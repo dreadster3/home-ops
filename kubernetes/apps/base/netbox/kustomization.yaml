@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: &app netbox
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: *app
+
+configMapGenerator:
+  - name: netbox-configuration-scripts
+    namespace: *app
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/authentik.py
+      - scripts/group_pipeline.py
+      - scripts/storages.py
+
+resources:
+  - bucket.yaml
+  - helm.yaml
+  - namespace.yaml
+  - pgcluster.yaml
+  - redis.yaml
+  - store.yaml
+  - secrets.yaml

@@ -1,0 +1,126 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: paperless
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": paperless
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: paperless
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: paperless-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: paperless
+            app.kubernetes.io/instance: paperless
+            app.kubernetes.io/name: paperless
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis-replication
+  namespace: paperless
+spec:
+  description: "Allow Redis pods access"
+  endpointSelector:
+    matchLabels:
+      app: paperless-redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: paperless
+            app.kubernetes.io/instance: paperless
+            app.kubernetes.io/name: paperless
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis-sentinel
+  namespace: paperless
+spec:
+  description: "Allow Redis Sentinel pods access"
+  endpointSelector:
+    matchLabels:
+      app: paperless-redis-sentinel
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: paperless
+            app.kubernetes.io/instance: paperless
+            app.kubernetes.io/name: paperless
+      toPorts:
+        - ports:
+            - port: "26379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: paperless-server
+  namespace: paperless
+spec:
+  description: "Allow traffic from and to paperless server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: paperless
+      app.kubernetes.io/instance: paperless
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: pangolin
+            app.kubernetes.io/name: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    - toFQDNs:
+        - matchName: debian.map.fastlydns.net
+        - matchName: deb.debian.org
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: authentik.${EXTERNAL_DOMAIN}
+    - toFQDNs:
+        - matchName: smtp.gmail.com
+      toPorts:
+        - ports:
+            - port: "587"
+              protocol: TCP

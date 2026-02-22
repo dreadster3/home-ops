@@ -1,0 +1,42 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: harbor-ca-certificate
+  namespace: harbor
+spec:
+  isCA: true
+  commonName: harbor-ca
+  secretName: harbor-ca-tls
+  duration: 70128h # 8y
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: ClusterIssuer
+    name: cluster-root
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: harbor-ca-issuer
+  namespace: harbor
+spec:
+  ca:
+    secretName: harbor-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: harbor-token-encryption
+  namespace: harbor
+spec:
+  isCA: true
+  duration: 8760h # 1y
+  commonName: harbor-token-ca
+  secretName: harbor-token-encryption
+  usages:
+    - digital signature
+    - key encipherment
+  issuerRef:
+    name: harbor-ca-issuer

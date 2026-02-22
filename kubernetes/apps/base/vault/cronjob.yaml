@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-backup
+  namespace: vault
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vault-backup
+  namespace: vault
+spec:
+  schedule: "0 2 * * *" # Daily at 2 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: vault-backup
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: hashicorp/vault:latest
+              env:
+                - name: VAULT_ADDR
+                  value: "https://vault-active.vault.svc.cluster.local:8200"
+                - name: VAULT_CACERT
+                  value: /var/run/secrets/vault-ca-tls/ca.crt
+                - name: VAULT_SKIP_VERIFY
+                  value: "true"
+                - name: S3_ENDPOINT
+                  value: https://truenas.${INTERNAL_DOMAIN}:30292
+                - name: S3_BUCKET
+                  value: vault
+                - name: AWS_CONFIG_FILE
+                  value: /var/run/secrets/s3/config
+                - name: AWS_SHARED_CREDENTIALS_FILE
+                  value: /var/run/secrets/s3/credentials
+                - name: RETENTION_DAYS
+                  value: "30"
+              command:
+                - /bin/sh
+                - /scripts/backup.sh
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+                - name: vault-ca-tls
+                  mountPath: /var/run/secrets/vault-ca-tls
+                  readOnly: true
+                - name: vault-backup-s3-credentials
+                  mountPath: /var/run/secrets/s3
+                  readOnly: true
+          volumes:
+            - name: scripts
+              configMap:
+                name: vault-backup-scripts
+                defaultMode: 0755
+            - name: vault-ca-tls
+              secret:
+                secretName: vault-ca-tls
+                items:
+                  - key: tls.crt
+                    path: ca.crt
+            - name: vault-backup-s3-credentials
+              secret:
+                secretName: vault-backup-s3-credentials

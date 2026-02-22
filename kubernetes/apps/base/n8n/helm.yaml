@@ -1,0 +1,101 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: n8n
+  namespace: n8n
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/n8n-io/n8n
+              tag: 2.7.3@sha256:b7ae2b468809522ff9770b078fd03a565eaeccf9c0600afce0ac870c536ae562
+            env:
+              TIMEZONE: &tz ${TIMEZONE}
+              GENERIC_TIMEZONE: *tz
+              N8N_EDITOR_BASE_URL: https://n8n.${INTERNAL_DOMAIN}
+              N8N_HOST: n8n.${INTERNAL_DOMAIN}
+              N8N_PORT: &port 8080
+              N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+              N8N_RUNNERS_ENABLED: true
+              N8N_DIAGNOSTICS_ENABLED: false
+              N8N_MFA_ENABLED: true
+            envFrom:
+              - secretRef:
+                  name: n8n-secret-env
+            ports:
+              - containerPort: *port
+                name: http
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 5m
+                memory: 384Mi
+              limits:
+                memory: 384Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+            targetPort: http
+
+    ingress:
+      main:
+        enabled: true
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+        hosts:
+          - host: &host n8n.${INTERNAL_DOMAIN}
+            paths:
+              - path: "/"
+                service:
+                  identifier: main
+        tls:
+          - secretName: n8n-ingress-tls
+            hosts:
+              - *host
+
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        globalMounts:
+          - path: /home/node/.n8n

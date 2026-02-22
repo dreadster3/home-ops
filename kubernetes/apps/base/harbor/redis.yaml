@@ -1,0 +1,77 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: harbor-redis
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  clusterSize: 3
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v8.2.2
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 15m
+        memory: 32Mi
+      limits:
+        memory: 32Mi
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.79.0
+    resources:
+      requests:
+        cpu: 5m
+        memory: 20Mi
+      limits:
+        memory: 20Mi
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - harbor-redis
+          topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: harbor-redis
+spec:
+  clusterSize: 3
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  redisSentinelConfig:
+    redisReplicationName: harbor-redis
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.79.0
+    resources:
+      requests:
+        cpu: 5m
+        memory: 20Mi
+      limits:
+        memory: 20Mi
+  kubernetesConfig:
+    image: quay.io/opstree/redis-sentinel:v8.4.0
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 10m
+        memory: 15Mi
+      limits:
+        memory: 15Mi

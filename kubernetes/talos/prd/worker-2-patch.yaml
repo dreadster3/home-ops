@@ -1,0 +1,53 @@
+machine:
+  kubelet:
+    image: ghcr.io/siderolabs/kubelet:v1.35.0 # The `image` field is an optional reference to an alternative kubelet image.
+    extraConfig:
+      serverTLSBootstrap: true
+    extraArgs:
+      rotate-server-certificates: true
+      feature-gates: CSIVolumeHealth=true
+  install:
+    disk: /dev/sda
+    image: factory.talos.dev/nocloud-installer/ddf38e55e30aa9b2bb0b765054ed63444dc00244ab8bb4ad4ad92486602285f8:v1.12.2
+  kernel:
+    modules:
+      - name: ipv6
+        parameters:
+          - disable=1
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: kubewrk02
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: eth0
+up: true
+addresses:
+  - address: 192.168.30.45/24
+routes:
+  - gateway: 192.168.30.1
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+nameservers:
+  - address: 192.168.30.2
+  - address: 192.168.30.3
+---
+apiVersion: v1alpha1
+kind: TimeSyncConfig
+bootTimeout: 2m
+ptp:
+  devices:
+    - /dev/ptp0
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-storage-vol1
+provisioning:
+  diskSelector:
+    match: "!system_disk"
+  minSize: 64GB
+  maxSize: 256GB
+  grow: true

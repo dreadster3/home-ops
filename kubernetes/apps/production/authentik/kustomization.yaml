@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: authentik
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: authentik
+
+resources:
+  - ../../base/authentik
+  - ingress.yaml
+
+patches:
+  - target:
+      kind: HelmRelease
+    path: helm.yaml

@@ -1,0 +1,241 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: &app netbox
+  namespace: *app
+spec:
+  interval: 24h
+  url: https://charts.netbox.oss.netboxlabs.com/
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2
+# kind: HelmRelease
+# metadata:
+#   name: &app netbox-operator
+#   namespace: netbox
+# spec:
+#   interval: 1h
+#   install:
+#     remediation:
+#       retries: 3
+#   upgrade:
+#     cleanupOnFail: true
+#     remediation:
+#       retries: 3
+#   chart:
+#     spec:
+#       chart: *app
+#       version: 1.x
+#       interval: 24h
+#       sourceRef:
+#         kind: HelmRepository
+#         name: netbox
+#         namespace: netbox
+#   dependsOn:
+#     - name: netbox
+#   values:
+#     host: netbox.${INTERNAL_DOMAIN}
+#     auth:
+#       existingSecret: netbox-operator
+#     metrics:
+#       enabled: true
+#       serviceMonitor:
+#         enabled: true
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app netbox
+  namespace: *app
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: *app
+      version: 7.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: netbox
+        namespace: netbox
+  values:
+    timezone: ${TIMEZONE}
+    loginRequired: true
+    existingSecret: netbox-server
+
+    resources:
+      requests:
+        cpu: 450m
+        memory: 1350Mi
+      limits:
+        memory: 1350Mi
+
+    worker:
+      resources:
+        requests:
+          cpu: 80m
+          memory: 300Mi
+        limits:
+          memory: 300Mi
+
+    commonAnnotations:
+      reloader.stakater.com/auto: "true"
+    allowedHosts:
+      - &host netbox.${INTERNAL_DOMAIN}
+    superuser:
+      existingSecret: netbox-superuser
+    csrf:
+      trustedOrigins:
+        - https://netbox.${INTERNAL_DOMAIN}
+    persistence:
+      enabled: false
+    # readinessProbe:
+    #   enabled: false
+    livenessProbe:
+      enabled: false
+
+    ingress:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt
+      hosts:
+        - host: *host
+          paths:
+            - /
+      tls:
+        - secretName: netbox-ingress-tls
+          hosts:
+            - *host
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+    postgresql:
+      enabled: false
+
+    externalDatabase:
+      host: netbox-cluster-rw
+      port: 5432
+      database: netbox
+      username: netbox
+      existingSecretName: netbox-cluster-credentials
+      existingSecretKey: password
+
+    valkey:
+      enabled: false
+
+    tasksDatabase: &redis
+      sentinels:
+        - netbox-redis-sentinel-0.netbox-redis-sentinel-headless:26379
+        - netbox-redis-sentinel-1.netbox-redis-sentinel-headless:26379
+        - netbox-redis-sentinel-2.netbox-redis-sentinel-headless:26379
+      sentinelService: mymaster
+      existingSecretName: netbox-redis-credentials
+      existingSecretKey: password
+
+    cachingDatabase: *redis
+
+    email:
+      server: smtp.gmail.com
+      port: 587
+      useTLS: true
+      from: no-reply@${EXTERNAL_DOMAIN}
+      existingSecretName: netbox-smtp
+      existingSecretKey: password
+
+    remoteAuth:
+      enabled: true
+      backends:
+        - social_core.backends.open_id_connect.OpenIdConnectAuth
+      autoCreateUser: true
+      autoCreateGroup: true
+
+    extraConfig:
+      - values:
+          SOCIAL_AUTH_PIPELINE:
+            - "social_core.pipeline.social_auth.social_details"
+            - "social_core.pipeline.social_auth.social_uid"
+            - "social_core.pipeline.social_auth.social_user"
+            - "social_core.pipeline.user.get_username"
+            - "social_core.pipeline.social_auth.associate_by_email"
+            - "social_core.pipeline.user.create_user"
+            - "social_core.pipeline.social_auth.associate_user"
+            - "netbox.authentication.user_default_groups_handler"
+            - "social_core.pipeline.social_auth.load_extra_data"
+            - "social_core.pipeline.user.user_details"
+            # Custom group pipeline
+            - "netbox.group_pipeline.add_groups"
+            - "netbox.group_pipeline.remove_groups"
+            - "netbox.group_pipeline.set_roles"
+    extraVolumes:
+      - name: netbox-configuration-scripts
+        configMap:
+          name: netbox-configuration-scripts
+
+    extraVolumeMounts:
+      - name: netbox-configuration-scripts
+        mountPath: /etc/netbox/config/authentik.py
+        subPath: authentik.py
+        readOnly: true
+      - name: netbox-configuration-scripts
+        mountPath: /opt/netbox/netbox/netbox/group_pipeline.py
+        subPath: group_pipeline.py
+        readOnly: true
+      - name: netbox-configuration-scripts
+        mountPath: /etc/netbox/config/storages.py
+        subPath: storages.py
+        readOnly: true
+
+    extraEnvs:
+      - name: AWS_ENDPOINT_URL
+        value: http://rook-ceph-rgw-k8s-ceph-objectstore.rook-ceph.svc
+      - name: AWS_BUCKET_NAME
+        valueFrom:
+          configMapKeyRef:
+            name: netbox-bucket
+            key: BUCKET_NAME
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: netbox-bucket
+            key: AWS_ACCESS_KEY_ID
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: netbox-bucket
+            key: AWS_SECRET_ACCESS_KEY
+      - name: DB_WAIT_DEBUG
+        value: "1"
+      - name: SOCIAL_AUTH_OIDC_OIDC_ENDPOINT
+        value: https://authentik.intra.dreadster3.com/application/o/netbox
+      - name: SOCIAL_AUTH_OIDC_KEY
+        valueFrom:
+          secretKeyRef:
+            name: netbox-oidc
+            key: client_id
+      - name: SOCIAL_AUTH_OIDC_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: netbox-oidc
+            key: client_secret
+      - name: SOCIAL_AUTH_OIDC_SCOPE
+        value: openid email profile netbox
+      - name: SOCIAL_AUTH_OIDC_USERNAME_KEY
+        value: preferred_username
+      - name: LOGOUT_REDIRECT_URL
+        value: https://authentik.intra.dreadster3.com/application/o/netbox/end-session/
+
+  valuesFrom:
+    - targetPath: email.username
+      kind: Secret
+      name: netbox-smtp
+      valuesKey: username

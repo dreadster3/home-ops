@@ -1,0 +1,106 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: uptime
+  namespace: uptime
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: docker.io/louislam/uptime-kuma
+              tag: 2.0.2@sha256:d0640df0961b57ca7063b355e9571615fcb075606258ffc629dc48e29f1ede7f
+            env:
+              TZ: Europe/Lisbon
+              UPTIME_KUMA_DB_TYPE: sqlite
+              NODE_EXTRA_CA_CERTS: /var/run/config/home-bundle-ca/ca-bundle.crt
+            ports:
+              - containerPort: 3001
+                name: http
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 70m
+                memory: 256Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: { type: RuntimeDefault }
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+            targetPort: http
+
+    ingress:
+      main:
+        enabled: true
+        className: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+          traefik.ingress.kubernetes.io/router.middlewares: traefik-system-authentik-proxy@kubernetescrd
+        hosts:
+          - host: &host "uptime.${INTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+            secretName: uptime-ingress-tls
+
+    persistence:
+      certs:
+        enabled: true
+        type: configMap
+        name: home-bundle-ca
+        advancedMounts:
+          main:
+            main:
+              - path: /var/run/config/home-bundle-ca/ca-bundle.crt
+                readOnly: true
+                subPath: ca-bundle.crt
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteMany
+        storageClass: ceph-filesystem
+        size: 3Gi
+        globalMounts:
+          - path: /app/data

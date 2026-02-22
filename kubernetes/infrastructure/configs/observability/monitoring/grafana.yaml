@@ -1,0 +1,160 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  interval: 1h
+  install:
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 2m
+  upgrade:
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 2m
+  chart:
+    spec:
+      chart: grafana
+      version: 10.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+  values:
+    ingress:
+      enabled: true
+      ingressClassName: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt
+      hosts:
+        - &host grafana.${INTERNAL_DOMAIN}
+      tls:
+        - secretName: grafana-ingress-tls
+          hosts:
+            - *host
+
+    extraSecretMounts:
+      - name: auth-authentik-secret-mount
+        secretName: grafana-authentik-client
+        defaultMode: 0440
+        mountPath: /var/run/secrets/authentik
+        readOnly: true
+
+    extraVolumeMounts:
+      - name: cluster-bundle-ca
+        mountPath: /etc/ssl/certs/ca-bundle.crt
+        subPath: ca-bundle.crt
+        readOnly: true
+
+    extraVolumes:
+      - name: cluster-bundle-ca
+        configMap:
+          name: cluster-bundle-ca
+
+    grafana.ini:
+      server:
+        root_url: "https://grafana.${INTERNAL_DOMAIN}"
+        domain: *host
+      auth:
+        signout_redirect_url: "https://authentik.${INTERNAL_DOMAIN}/application/o/grafana/end-session/"
+      auth.generic_oauth:
+        enabled: true
+        auto_login: true
+        name: authentik
+        client_id: "$__file{/var/run/secrets/authentik/client_id}"
+        client_secret: "$__file{/var/run/secrets/authentik/client_secret}"
+        scopes: "openid profile email"
+        auth_url: "https://authentik.${INTERNAL_DOMAIN}/application/o/authorize/"
+        token_url: "https://authentik.${INTERNAL_DOMAIN}/application/o/token/"
+        api_url: "https://authentik.${INTERNAL_DOMAIN}/application/o/userinfo/"
+        role_attribute_path: contains(groups, 'AuthentikAdmins') && 'Admin' || 'Viewer'
+
+    serviceMonitor:
+      enabled: true
+
+    persistence:
+      enabled: false
+      storageClassName: nfs
+      accessModes:
+        - ReadWriteMany
+      size: 1Gi
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 350Mi
+      limits:
+        memory: 350Mi
+
+    sidecar:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 100Mi
+        limits:
+          memory: 100Mi
+      dashboards:
+        enabled: true
+        label: grafana/dashboard
+        value: "true"
+        searchNamespace: ALL
+        folder: /var/lib/grafana/dashboards/sidecar
+        folderAnnotation: grafana/folder
+        provider:
+          foldersFromFilesStructure: true
+      datasources:
+        enabled: true
+        label: grafana/datasource
+        value: "true"
+        searchNamespace: monitoring
+
+    podAnnotations:
+      reloader.stakater.com/auto: "true"
+
+    dashboards:
+      default:
+        node-exporter:
+          gnetId: 1860
+          revision: 42
+          dataSource: Prometheus
+        cert-manager:
+          gnetId: 11001
+          revision: 1
+          datasource: Prometheus
+        coredns:
+          gnetId: 14981
+          revision: 2
+          datasource: Prometheus
+        kube-state-metrics:
+          gnetId: 13332
+          revision: 12
+          datasource: Prometheus
+        ceph-cluster:
+          gnetId: 2842
+          revision: 18
+          datasource: Prometheus
+        external-dns:
+          gnetId: 23969
+          revision: 1
+          datasource: Prometheus
+
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: default
+            orgId: 1
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+          # - name: loki
+          #   orgId: 1
+          #   type: file
+          #   disableDeletion: false
+          #   editable: true
+          #   folder: Loki
+          #   options:
+          #     path: /var/lib/grafana/dashboards/sidecar/loki

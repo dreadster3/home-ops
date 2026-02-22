@@ -1,0 +1,76 @@
+use_default_settings: true
+
+server:
+  limiter: true
+  image_proxy: true
+  method: GET
+  public_instance: false
+
+general:
+  instance_name: Dreadster SearxNG
+  privacypolicy_url: false
+  donation_url: false
+  contact_url: false
+  enable_metrics: false
+search:
+  safe_search: 0
+  autocomplete: duckduckgo
+  favicon_resolver: duckduckgo
+  autocomplete_min: 2
+  languages:
+    - all
+    - en
+    - en-US
+    - pt-PT
+  formats:
+    - html
+    - json
+  max_page: 0
+ui:
+  default_theme: simple
+  query_in_title: true
+  theme_args:
+    simple_style: auto
+
+plugins:
+  searx.plugins.calculator.SXNGPlugin:
+    active: true
+
+  searx.plugins.infinite_scroll.SXNGPlugin:
+    active: true
+
+  searx.plugins.hash_plugin.SXNGPlugin:
+    active: true
+
+  searx.plugins.self_info.SXNGPlugin:
+    active: true
+
+  searx.plugins.tracker_url_remover.SXNGPlugin:
+    active: true
+
+  searx.plugins.unit_converter.SXNGPlugin:
+    active: true
+
+  searx.plugins.ahmia_filter.SXNGPlugin:
+    active: true
+
+  searx.plugins.hostnames.SXNGPlugin:
+    active: true
+
+  searx.plugins.oa_doi_rewrite.SXNGPlugin:
+    active: true
+
+  searx.plugins.tor_check.SXNGPlugin:
+    active: false
+
+hostnames:
+  high_priority:
+    - (.*)\/blog\/(.*)
+    - (.*\.)?wikipedia.org$
+    - (.*\.)?github.com$
+    - (.*\.)?reddit.com$
+    - (.*\.)?docker.com$
+    - (.*\.)?archlinux.org$
+    - (.*\.)?stackoverflow.com$
+    - (.*\.)?askubuntu.com$
+    - (.*\.)?superuser.com$

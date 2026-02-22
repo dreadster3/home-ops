@@ -1,0 +1,147 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: paperless
+  namespace: paperless
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/paperless-ngx/paperless-ngx
+              tag: 2.20.7@sha256:7b937cb2fa2885ab0ecfceb8c7e8827e2312472d9d897a270097ba7f5522dcdc
+            env:
+              PAPERLESS_TIME_ZONE: Europe/Lisbon
+              PAPERLESS_DBENGINE: postgresql
+              PAPERLESS_ALLOWED_HOSTS: paperless.${INTERNAL_DOMAIN},paperless.${EXTERNAL_DOMAIN}
+              PAPERLESS_CORS_ALLOWED_HOSTS: https://paperless.${INTERNAL_DOMAIN},https://paperless.${EXTERNAL_DOMAIN}
+              PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.${INTERNAL_DOMAIN},https://paperless.${EXTERNAL_DOMAIN}
+              PAPERLESS_OCR_LANGUAGE: eng+por
+              PAPERLESS_OCR_LANGUAGES: eng por
+              PAPERLESS_WEBSERVER_WORKERS: 2
+              PAPERLESS_TASK_WORKERS: 2
+              PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+              PAPERLESS_LOGOUT_REDIRECT_URL: "https://authentik.${EXTERNAL_DOMAIN}/application/o/paperless/end-session/"
+              PAPERLESS_SOCIAL_AUTO_SIGNUP: true
+              PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: true
+              PAPERLESS_SOCIAL_ACCOUNT_SYNC_GROUPS: true
+              PAPERLESS_EMAIL_FROM: no-reply@${EXTERNAL_DOMAIN}
+              # PAPERLESS_CONSUMER_DISABLE: false
+              PAPERLESS_CONSUMPTION_DIR: &consume /usr/src/paperless/consume
+              PAPERLESS_CONSUMER_RECURSIVE: true
+              PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: false
+              PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
+              PAPERLESS_CONSUMER_POLLING: 30
+              PAPERLESS_DISABLE_REGULAR_LOGIN: true
+              PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
+              USERMAP_UID: 4100
+              USERMAP_GID: 4100
+            envFrom:
+              - secretRef:
+                  name: paperless-secret-env
+            ports:
+              - containerPort: &port 8000
+                name: http
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 900m
+                memory: 1.5Gi
+              limits:
+                memory: 1.5Gi
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                spec:
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                spec:
+                  initialDelaySeconds: 30
+                  timeoutSeconds: 3
+                  failureThreshold: 15
+                  periodSeconds: 10
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+            targetPort: http
+
+    ingress:
+      main:
+        enabled: true
+        className: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+        hosts:
+          - host: &host "paperless.${INTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+            secretName: paperless-ingress-tls
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteMany
+        storageClass: nfs
+        size: 10Gi
+        advancedMounts:
+          main:
+            main:
+              - path: /usr/src/paperless/data
+      media:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteMany
+        storageClass: nfs
+        size: 50Gi
+        advancedMounts:
+          main:
+            main:
+              - path: /usr/src/paperless/media
+      consume:
+        type: nfs
+        server: 192.168.30.20
+        path: /mnt/main/PaperlessConsume
+        advancedMounts:
+          main:
+            main:
+              - path: *consume

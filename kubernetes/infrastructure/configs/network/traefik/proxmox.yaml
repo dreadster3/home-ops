@@ -1,0 +1,72 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: proxmox
+  namespace: traefik-system
+spec:
+  serverName: proxmox.intra.dreadster3.com
+  insecureSkipVerify: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxmox
+  namespace: traefik-system
+  annotations:
+    traefik.ingress.kubernetes.io/service.serverstransport: traefik-system-proxmox@kubernetescrd
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.name: pve-session
+    traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.httponly: "true"
+    traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: "Lax"
+spec:
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: proxmox
+  namespace: traefik-system
+subsets:
+  - addresses:
+      - ip: 192.168.30.5
+        nodeName: pve01
+      - ip: 192.168.30.6
+        nodeName: pve02
+      - ip: 192.168.30.10
+        nodeName: pve30
+    ports:
+      - name: https
+        port: 8006
+        protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  name: proxmox
+  namespace: traefik-system
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: &host proxmox.intra.dreadster3.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: proxmox
+                port:
+                  name: https
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - *host
+      secretName: proxmox-ingress-tls

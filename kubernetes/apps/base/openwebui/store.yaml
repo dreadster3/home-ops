@@ -1,0 +1,21 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup-store
+  namespace: openwebui
+spec:
+  configuration:
+    destinationPath: s3://openwebui
+    endpointURL: https://truenas.${INTERNAL_DOMAIN}:30292
+    s3Credentials:
+      accessKeyId:
+        name: openwebui-backup-s3-account
+        key: ACCESS_KEY
+      secretAccessKey:
+        name: openwebui-backup-s3-account
+        key: SECRET_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip
+  retentionPolicy: "7d"

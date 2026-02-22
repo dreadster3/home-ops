@@ -1,0 +1,58 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentik-cluster
+  namespace: authentik
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.6-standard-trixie
+  instances: 3
+  primaryUpdateStrategy: unsupervised
+  storage:
+    storageClass: local-path
+    size: 2Gi
+
+  bootstrap:
+    recovery:
+      source: backup
+      database: authentik
+      owner: authentik
+      secret:
+        name: authentik-cluster-credentials
+    # initdb:
+    #   database: authentik
+    #   owner: authentik
+    #   secret:
+    #     name: authentik-cluster-credentials
+  externalClusters:
+    - name: backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: backup-store
+          serverName: authentik-cluster
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backup-store
+        serverName: authentik-cluster
+
+  monitoring:
+    enablePodMonitor: true
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: authentik-cluster-backup
+  namespace: authentik
+spec:
+  cluster:
+    name: authentik-cluster
+  schedule: "0 0 0 * * *"
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io

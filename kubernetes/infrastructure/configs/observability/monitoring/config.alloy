@@ -1,0 +1,437 @@
+discovery.kubernetes "nodes" {
+    role = "node"
+}
+
+// Discover Kubernetes pods and collect their logs
+discovery.kubernetes "pods" {
+    role = "pod"
+}
+
+discovery.kubernetes "services" {
+    role = "service"
+}
+
+discovery.relabel "cadvisor" {
+    targets = discovery.kubernetes.nodes.targets
+
+    rule {
+        target_label = "__scheme__"
+        replacement  = "https"
+    }
+
+    rule {
+        target_label = "__metrics_path__"
+        replacement  = "/metrics/cadvisor"
+    }
+
+    rule {
+        target_label = "job"
+        replacement  = "kubelet"
+    }
+
+    rule {
+        source_labels = ["__metrics_path__"]
+        action        = "replace"
+        target_label  = "metrics_path"
+    }
+}
+
+// Relabel to add useful metadata
+discovery.relabel "pods" {
+    targets = discovery.kubernetes.pods.targets
+
+    // Keep only running pods
+    rule {
+        source_labels = ["__meta_kubernetes_pod_phase"]
+        action        = "keep"
+        regex         = "Running"
+    }
+
+    // Add namespace label
+    rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+    }
+
+    // Add pod name label
+    rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+    }
+
+    // Add container name label
+    rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+    }
+
+    // Add node name
+    rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+    }
+
+    // For ReplicaSets: strip the hash
+    rule {
+        source_labels = ["__meta_kubernetes_pod_label_pod_template_hash", "__meta_kubernetes_pod_controller_name"]
+        regex         = ".+;(.+)-[0-9a-f]+"
+        replacement   = "$1"
+        target_label  = "__controller"
+    }
+
+    // For everything else: use controller name as-is (fallback)
+    rule {
+        source_labels = ["__controller", "__meta_kubernetes_pod_controller_name"]
+        regex         = ";(.+)" // Only matches if __controller is empty
+        replacement   = "$1"
+        target_label  = "__controller"
+    }
+
+    // Set controller label
+    rule {
+        source_labels = ["__controller"]
+        target_label  = "controller"
+    }
+
+    // Set job label
+    rule {
+        source_labels = ["__meta_kubernetes_namespace", "__controller"]
+        action        = "replace"
+        target_label  = "job"
+        separator     = "/"
+    }
+
+    // Add app label if it exists
+    rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        action        = "replace"
+        target_label  = "app"
+    }
+
+    // Set the log path
+    rule {
+        source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+        target_label  = "__path__"
+        separator     = "/"
+        replacement   = "/var/log/pods/*$1/*.log"
+    }
+
+    // Set the container runtime
+    rule {
+        source_labels = ["__meta_kubernetes_pod_container_id"]
+        action        = "replace"
+        target_label  = "container_runtime"
+        regex         = "^(\\S+):\\/\\/.+$"
+        replacement   = "$1"
+    }
+
+    // Set label map
+    rule {
+        action = "labelmap"
+        regex  = "__meta_kubernetes_pod_label_(.+)"
+    }
+}
+
+// Relabel to add useful metadata
+discovery.relabel "services" {
+    targets = discovery.kubernetes.services.targets
+
+    // Add namespace label
+    rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+    }
+
+    // Add service name
+    rule {
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "name"
+    }
+
+    // Add app label if it exists
+    rule {
+        source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_name"]
+        action        = "replace"
+        target_label  = "app"
+    }
+
+    // Set service type
+    rule {
+        source_labels = ["__meta_kubernetes_service_type"]
+        target_label  = "type"
+    }
+
+    // Set the service port
+    rule {
+        source_labels = ["__meta_kubernetes_service_port_number"]
+        target_label  = "port"
+    }
+
+    // Set the service port
+    rule {
+        source_labels = ["__meta_kubernetes_service_port_name"]
+        target_label  = "port_name"
+    }
+
+    // Set the service port
+    rule {
+        source_labels = ["__meta_kubernetes_service_port_protocol"]
+        target_label  = "protocol"
+    }
+
+    // Set label map
+    rule {
+        action = "labelmap"
+        regex  = "__meta_kubernetes_service_label_(.+)"
+    }
+}
+
+discovery.relabel "loki_pods" {
+    targets = discovery.relabel.pods.output
+
+    rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_loki_ignore"]
+        action        = "drop"
+        regex         = "true"
+    }
+}
+
+// Read the log files
+loki.source.kubernetes "pods" {
+    targets    = discovery.relabel.loki_pods.output
+    forward_to = [loki.process.canary_pods.receiver]
+}
+
+// Fix canary logs
+loki.process "canary_pods" {
+    forward_to = [loki.write.loki.receiver]
+
+    stage.match {
+        selector = `{job="monitoring/loki-canary"}`
+
+        stage.regex {
+            expression         = "^(?P<canary_ts>\\d+) p+\n$"
+            labels_from_groups = true
+        }
+
+        stage.match {
+            selector = `{canary_ts!=""}`
+
+            // Add a static label for matched logs
+            stage.static_labels {
+                values = {
+                    stream = env("NODE_NAME"),
+                    level  = "trace",
+                }
+            }
+
+            stage.label_drop {
+                values = ["canary_ts"]
+            }
+        }
+    }
+}
+
+loki.write "loki" {
+    endpoint {
+        url = "http://loki-gateway/loki/api/v1/push"
+
+        basic_auth {
+            username = env("LOKI_USER")
+            password = env("LOKI_PASS")
+        }
+    }
+
+    external_labels = {
+        alloy   = env("NODE_NAME"),
+        cluster = "prd",
+    }
+}
+
+discovery.relabel "prometheus_pods" {
+    targets = discovery.relabel.pods.output
+
+    // Only keep pods with prometheus.io/scrape annotation
+    rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
+        action        = "keep"
+        regex         = "true"
+    }
+
+    // Set scheme
+    rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scheme"]
+        action        = "replace"
+        target_label  = "__scheme__"
+        regex         = "(https?)"
+    }
+
+    // Get the scrape port from annotation (default to pod port if not specified)
+    rule {
+        source_labels = ["__meta_kubernetes_pod_ip", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
+        action        = "replace"
+        regex         = "([^;]+);(\\d+)"
+        target_label  = "__address__"
+        replacement   = "$1:$2"
+        separator     = ";"
+    }
+
+    // Get the metrics path (default /metrics)
+    rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
+        action        = "replace"
+        target_label  = "__metrics_path__"
+        regex         = "(.+)"
+        replacement   = "$1"
+    }
+
+    // Label map
+    rule {
+        action      = "labelmap"
+        regex       = "__meta_kubernetes_pod_annotation_prometheus_io_param_(.+)"
+        replacement = "__param_$1"
+    }
+}
+
+discovery.relabel "prometheus_services" {
+    targets = discovery.relabel.services.output
+
+    // Only keep services with prometheus.io/scrape annotation
+    rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scrape"]
+        action        = "keep"
+        regex         = "true"
+    }
+
+    // Set scheme
+    rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scheme"]
+        action        = "replace"
+        target_label  = "__scheme__"
+        regex         = "(https?)"
+    }
+
+    // Get the scrape port from annotation
+    rule {
+        source_labels = ["__address__", "__meta_kubernetes_service_annotation_prometheus_io_port"]
+        action        = "replace"
+        target_label  = "__address__"
+        regex         = "(.+?)(?::\\d+)?;(\\d+)"
+        replacement   = "$1:$2"
+    }
+
+    // Get the metrics path (default /metrics)
+    rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_path"]
+        action        = "replace"
+        target_label  = "__metrics_path__"
+        regex         = "(.+)"
+        replacement   = "$1"
+    }
+
+    // Label map
+    rule {
+        action      = "labelmap"
+        regex       = "__meta_kubernetes_service_annotation_prometheus_io_param_(.+)"
+        replacement = "__param_$1"
+    }
+}
+
+prometheus.scrape "cadvisor" {
+    clustering {
+        enabled = true
+    }
+
+    scrape_interval = "15s"
+    scrape_timeout  = "5s"
+    targets         = discovery.relabel.cadvisor.output
+
+    authorization {
+        credentials_file = "/run/secrets/kubernetes.io/serviceaccount/token"
+        type             = "Bearer"
+    }
+
+    tls_config {
+        ca_file              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        insecure_skip_verify = false
+    }
+
+    forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.scrape "pods" {
+    clustering {
+        enabled = true
+    }
+
+    scrape_interval = "15s"
+    scrape_timeout  = "5s"
+    targets         = discovery.relabel.prometheus_pods.output
+    forward_to      = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.scrape "services" {
+    clustering {
+        enabled = true
+    }
+
+    scrape_interval = "15s"
+    scrape_timeout  = "5s"
+    targets         = discovery.relabel.prometheus_services.output
+    forward_to      = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.exporter.self "alloy" { }
+
+prometheus.scrape "alloy" {
+    scrape_interval = "15s"
+    scrape_timeout  = "5s"
+    targets         = prometheus.exporter.self.alloy.targets
+    forward_to      = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.exporter.unix "node" { }
+
+prometheus.scrape "node" {
+    scrape_interval = "30s"
+    scrape_timeout  = "15s"
+    targets         = prometheus.exporter.unix.node.targets
+    forward_to      = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.operator.servicemonitors "servicemonitors" {
+    clustering {
+        enabled = true
+    }
+
+    scrape {
+        default_scrape_interval = "15s"
+        default_scrape_timeout  = "5s"
+    }
+
+    forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.operator.podmonitors "podmonitors" {
+    clustering {
+        enabled = true
+    }
+
+    scrape {
+        default_scrape_interval = "15s"
+        default_scrape_timeout  = "5s"
+    }
+
+    forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.remote_write "prometheus" {
+    endpoint {
+        url = "http://prometheus-prometheus:9090/api/v1/write"
+    }
+
+    external_labels = {
+        alloy   = env("NODE_NAME"),
+        cluster = "prd",
+    }
+}

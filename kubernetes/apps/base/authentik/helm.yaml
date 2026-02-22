@@ -1,0 +1,101 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: authentik
+  namespace: authentik
+spec:
+  interval: 24h
+  url: https://charts.goauthentik.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authentik
+  namespace: authentik
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: authentik
+      version: 2025.10.3
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+  values:
+    global:
+      podAnnotations:
+        reloader.stakater.com/auto: "true"
+      security:
+        allowInsecureImages: false
+      volumeMounts:
+        - name: authentik-secret-env
+          mountPath: /var/run/secrets/authentik-secret-env
+      volumes:
+        - name: authentik-secret-env
+          secret:
+            secretName: authentik-secret-env
+
+    authentik:
+      secret_key: file:///var/run/secrets/authentik-secret-env/SECRET_KEY
+      email:
+        host: smtp.gmail.com
+        port: 587
+        username: file:///var/run/secrets/authentik-secret-env/SMTP_USERNAME
+        password: file:///var/run/secrets/authentik-secret-env/SMTP_PASSWORD
+        use_tls: true
+        from: no-reply@${EXTERNAL_DOMAIN}
+      postgresql:
+        host: authentik-cluster-rw
+        port: 5432
+        name: authentik
+        user: file:///var/run/secrets/authentik-secret-env/DB_USERNAME
+        password: file:///var/run/secrets/authentik-secret-env/DB_PASSWORD
+        # WARN: Initial setup cannot use read replicas
+        # https://github.com/goauthentik/authentik/issues/15191
+        # read_replicas:
+        #   "0":
+        #     host: authentik-cluster-ro
+        #     port: 5432
+        #     name: authentik
+        #     user: file:///var/run/secrets/authentik-cluster-credentials/username
+        #     password: file:///var/run/secrets/authentik-cluster-credentials/password
+
+    server:
+      replicas: 2
+
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+
+      ingress:
+        enabled: true
+        ingressClassName: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+        hosts:
+          - &host authentik.${INTERNAL_DOMAIN}
+        tls:
+          - secretName: authentik-ingress-tls
+            hosts:
+              - *host
+
+    worker:
+      replicas: 2
+
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+
+    prometheus:
+      rules:
+        enabled: true

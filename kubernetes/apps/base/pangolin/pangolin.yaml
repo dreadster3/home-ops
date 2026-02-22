@@ -1,0 +1,89 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: fossorial
+  namespace: pangolin
+spec:
+  interval: 24h
+  url: https://charts.fossorial.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pangolin
+  namespace: pangolin
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: newt
+      version: 1.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: fossorial
+  values:
+    global:
+      image:
+        tag: "1.9.0"
+      podLabels:
+        app.kubernetes.io/name: pangolin
+      notes:
+        defaultTraefikTarget: "traefik.traefik-system.svc.cluster.local:80"
+      metrics:
+        # BUG: https://github.com/fosrl/helm-charts/issues/8
+        # Wait until bug is fixed to enable metrics
+        enabled: false
+        service:
+          enabled: true
+        serviceMonitor:
+          enabled: true
+        prometheusRule:
+          enabled: true
+      resources:
+        requests:
+          cpu: 25m
+          memory: 128Mi
+        limits:
+          cpu: 75m
+          memory: 200Mi
+
+    newtInstances:
+      - name: kubernetes-1
+        enabled: true
+        auth:
+          existingSecretName: pangolin-newt-1-credentials
+          keys:
+            endpointKey: PANGOLIN_ENDPOINT
+            idKey: NEWT_ID
+            secretKey: NEWT_SECRET
+        service:
+          enabled: false
+        affinity: &affinity
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: pangolin
+                      app.kubernetes.io/instance: pangolin
+                      app.kubernetes.io/component: newt
+                  topologyKey: "kubernetes.io/hostname"
+      - name: kubernetes-2
+        enabled: true
+        auth:
+          existingSecretName: pangolin-newt-2-credentials
+          keys:
+            endpointKey: PANGOLIN_ENDPOINT
+            idKey: NEWT_ID
+            secretKey: NEWT_SECRET
+        service:
+          enabled: false
+        affinity: *affinity

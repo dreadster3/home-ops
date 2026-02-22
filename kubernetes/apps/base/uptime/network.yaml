@@ -1,0 +1,143 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: uptime
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: uptime
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: uptime-server
+  namespace: uptime
+spec:
+  description: "Allow traffic from and to uptime server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: uptime
+      app.kubernetes.io/instance: uptime
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: pangolin
+            app.kubernetes.io/name: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    - toCIDR:
+        - 192.168.30.20/32
+      toPorts:
+        - ports:
+            - port: "30293"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    - toCIDR:
+        - 1.1.1.1/32
+        - 1.0.0.1/32
+        - 8.8.8.8/32
+        - 8.8.4.4/32
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    - toFQDNs:
+        - matchPattern: "*.${EXTERNAL_DOMAIN}"
+        - matchName: "uptime.kuma.pet"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # BUG: https://github.com/cilium/cilium/issues/30003
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: immich
+            app.kubernetes.io/instance: immich
+            app.kubernetes.io/name: server
+      toPorts:
+        - ports:
+            - port: "2283"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: immich
+            app.kubernetes.io/instance: immich
+            app.kubernetes.io/name: machine-learning
+      toPorts:
+        - ports:
+            - port: "3003"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-uptime-clusterwide-resources
+spec:
+  description: "Allow Uptime Kuma to reach any resource in the cluster"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: uptime
+      app.kubernetes.io/instance: uptime
+      io.kubernetes.pod.namespace: uptime
+  enableDefaultDeny:
+    egress: false
+    ingress: false
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/managed-by: cloudnative-pg
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            redis_setup_type: sentinel
+      toPorts:
+        - ports:
+            - port: "26379"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            redis_setup_type: replication
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: uptime-server-backup
+  namespace: uptime
+spec:
+  description: "Allow traffic from and to uptime server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: uptime
+      app.kubernetes.io/component: backup
+  egress:
+    - toEntities:
+        - world

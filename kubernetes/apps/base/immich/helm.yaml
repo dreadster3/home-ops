@@ -1,0 +1,106 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: immich
+  namespace: immich
+spec:
+  interval: 24h
+  url: https://immich-app.github.io/immich-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: immich
+  namespace: immich
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: immich
+      version: 0.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: immich
+  values:
+    defaultPodOptions:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              tag: v2.5.6
+            env:
+              DB_DATABASE_NAME: immich
+              DB_HOSTNAME: immich-cluster-rw
+            envFrom:
+              - secretRef:
+                  name: immich-secret-env
+
+    immich:
+      metrics:
+        enabled: true
+      persistence:
+        library:
+          existingClaim: library
+
+    server:
+      controllers:
+        main:
+          containers:
+            main:
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 2150Mi
+                limits:
+                  memory: 2150Mi
+      ingress:
+        main:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+          hosts:
+            - host: &host immich.${INTERNAL_DOMAIN}
+              paths:
+                - path: "/"
+                  service:
+                    identifier: main
+          tls:
+            - secretName: immich-ingress-tls
+              hosts:
+                - *host
+      persistence:
+        external-library:
+          enabled: true
+          type: nfs
+          server: 192.168.30.20
+          path: /mnt/main/Cluster/Production/ImmichExternalLibrary
+
+    machine-learning:
+      enabled: true
+      controllers:
+        main:
+          containers:
+            main:
+              resources:
+                requests:
+                  cpu: 205m
+                  memory: 1760Mi
+                limits:
+                  memory: 1760Mi
+      persistence:
+        cache:
+          type: persistentVolumeClaim
+          accessMode: ReadWriteMany
+          storageClass: ceph-filesystem

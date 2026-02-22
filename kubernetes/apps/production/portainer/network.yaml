@@ -1,0 +1,13 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ingress-world
+  namespace: portainer
+spec:
+  description: "Allow traffic from the world to the portainer loadbalancer"
+  endpointSelector:
+    matchLabels:
+      app: portainer-agent
+  ingress:
+    - fromEntities:
+        - world

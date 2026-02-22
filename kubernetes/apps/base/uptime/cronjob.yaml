@@ -1,0 +1,79 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: uptime-backup
+  namespace: uptime
+spec:
+  schedule: "0 0 * * *" # Daily at midnight
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: uptime
+            app.kubernetes.io/component: backup
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: alpine:latest
+              env:
+                - name: S3_ENDPOINT
+                  value: https://192.168.30.20:30292
+                - name: S3_BUCKET
+                  value: uptime
+                - name: AWS_CONFIG_FILE
+                  value: /var/run/secrets/s3/config
+                - name: AWS_SHARED_CREDENTIALS_FILE
+                  value: /var/run/secrets/s3/credentials
+                - name: AWS_CA_BUNDLE
+                  value: /var/run/secrets/bundle-ca/ca-bundle.crt
+                - name: RETENTION_DAYS
+                  value: "30"
+              command:
+                - /bin/sh
+                - /scripts/backup.sh
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+                - name: bundle-ca
+                  mountPath: /var/run/secrets/bundle-ca
+                  readOnly: true
+                - name: backup-s3-credentials
+                  mountPath: /var/run/secrets/s3
+                  readOnly: true
+                - name: data
+                  mountPath: /data
+                  readOnly: true
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
+              resources:
+                requests:
+                  cpu: 60m
+                  memory: 90Mi
+                limits:
+                  memory: 90Mi
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            fsGroup: 0
+            fsGroupChangePolicy: OnRootMismatch
+            runAsNonRoot: false
+            seccompProfile:
+              type: RuntimeDefault
+          volumes:
+            - name: scripts
+              configMap:
+                name: uptime-backup-scripts
+                defaultMode: 0755
+            - name: bundle-ca
+              secret:
+                secretName: home-bundle-ca
+            - name: backup-s3-credentials
+              secret:
+                secretName: uptime-backup-s3-credentials
+            - name: data
+              persistentVolumeClaim:
+                claimName: uptime

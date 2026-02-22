@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: &app joplin
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: *app
+
+configMapGenerator:
+  - name: joplin-saml-sp
+    namespace: joplin
+    options:
+      disableNameSuffixHash: true
+    files:
+      - ./sso/joplin-sp.xml
+
+resources:
+  - namespace.yaml
+  - store.yaml
+  - pgcluster.yaml
+  - secrets.yaml
+  - helm.yaml
+  - network.yaml

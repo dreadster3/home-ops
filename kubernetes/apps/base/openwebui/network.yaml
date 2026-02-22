@@ -1,0 +1,135 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: openwebui
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": openwebui
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: openwebui
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: openwebui-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+            app.kubernetes.io/instance: openwebui
+            app.kubernetes.io/name: openwebui
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis-replication
+  namespace: openwebui
+spec:
+  description: "Allow Redis pods access"
+  endpointSelector:
+    matchLabels:
+      app: openwebui-redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+            app.kubernetes.io/instance: openwebui
+            app.kubernetes.io/name: openwebui
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis-sentinel
+  namespace: openwebui
+spec:
+  description: "Allow Redis Sentinel pods access"
+  endpointSelector:
+    matchLabels:
+      app: openwebui-redis-sentinel
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+            app.kubernetes.io/instance: openwebui
+            app.kubernetes.io/name: openwebui
+      toPorts:
+        - ports:
+            - port: "26379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: openwebui-server
+  namespace: openwebui
+spec:
+  description: "Allow traffic from and to openwebui server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: openwebui
+      app.kubernetes.io/instance: openwebui
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": pangolin
+            app.kubernetes.io/name: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    - toEntities:
+        - world
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: searxng
+            app.kubernetes.io/instance: searxng
+            app.kubernetes.io/name: searxng
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: openwebui-ollama
+  namespace: openwebui
+spec:
+  description: "Allow traffic from ollama server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: ollama
+      app.kubernetes.io/instance: ollama
+  egress:
+    - toEntities:
+        - world

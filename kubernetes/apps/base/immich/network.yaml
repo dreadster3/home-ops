@@ -1,0 +1,226 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: immich
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  description: "Control access to/from immich machine learning server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: machine-learning
+      app.kubernetes.io/instance: immich
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            app.kubernetes.io/name: server
+            app.kubernetes.io/instance: immich
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: uptime
+            app.kubernetes.io/name: uptime
+            app.kubernetes.io/instance: uptime
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    - toEntities:
+        - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: immich
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: immich-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": cnpg-system
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            cnpg.io/cluster: immich-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+            - port: status
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            app.kubernetes.io/instance: immich
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: metrics
+              protocol: TCP
+  egress:
+    - toEntities:
+        - kube-apiserver
+    - toCIDR:
+        - 192.168.30.20/32
+      toPorts:
+        - ports:
+            - port: "30292"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis-cluster
+  namespace: immich
+spec:
+  description: "Allow Redis pods access"
+  endpointSelector:
+    matchLabels:
+      app: immich-redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": redis-operator
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            app.kubernetes.io/instance: immich
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: redis-exporter
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis-sentinel
+  namespace: immich
+spec:
+  description: "Allow Redis Sentinel pods access"
+  endpointSelector:
+    matchLabels:
+      app: immich-redis-sentinel
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": redis-operator
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+            - port: "26379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": immich
+            app.kubernetes.io/instance: immich
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+            - port: "26379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: redis-exporter
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-server
+  namespace: immich
+spec:
+  description: "Allow traffic from and to immich server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: server
+      app.kubernetes.io/instance: immich
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": pangolin
+            app.kubernetes.io/name: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: metrics-api
+              protocol: TCP
+            - port: metrics-ms
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: uptime
+            app.kubernetes.io/name: uptime
+            app.kubernetes.io/instance: uptime
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    - toEntities:
+        - world
+    - toCIDR:
+        - 192.168.30.240/32
