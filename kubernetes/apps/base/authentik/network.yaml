@@ -1,0 +1,223 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: authentik
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": authentik
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: authentik
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: authentik-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": cnpg-system
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": authentik
+            cnpg.io/cluster: authentik-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+            - port: status
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": authentik
+            app.kubernetes.io/name: authentik
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: metrics
+              protocol: TCP
+  egress:
+    - toEntities:
+        - kube-apiserver
+    - toCIDR:
+        - 192.168.30.20/32
+      toPorts:
+        - ports:
+            - port: "30292"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: authentik-metrics-ingress
+  namespace: authentik
+spec:
+  description: "Allow ingress to the Authentik metrics server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: authentik
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: metrics
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: authentik-worker
+  namespace: authentik
+spec:
+  description: "Allow authentik worker to connect to the kube api server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: authentik
+      app.kubernetes.io/component: worker
+  egress:
+    - toEntities:
+        - kube-apiserver
+        - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: authentik-server
+  namespace: authentik
+spec:
+  description: "Allow connections from and to server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: authentik
+      app.kubernetes.io/component: server
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": pangolin
+            app.kubernetes.io/instance: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: https
+              protocol: TCP
+  egress:
+    - toEntities:
+        - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: authentik-ingress
+  namespace: authentik
+spec:
+  description: "Allow ingress from any authentik component to other authentik components"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: authentik
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": authentik
+            app.kubernetes.io/name: authentik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: authentik-outpost-ldap
+  namespace: authentik
+spec:
+  description: "Allow traffic to and from the authentik ldap outpost"
+  endpointSelector:
+    matchLabels:
+      app: authentik-outpost
+      goauthentik.io/outpost-type: ldap
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: ldaps
+              protocol: TCP
+            - port: ldap
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: http-metrics
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik-system
+            app.kubernetes.io/name: traefik
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: authentik-outpost-proxy
+  namespace: authentik
+spec:
+  description: "Allow traffic to and from the authentik proxy outpost"
+  endpointSelector:
+    matchLabels:
+      app: authentik-outpost
+      goauthentik.io/outpost-type: proxy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+            - port: https
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: http-metrics
+              protocol: TCP
+  egress:
+    - toFQDNs:
+        - matchName: "authentik.${EXTERNAL_DOMAIN}"

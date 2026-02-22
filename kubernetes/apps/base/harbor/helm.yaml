@@ -1,0 +1,156 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  interval: 24h
+  url: https://helm.goharbor.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: harbor
+      version: 1.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: harbor
+  values:
+    externalURL: https://harbor.${INTERNAL_DOMAIN}
+
+    existingSecretAdminPassword: harbor-admin-password
+    existingSecretSecretKey: harbor-secret-key
+
+    core:
+      replicas: 2
+      existingSecret: harbor-core-secret
+      existingXsrfSecret: harbor-core-csrf
+      secretName: harbor-token-encryption
+      resources:
+        requests:
+          memory: 192Mi
+          cpu: 5m
+        limits:
+          memory: 192Mi
+
+    jobservice:
+      replicas: 2
+      existingSecret: harbor-jobservice-secret
+      existingSecretKey: secret
+      jobLoggers:
+        - stdout
+      resources:
+        requests:
+          memory: 150Mi
+          cpu: 5m
+        limits:
+          memory: 150Mi
+
+    registry:
+      replicas: 2
+      existingSecret: harbor-registry-secret
+      existingSecretKey: secret
+      credentials:
+        existingSecret: harbor-registry-credentials
+      registry:
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 5m
+          limits:
+            memory: 128Mi
+      controller:
+        resources:
+          requests:
+            cpu: 5m
+            memory: 25Mi
+          limits:
+            memory: 25Mi
+
+    portal:
+      resources:
+        requests:
+          cpu: 5m
+          memory: 20Mi
+        limits:
+          memory: 20Mi
+
+    exporter:
+      resources:
+        requests:
+          cpu: 5m
+          memory: 35Mi
+        limits:
+          memory: 35Mi
+
+    trivy:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 5m
+          memory: 1280Mi
+        limits:
+          memory: 1280Mi
+
+    expose:
+      tls:
+        certSource: secret
+        secret:
+          secretName: harbor-ingress-tls
+      ingress:
+        hosts:
+          core: harbor.${INTERNAL_DOMAIN}
+        className: traefik
+        annotations:
+          ingress.kubernetes.io/proxy-body-size: "0"
+          cert-manager.io/cluster-issuer: letsencrypt
+
+    cache:
+      enabled: true
+
+    persistence:
+      imageChartStorage:
+        disableredirect: true
+        type: s3
+        s3:
+          bucket: harbor
+          regionendpoint: http://rook-ceph-rgw-k8s-ceph-objectstore.rook-ceph.svc:80
+          existingSecret: harbor-s3-storage
+          secure: false
+          chunksize: "5242880"
+          multipartcopychunksize: "33554432"
+          multipartcopymaxconcurrency: 100
+          multipartcopythresholdsize: "33554432"
+
+    database:
+      type: external
+      external:
+        host: harbor-cluster-rw
+        existingSecret: harbor-cluster-credentials
+        coreDatabase: harbor
+        username: harbor
+
+    redis:
+      type: external
+      external:
+        addr: harbor-redis-sentinel:26379
+        sentinelMasterSet: myMaster
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true

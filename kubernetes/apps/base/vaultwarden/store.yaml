@@ -1,0 +1,21 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup-store
+  namespace: vaultwarden
+spec:
+  configuration:
+    destinationPath: s3://vaultwarden
+    endpointURL: https://truenas.${INTERNAL_DOMAIN}:30292
+    s3Credentials:
+      accessKeyId:
+        name: vaultwarden-backup-s3-account
+        key: ACCESS_KEY
+      secretAccessKey:
+        name: vaultwarden-backup-s3-account
+        key: SECRET_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip
+  retentionPolicy: "7d"

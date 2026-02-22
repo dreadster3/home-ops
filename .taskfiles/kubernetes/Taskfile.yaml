@@ -1,0 +1,12 @@
+---
+version: "3"
+
+tasks:
+  reconcile:
+    desc: Reconcile the kubernetes cluster source
+    cmds:
+      - flux reconcile source git flux-system
+
+includes:
+  eso: ./eso
+  flux: ./flux

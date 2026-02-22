@@ -1,0 +1,39 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: trust-manager
+  namespace: cert-manager
+spec:
+  interval: 24h
+  url: oci://quay.io/jetstack/charts/trust-manager
+  layerSelector:
+    mediaType: "application/vnd.cncf.helm.chart.content.v1.tar+gzip"
+    operation: copy
+  ref:
+    semver: 0.x
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: trust-manager
+  namespace: cert-manager
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  chartRef:
+    kind: OCIRepository
+    name: trust-manager
+  values:
+    crds:
+      enabled: true
+      keep: false
+    secretTargets:
+      enabled: true
+      authorizedSecrets:
+        - cluster-bundle-ca
+        - home-bundle-ca

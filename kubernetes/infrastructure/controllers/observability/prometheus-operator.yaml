@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  interval: 24h
+  url: https://prometheus-community.github.io/helm-charts/
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  interval: 24h
+  chart: kube-prometheus-stack
+  sourceRef:
+    kind: HelmRepository
+    name: prometheus
+  version: 81.*
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus-operator
+  namespace: monitoring
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cert-manager
+      namespace: cert-manager
+    - name: cilium
+      namespace: cilium-system
+  chartRef:
+    kind: HelmChart
+    name: prometheus
+  values:
+    fullnameOverride: prometheus
+    cleanPrometheusOperatorObjectNames: true
+
+    crds:
+      enabled: true
+
+    defaultRules:
+      create: true
+
+    kubernetesServiceMonitors:
+      enabled: true
+
+    kubeApiServer:
+      enabled: true
+
+    kubelet:
+      enabled: true
+
+    kubeControllerManager:
+      enabled: true
+
+    coreDns:
+      enabled: true
+
+    kubeEtcd:
+      enabled: true
+      service:
+        enabled: true
+        selector:
+          k8s-app: kube-controller-manager # Fix selector for kube-etcd for Talos (set itentionally to kube-controller-manager because all master nodes has the same roles)
+        ipDualStack:
+          enabled: false
+      serviceMonitor:
+        enabled: true
+        relabelings: # Add nodename label
+          - sourceLabels: [__meta_kubernetes_pod_node_name]
+            separator: ;
+            regex: ^(.*)$
+            targetLabel: nodename
+            replacement: $1
+            action: replace
+        metricRelabelings: # Remove pod label
+          - action: labeldrop
+            regex: pod
+
+    kubeScheduler:
+      enabled: true
+
+    kubeProxy:
+      enabled: true
+
+    kubeStateMetrics:
+      enabled: true
+
+    kube-state-metrics:
+      enabled: true
+      resources:
+        requests:
+          cpu: 25m
+          memory: 256Mi
+        limits:
+          memory: 256Mi
+
+    nodeExporter:
+      enabled: false # Alloy has built-in node exporter
+
+    prometheus-node-exporter:
+      enabled: false
+
+    prometheusOperator:
+      enabled: true
+      admissionWebhooks:
+        certManager:
+          enabled: true
+      networkPolicy:
+        enabled: true
+        flavor: cilium
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          memory: 100Mi
+      prometheusConfigReloader:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 50Mi
+          limits:
+            memory: 50Mi
+
+    grafana:
+      enabled: false
+
+    windowsMonitoring:
+      enabled: false
+
+    prometheus-windows-exporter:
+      enabled: false
+
+    alertmanager:
+      enabled: false
+
+    prometheus:
+      enabled: false
+
+    thanosRuler:
+      enabled: false

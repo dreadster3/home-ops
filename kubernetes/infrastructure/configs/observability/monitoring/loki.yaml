@@ -1,0 +1,220 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  interval: 24h
+  url: https://grafana.github.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: monitoring
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: loki
+      version: v6.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+  values:
+    clusterLabelOverride: prd
+
+    global:
+      extraArgs:
+        - "-config.expand-env=true"
+      extraEnvFrom:
+        - secretRef:
+            name: loki-bucket
+        - configMapRef:
+            name: loki-bucket
+      extraVolumeMounts:
+        - name: ca-bundle
+          mountPath: /etc/ssl/certs/ca-bundle.crt
+          subPath: ca-bundle.crt
+          readOnly: true
+      extraVolumes:
+        - name: ca-bundle
+          configMap:
+            name: cluster-bundle-ca
+
+    chunksCache:
+      enabled: false
+    resultsCache:
+      enabled: false
+
+    write:
+      replicas: 3
+      resources:
+        requests:
+          cpu: 25m
+          memory: 800Mi
+        limits:
+          memory: 800Mi
+
+    read:
+      replicas: 2
+      resources:
+        requests:
+          cpu: 50m
+          memory: 400Mi
+        limits:
+          memory: 400Mi
+
+    sidecar:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 128Mi
+    backend:
+      replicas: 2
+      resources:
+        requests:
+          cpu: 20m
+          memory: 200Mi
+        limits:
+          memory: 200Mi
+
+    gateway:
+      replicas: 2
+      podAnnotations:
+        reloader.stakater.com/auto: "true"
+      basicAuth:
+        enabled: true
+        existingSecret: loki-gateway
+      resources:
+        requests:
+          cpu: 200m
+          memory: 100Mi
+        limits:
+          memory: 100Mi
+
+    loki:
+      custom:
+        ruler:
+          ruler_storage:
+            storage_prefix: ruler
+      auth_enabled: true
+      tenants:
+        - {}
+      limits_config:
+        retention_period: 744h
+        max_label_names_per_series: 40
+
+      schemaConfig:
+        configs:
+          - from: "2024-04-01"
+            store: tsdb
+            object_store: s3
+            schema: v13
+            index:
+              prefix: loki_index_
+              period: 24h
+
+      storage:
+        bucketNames:
+          chunks: $${BUCKET_NAME}
+          ruler: $${BUCKET_NAME}
+        use_thanos_objstore: true
+        object_store:
+          # Type of object store. Valid options are: s3, gcs, azure
+          type: s3
+          # Optional prefix for storage keys
+          storage_prefix: chunks
+          # S3 configuration (when type is "s3")
+          s3:
+            # S3 endpoint URL
+            endpoint: $${BUCKET_HOST}
+            # Optional access key
+            access_key_id: $${AWS_ACCESS_KEY_ID}
+            # Optional secret key
+            secret_access_key: $${AWS_SECRET_ACCESS_KEY}
+            # Optional. Enable if using self-signed TLS
+            insecure: true
+            # Optional server-side encryption configuration
+            sse: {}
+            # Optional HTTP client configuration
+            # http:
+            #   insecure_skip_verify: false
+            #   tls_ca_path: /etc/ssl/certs/ca-bundle.crt
+            trace:
+              enabled: true
+
+    lokiCanary:
+      extraArgs:
+        - "-streamname=stream"
+        - "-streamvalue=$(NODE_NAME)"
+      push: false
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          memory: 100Mi
+      extraEnv:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: LOKI_USER
+          valueFrom:
+            secretKeyRef:
+              name: loki-auth
+              key: username
+        - name: LOKI_PASS
+          valueFrom:
+            secretKeyRef:
+              name: loki-auth
+              key: password
+
+    monitoring:
+      serviceMonitor:
+        enabled: true
+      dashboards:
+        enabled: true
+        annotations:
+          grafana/folder: Loki
+        labels:
+          grafana/dashboard: "true"
+      rules:
+        enabled: true
+        alerting: true
+      selfMonitoring:
+        tenant:
+          name: $(LOKI_USER)
+          password: $(LOKI_PASS)
+
+    singleBinary:
+      replicas: 0
+
+    ingester:
+      replicas: 0
+    querier:
+      replicas: 0
+    queryFrontend:
+      replicas: 0
+    queryScheduler:
+      replicas: 0
+    distributor:
+      replicas: 0
+    compactor:
+      replicas: 0
+    indexGateway:
+      replicas: 0
+    bloomCompactor:
+      replicas: 0
+    bloomGateway:
+      replicas: 0

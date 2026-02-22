@@ -1,0 +1,49 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: netbox-cluster
+  namespace: netbox
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.6-standard-trixie
+  instances: 3
+  primaryUpdateStrategy: unsupervised
+  storage:
+    storageClass: local-path
+    size: 5Gi
+
+  bootstrap:
+    initdb:
+      database: netbox
+      owner: netbox
+      secret:
+        name: netbox-cluster-credentials
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backup-store
+
+  resources:
+    requests:
+      cpu: 20m
+      memory: 128Mi
+    limits:
+      memory: 128Mi
+
+  monitoring:
+    enablePodMonitor: true
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: netbox-cluster-backup
+  namespace: netbox
+spec:
+  cluster:
+    name: netbox-cluster
+  schedule: "0 0 0 * * *"
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io

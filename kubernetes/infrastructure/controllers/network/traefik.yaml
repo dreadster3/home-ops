@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: traefik-system
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: traefik
+  namespace: traefik-system
+spec:
+  interval: 24h
+  url: https://traefik.github.io/charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik
+  namespace: traefik-system
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 5
+    disableWait: true
+  upgrade:
+    remediation:
+      retries: 5
+  chart:
+    spec:
+      chart: traefik
+      version: 39.x.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: traefik
+  values:
+    deployment:
+      replicas: 2
+
+    service:
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: ingress.${INTERNAL_DOMAIN}
+
+    providers:
+      kubernetesCRD:
+        allowCrossNamespace: true
+
+    ports:
+      web:
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+              permanent: true
+      websecure:
+        http:
+          encodedCharacters:
+            allowEncodedSlash: true
+            allowEncodedPercent: true
+      ldaps:
+        expose:
+          default: true
+        exposedPort: 636
+        port: 6636
+        protocol: TCP

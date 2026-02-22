@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: redis-operator
+
+resources:
+  - namespace.yaml
+  - helm.yaml
+
+configMapGenerator:
+  - name: redis-dashboards
+    options:
+      labels:
+        grafana/dashboard: "true"
+      annotations:
+        grafana/folder: Redis
+    files:
+      - operator-dashboard.json
+      - cluster-dashboard.json

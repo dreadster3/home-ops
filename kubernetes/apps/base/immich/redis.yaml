@@ -1,0 +1,87 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: immich-redis
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  clusterSize: 3
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v8.4.0
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: immich-redis-credentials
+      key: password
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 100Mi
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.80.1
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 100Mi
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - immich-redis
+          topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: immich-redis
+spec:
+  clusterSize: 3
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  redisSentinelConfig:
+    redisReplicationName: immich-redis
+    redisReplicationPassword:
+      secretKeyRef:
+        name: immich-redis-credentials
+        key: password
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.80.1
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 100Mi
+  kubernetesConfig:
+    image: quay.io/opstree/redis-sentinel:v8.4.0
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: immich-redis-credentials
+      key: password
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 100Mi

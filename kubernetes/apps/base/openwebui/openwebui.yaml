@@ -1,0 +1,148 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: openwebui
+  namespace: openwebui
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  # dependsOn:
+  #   - name: ollama
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/open-webui/open-webui
+              tag: 0.8.3@sha256:205e9cf23b66553643b065afcdeffb7f86b35bf36e0ce643dc56946a911954b7
+            # command: ["/bin/sh"]
+            # args:
+            #   - -c
+            #   - |
+            #     # Install the correct dependency
+            #     pip install --no-cache-dir datasets==3.6.0
+            #
+            #     # Run the original entrypoint
+            #     exec /app/backend/start.sh
+            env:
+              OLLAMA_BASE_URL: https://ollama.${INTERNAL_DOMAIN}
+
+              ENABLE_WEBSOCKET_SUPPORT: "true"
+              WEBSOCKET_MANAGER: "redis"
+              WEBSOCKET_SENTINEL_HOSTS: "openwebui-redis-sentinel"
+              WEBSOCKET_SENTINEL_PORT: "26379"
+
+              REDIS_SENTINEL_HOSTS: "openwebui-redis-sentinel"
+              REDIS_SENTINEL_PORT: "26379"
+
+              WEBUI_URL: https://openwebui.${EXTERNAL_DOMAIN}
+
+              # OAuth
+              OPENID_PROVIDER_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/open-web-ui/.well-known/openid-configuration
+              OPENID_REDIRECT_URI: https://openwebui.${EXTERNAL_DOMAIN}/oauth/oidc/callback
+              OAUTH_SCOPES: openid email profile
+              OAUTH_PROVIDER_NAME: Authentik
+              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
+              ENABLE_OAUTH_SIGNUP: true
+              ENABLE_LOGIN_FORM: false
+
+              # STT
+              WHISPER_MODEL: base
+              WHISPER_MULTILINGUAL: true
+
+              # TTS
+              AUDIO_TTS_ENGINE: transformers
+              AUDIO_TTS_MODEL: slt
+              AUDIO_TTS_SPLIT_ON: punctuation
+
+              # Search Engine
+              ENABLE_WEB_SEARCH: true
+              ENABLE_SEARCH_QUERY_GENERATION: true
+              WEB_SEARCH_ENGINE: searxng
+              SEARXNG_QUERY_URL: http://searxng.searxng.svc.cluster.local/search?q=<query>
+
+              EXTRA_PIP_PACKAGES: datasets==3.6.0
+
+              REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+            envFrom:
+              - secretRef:
+                  name: openwebui-secret-env
+            ports:
+              - containerPort: &port 8080
+                name: http
+                protocol: TCP
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: true
+            resources:
+              requests:
+                cpu: 10m
+                memory: 1Gi
+              limits:
+                memory: 1Gi
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+            targetPort: http
+
+    ingress:
+      main:
+        enabled: true
+        className: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+        hosts:
+          - host: &host "openwebui.${INTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+            secretName: openwebui-ingress-tls
+
+    persistence:
+      config:
+        enabled: true
+        type: persistentVolumeClaim
+        size: 10Gi
+        accessMode: ReadWriteOnce
+        storageClass: ceph-block
+        globalMounts:
+          - path: /app/backend/data

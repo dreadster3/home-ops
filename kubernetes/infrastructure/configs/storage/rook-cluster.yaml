@@ -1,0 +1,167 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  external:
+    enable: true
+  crashCollector:
+    disable: true
+  cephVersion:
+    allowUnsupported: false
+    image: quay.io/ceph/ceph:v19.2.3
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s
+  monitoring:
+    enabled: true
+    externalMgrEndpoints:
+      - ip: 192.168.30.5
+      - ip: 192.168.30.6
+      - ip: 192.168.30.10
+    externalMgrPrometheusPort: 9283
+  dataDirHostPath: /var/lib/rook
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: rook-ceph-mgr-external
+  namespace: rook-ceph
+subsets:
+  - addresses:
+      - ip: 192.168.30.5
+        nodeName: pve01
+      - ip: 192.168.30.6
+        nodeName: pve02
+      - ip: 192.168.30.10
+        nodeName: pve30
+    ports:
+      - name: http-external-metrics
+        port: 9283
+        protocol: TCP
+---
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStore
+metadata:
+  name: k8s-ceph-objectstore
+  namespace: rook-ceph
+spec:
+  metadataPool:
+    failureDomain: host
+    replicated:
+      size: 3
+  dataPool:
+    failureDomain: host
+    erasureCoded:
+      dataChunks: 2
+      codingChunks: 1
+    parameters:
+      bulk: "true"
+  preservePoolsOnDelete: true
+  gateway:
+    port: 80
+    securePort: 443
+    sslCertificateRef: rook-rgw-gateway-tls
+    resources:
+      requests:
+        cpu: 50m
+        memory: 700Mi
+      limits:
+        memory: 700Mi
+    instances: 2
+    priorityClassName: system-cluster-critical
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rook-ca-certificate
+  namespace: rook-ceph
+spec:
+  isCA: true
+  commonName: rook-ca
+  secretName: rook-ca-tls
+  duration: 70128h # 8y
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: ClusterIssuer
+    name: cluster-root
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: rook-ca-issuer
+  namespace: rook-ceph
+spec:
+  ca:
+    secretName: rook-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rook-rgw-gateway-tls
+  namespace: rook-ceph
+spec:
+  dnsNames:
+    - rook-ceph-rgw-k8s-ceph-objectstore.rook-ceph.svc
+  secretName: rook-rgw-gateway-tls
+  issuerRef:
+    name: rook-ca-issuer
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ceph-bucket
+provisioner: rook-ceph.ceph.rook.io/bucket
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+parameters:
+  objectStoreName: k8s-ceph-objectstore
+  objectStoreNamespace: rook-ceph
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-block
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+provisioner: rook-ceph.rbd.csi.ceph.com
+parameters:
+  clusterID: rook-ceph
+  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+  csi.storage.k8s.io/fstype: ext4
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+  imageFeatures: layering
+  imageFormat: "2"
+  pool: k8s-ceph-blockpool
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-filesystem
+provisioner: rook-ceph.cephfs.csi.ceph.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+parameters:
+  clusterID: rook-ceph
+  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+  fsName: k8s-ceph-filesystem
+  pool: k8s-ceph-filesystem-data

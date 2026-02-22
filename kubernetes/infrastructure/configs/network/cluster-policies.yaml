@@ -1,0 +1,191 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-all-dns-egress
+spec:
+  description: "Allow all egress traffic to DNS"
+  endpointSelector:
+    matchExpressions:
+      - key: "io.kubernetes.pod.namespace"
+        operator: "NotIn"
+        values:
+          - "kube-system"
+      - key: "k8s-app"
+        operator: "NotIn"
+        values:
+          - kube-dns
+  enableDefaultDeny:
+    egress: false
+    ingress: false
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: TCP
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: "external-lockdown"
+spec:
+  description: "Deny all traffic from outside the cluster, except to ingress controllers"
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: NotIn
+        values:
+          - traefik
+          - portainer
+  ingressDeny:
+    - fromEntities:
+        - "world"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-kube-apiserver-ingress
+spec:
+  endpointSelector: {}
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-redis-sentinel
+spec:
+  description: "Allow Redis Sentinel pods access"
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      redis_setup_type: sentinel
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": redis-operator
+      toPorts:
+        - ports:
+            - port: "26379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: redis-exporter
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: uptime
+            app.kubernetes.io/name: uptime
+            app.kubernetes.io/instance: uptime
+      toPorts:
+        - ports:
+            - port: "26379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-redis-replication
+spec:
+  description: "Allow Redis Replication pods access"
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      redis_setup_type: replication
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": redis-operator
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: redis-exporter
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: uptime
+            app.kubernetes.io/name: uptime
+            app.kubernetes.io/instance: uptime
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-cnpg-cluster
+spec:
+  description: "Allow CloudNativePG pods access"
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/managed-by: cloudnative-pg
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": cnpg-system
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+            - port: status
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: metrics
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: uptime
+            app.kubernetes.io/name: uptime
+            app.kubernetes.io/instance: uptime
+      toPorts:
+        - ports:
+            - port: status
+              protocol: TCP
+  egress:
+    - toCIDR:
+        - 192.168.30.20/32
+      toPorts:
+        - ports:
+            - port: "30292"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver

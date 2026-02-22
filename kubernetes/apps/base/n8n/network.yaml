@@ -1,0 +1,68 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: n8n
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: n8n
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: n8n
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: n8n-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: n8n
+            cnpg.io/cluster: n8n-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: n8n-server
+  namespace: n8n
+spec:
+  description: "Allow traffic from and to n8n server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: n8n
+      app.kubernetes.io/instance: n8n
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: pangolin
+            app.kubernetes.io/name: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    - toEntities:
+        - world

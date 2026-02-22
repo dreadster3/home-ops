@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: immich-redis-exporter
+  namespace: immich
+  labels:
+    app.kubernetes.io/name: immich-redis
+    app.kubernetes.io/instance: immich-redis
+    app.kubernetes.io/component: middleware
+spec:
+  selector:
+    matchLabels:
+      app: immich-redis
+      redis_setup_type: replication
+      role: replication
+  namespaceSelector:
+    matchNames:
+      - immich
+  endpoints:
+    - port: redis-exporter
+      interval: 30s
+      scrapeTimeout: 10s

@@ -1,0 +1,72 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: joplin
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: joplin
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: joplin
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: joplin-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: joplin
+            cnpg.io/cluster: joplin-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: joplin-server
+  namespace: joplin
+spec:
+  description: "Allow traffic from and to joplin server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: joplin
+      app.kubernetes.io/instance: joplin
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: traefik-system
+            app.kubernetes.io/name: traefik
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: pangolin
+            app.kubernetes.io/name: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    - toFQDNs:
+        - matchName: "pool.ntp.org"
+      toPorts:
+        - ports:
+            - port: "123"
+              protocol: UDP

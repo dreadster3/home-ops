@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vaultwarden-backup
+  namespace: vaultwarden
+spec:
+  schedule: "0 0 * * *" # Daily at midnight
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: alpine:latest
+              env:
+                - name: S3_ENDPOINT
+                  value: https://192.168.30.20:30292
+                - name: S3_BUCKET
+                  value: vaultwarden/data
+                - name: AWS_CONFIG_FILE
+                  value: /var/run/secrets/s3/config
+                - name: AWS_SHARED_CREDENTIALS_FILE
+                  value: /var/run/secrets/s3/credentials
+                - name: AWS_CA_BUNDLE
+                  value: /var/run/secrets/bundle-ca/ca-bundle.crt
+                - name: RETENTION_DAYS
+                  value: "30"
+              command:
+                - /bin/sh
+                - /scripts/backup.sh
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+                - name: bundle-ca
+                  mountPath: /var/run/secrets/bundle-ca
+                  readOnly: true
+                - name: backup-s3-credentials
+                  mountPath: /var/run/secrets/s3
+                  readOnly: true
+                - name: data
+                  mountPath: /data
+                  readOnly: true
+                - name: attachments
+                  mountPath: /data/attachments
+                  readOnly: true
+          volumes:
+            - name: scripts
+              configMap:
+                name: vaultwarden-backup-scripts
+                defaultMode: 0755
+            - name: bundle-ca
+              secret:
+                secretName: home-bundle-ca
+            - name: backup-s3-credentials
+              secret:
+                secretName: vaultwarden-backup-s3-credentials
+            - name: data
+              persistentVolumeClaim:
+                claimName: vaultwarden-data-vaultwarden-0
+            - name: attachments
+              persistentVolumeClaim:
+                claimName: vaultwarden-files-vaultwarden-0

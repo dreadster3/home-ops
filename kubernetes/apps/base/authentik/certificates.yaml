@@ -1,0 +1,38 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: authentik-ca-certificate
+  namespace: authentik
+spec:
+  isCA: true
+  commonName: authentik-ca
+  secretName: authentik-ca-tls
+  duration: 70128h # 8y
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: ClusterIssuer
+    name: cluster-root
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: authentik-ca-issuer
+  namespace: authentik
+spec:
+  ca:
+    secretName: authentik-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: authentik-ingress-tls
+  namespace: authentik
+spec:
+  dnsNames:
+    - authentik.dreadster.net
+  secretName: authentik-ingress-tls-old
+  issuerRef:
+    name: authentik-ca-issuer

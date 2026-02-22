@@ -1,0 +1,61 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-ca-certificate
+  namespace: vault
+spec:
+  isCA: true
+  commonName: vault-ca
+  secretName: vault-ca-tls
+  duration: 70128h # 8y
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: ClusterIssuer
+    name: cluster-root
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: vault-ca-issuer
+  namespace: vault
+spec:
+  ca:
+    secretName: vault-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-ingress-tls
+  namespace: vault
+spec:
+  dnsNames:
+    - vault.${INTERNAL_DOMAIN}
+  secretName: vault-ingress-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-internal-tls
+  namespace: vault
+spec:
+  dnsNames:
+    - "*.vault-internal"
+    - "*.vault-internal.vault"
+    - "*.vault-internal.vault.svc.cluster.local"
+    - vault-active
+    - vault-active.vault
+    - vault-active.vault.svc.cluster.local
+    - vault
+    - vault.vault
+    - vault.vault.svc.cluster.local
+  ipAddresses:
+    - 127.0.0.1
+  secretName: vault-internal-tls
+  issuerRef:
+    name: vault-ca-issuer

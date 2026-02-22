@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+includes:
+  kubernetes: .taskfiles/kubernetes
+
+tasks:
+  default:
+    desc: List available tasks
+    aliases:
+      - help
+    cmd: task -l
+    silent: true

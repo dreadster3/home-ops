@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: immich-cluster
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/managed-by: cloudnative-pg
+    cnpg.io/cluster: immich-cluster
+  name: immich-cluster-status
+  namespace: immich
+spec:
+  type: ClusterIP
+  ports:
+    - name: status
+      port: 443
+      protocol: TCP
+      targetPort: status
+  selector:
+    cnpg.io/cluster: immich-cluster
+    cnpg.io/podRole: instance

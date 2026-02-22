@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: immich
+
+configMapGenerator:
+  - name: immich-dashboards
+    options:
+      labels:
+        grafana/dashboard: "true"
+      annotations:
+        grafana/folder: Immich
+    files:
+      - dashboard.json
+
+resources:
+  - namespace.yaml
+  - library.yaml
+  - store.yaml
+  - pgcluster.yaml
+  - redis.yaml
+  - network.yaml
+  - secrets.yaml
+  - helm.yaml
+  - hpa.yaml
+  - service.yaml

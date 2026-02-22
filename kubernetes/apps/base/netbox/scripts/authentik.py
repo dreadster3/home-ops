@@ -1,0 +1,11 @@
+from os import environ
+
+SOCIAL_AUTH_BACKEND_ATTRS = {
+    "oidc": ("Sign in with authentik", ""),
+}
+
+SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = environ.get("SOCIAL_AUTH_OIDC_OIDC_ENDPOINT")
+SOCIAL_AUTH_OIDC_KEY = environ.get("SOCIAL_AUTH_OIDC_KEY")
+SOCIAL_AUTH_OIDC_SECRET = environ.get("SOCIAL_AUTH_OIDC_SECRET")
+SOCIAL_AUTH_OIDC_SCOPE = environ.get("SOCIAL_AUTH_OIDC_SCOPE", "").split(" ")
+LOGOUT_REDIRECT_URL = environ.get("LOGOUT_REDIRECT_URL")

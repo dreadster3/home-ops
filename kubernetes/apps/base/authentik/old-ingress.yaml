@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: authentik.dreadster.net
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: authentik
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2025.12.2
+    helm.sh/chart: authentik-2025.12.2
+    helm.toolkit.fluxcd.io/name: authentik
+    helm.toolkit.fluxcd.io/namespace: authentik
+  name: authentik-server-old
+  namespace: authentik
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: authentik.dreadster.net
+      http:
+        paths:
+          - backend:
+              service:
+                name: authentik-server
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - authentik.dreadster.net
+      secretName: authentik-ingress-tls-old

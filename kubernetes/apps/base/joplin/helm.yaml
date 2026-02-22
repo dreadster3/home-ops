@@ -1,0 +1,92 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: joplin
+  namespace: joplin
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: docker.io/joplin/server
+              tag: 3.5.2@sha256:5d9e7f9d31b436cb1b99d1a6a65d8c5bf760829094617e8ad1e956fd925de888
+            env:
+              APP_PORT: 22300
+              APP_BASE_URL: &host https://joplin.${EXTERNAL_DOMAIN}
+              API_BASE_URL: *host
+              DB_CLIENT: pg
+              POSTGRES_HOST: joplin-cluster-rw
+              POSTGRES_PORT: 5432
+              POSTGRES_DATABASE: joplin
+
+              SAML_ENABLED: true
+              SAML_IDP_CONFIG_FILE: /opt/joplin/saml/joplin-idp.xml
+              SAML_SP_CONFIG_FILE: /opt/joplin/saml/joplin-sp.xml
+              DELETE_EXPIRED_SESSIONS_SCHEDULE: ""
+
+              # Optional: Disable local authentication to require SAML login
+              LOCAL_AUTH_ENABLED: false
+            envFrom:
+              - secretRef:
+                  name: joplin-secret-env
+            ports:
+              - containerPort: 22300
+                name: http
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 10m
+                memory: 385Mi
+              limits:
+                memory: 385Mi
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+            targetPort: http
+
+    persistence:
+      metadata:
+        enabled: true
+        type: secret
+        name: joplin-saml-metadata
+        advancedMounts:
+          main:
+            main:
+              - path: /opt/joplin/saml/joplin-idp.xml
+                readOnly: true
+                subPath: joplin-idp.xml
+      sp:
+        enabled: true
+        type: configMap
+        name: joplin-saml-sp
+        advancedMounts:
+          main:
+            main:
+              - path: /opt/joplin/saml/joplin-sp.xml
+                readOnly: true
+                subPath: joplin-sp.xml

@@ -1,0 +1,15 @@
+---
+version: "3"
+
+tasks:
+  sync:
+    desc: Force sync of external secret
+    cmd: kubectl -n {{ .NS }} annotate externalsecret {{ .NAME }} force-sync=$(date +%s) --overwrite
+    vars:
+      NS: "{{ .NS | default `default` }}"
+    requires:
+      vars:
+        - NAME
+    preconditions:
+      - sh: which kubectl
+        msg: kubectl is not installed

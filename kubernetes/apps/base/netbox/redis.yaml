@@ -1,0 +1,85 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: netbox-redis
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  clusterSize: 3
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v8.4.0
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: netbox-redis-credentials
+      key: password
+    resources:
+      requests:
+        cpu: 10m
+        memory: 10Mi
+      limits:
+        memory: 10Mi
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.80.1
+    resources:
+      requests:
+        cpu: 5m
+        memory: 15Mi
+      limits:
+        memory: 15Mi
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - netbox-redis
+          topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: netbox-redis
+spec:
+  clusterSize: 3
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  redisSentinelConfig:
+    redisReplicationName: netbox-redis
+    masterGroupName: mymaster
+    redisReplicationPassword:
+      secretKeyRef:
+        name: netbox-redis-credentials
+        key: password
+  redisExporter:
+    enabled: true
+    image: quay.io/opstree/redis-exporter:v1.80.1
+    resources:
+      requests:
+        cpu: 5m
+        memory: 20Mi
+      limits:
+        memory: 20Mi
+  kubernetesConfig:
+    image: quay.io/opstree/redis-sentinel:v8.4.0
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 10m
+        memory: 15Mi
+      limits:
+        memory: 15Mi

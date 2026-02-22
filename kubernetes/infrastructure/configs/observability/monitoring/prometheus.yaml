@@ -1,0 +1,160 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  chartRef:
+    kind: HelmChart
+    name: prometheus
+  values:
+    fullnameOverride: prometheus
+    cleanPrometheusOperatorObjectNames: true
+
+    prometheus:
+      serviceMonitor:
+        selfMonitor: true
+      thanosService:
+        enabled: true
+      thanosServiceMonitor:
+        enabled: true
+
+      prometheusSpec:
+        replicas: 2
+
+        image:
+          tag: v3.7.3
+
+        enableRemoteWriteReceiver: true
+
+        externalLabels:
+          prometheus_replica: $(POD_NAME)
+
+        retention: 7d
+        retentionSize: 45GB
+
+        thanos:
+          image: quay.io/thanos/thanos:v0.40.1
+          resources:
+            requests:
+              cpu: 10m
+              memory: 466Mi
+            limits:
+              memory: 466Mi
+
+          grpcListenLocal: false
+          httpListenLocal: false
+          objectStorageConfig:
+            existingSecret:
+              name: thanos-object-store
+              key: objstore.yml
+          volumeMounts:
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs
+              readOnly: true
+
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              resources:
+                requests:
+                  storage: 50Gi
+
+        resources:
+          requests:
+            cpu: 650m
+            memory: 5.5Gi
+          limits:
+            memory: 5.5Gi
+
+        ruleSelectorNilUsesHelmValues: false
+        podMonitorSelector:
+          matchLabels:
+            disabled: "true"
+        probeSelector:
+          matchLabels:
+            disabled: "true"
+        scrapeConfigSelector:
+          matchLabels:
+            disabled: "true"
+        serviceMonitorSelector:
+          matchLabels:
+            disabled: "true"
+        volumes:
+          - name: ca-bundle
+            configMap:
+              name: cluster-bundle-ca
+
+    alertmanager:
+      enabled: true
+
+      alertmanagerSpec:
+        image:
+          tag: v0.28.1
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 64Mi
+
+    crds:
+      enabled: false
+
+    defaultRules:
+      create: false
+
+    kubernetesServiceMonitors:
+      enabled: false
+
+    kubeApiServer:
+      enabled: false
+
+    kubelet:
+      enabled: false
+
+    kubeControllerManager:
+      enabled: false
+
+    coreDns:
+      enabled: false
+
+    kubeEtcd:
+      enabled: false
+
+    kubeScheduler:
+      enabled: false
+
+    kubeProxy:
+      enabled: false
+
+    kubeStateMetrics:
+      enabled: false
+
+    kube-state-metrics:
+      enabled: false
+
+    grafana:
+      enabled: false
+
+    nodeExporter:
+      enabled: false
+
+    prometheus-node-exporter:
+      enabled: false
+
+    windowsMonitoring:
+      enabled: false
+
+    prometheusOperator:
+      enabled: false
+
+    thanosRuler:
+      enabled: false
