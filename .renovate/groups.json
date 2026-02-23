@@ -1,0 +1,72 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "Barman Cloud Group",
+      "groupName": "Barman Cloud",
+      "matchDatasources": ["docker", "github-releases"],
+      "matchPackagePatterns": ["plugin-barman-cloud"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
+    },
+    {
+      "description": "Flux Operator Group",
+      "groupName": "Flux Operator",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["flux-operator", "flux-instance"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 4
+    },
+    {
+      "description": "Immich Group",
+      "groupName": "Immich",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["immich"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "sourceUrl": "https://github.com/immich-app/immich",
+      "minimumGroupSize": 2
+    },
+    {
+      "description": "Rook-Ceph Group",
+      "groupName": "Rook-Ceph",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["rook.ceph"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
+    },
+    {
+      "description": "Talos Group",
+      "groupName": "Talos",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["siderolabs/talosctl", "siderolabs/installer"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 1
+    },
+    {
+      "description": "Kubernetes Group",
+      "groupName": "Kubernetes",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "kube-apiserver",
+        "kube-controller-manager",
+        "kube-proxy",
+        "kube-scheduler",
+        "kubelet"
+      ],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 5
+    }
+  ]
+}
