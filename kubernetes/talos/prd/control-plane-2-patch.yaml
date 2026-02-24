@@ -19,7 +19,7 @@ cluster:
       listen-metrics-urls: http://0.0.0.0:2381
 machine:
   kubelet:
-    image: ghcr.io/siderolabs/kubelet:v1.35.0 # The `image` field is an optional reference to an alternative kubelet image.
+    image: ghcr.io/siderolabs/kubelet:v1.35.1 # The `image` field is an optional reference to an alternative kubelet image.
     extraConfig:
       serverTLSBootstrap: true
     extraArgs:
