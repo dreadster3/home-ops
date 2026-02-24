@@ -33,10 +33,10 @@
       "minimumGroupSize": 2
     },
     {
-      "description": "Rook-Ceph Group",
-      "groupName": "Rook-Ceph",
+      "description": "Ceph Group",
+      "groupName": "Ceph",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["rook.ceph"],
+      "matchPackageNames": ["/rook-ceph/", "/rook-ceph-cluster/", "/ceph/"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
@@ -57,11 +57,11 @@
       "groupName": "Kubernetes",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
-        "kube-apiserver",
-        "kube-controller-manager",
-        "kube-proxy",
-        "kube-scheduler",
-        "kubelet"
+        "/kube-apiserver/",
+        "/kube-controller-manager/",
+        "/kube-proxy/",
+        "/kube-scheduler/",
+        "/kubelet/"
       ],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
@@ -72,7 +72,7 @@
       "description": "Redis Group",
       "groupName": "Redis",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["redis", "redis-exporter"],
+      "matchPackagePatterns": ["/redis/", "/redis-exporter/"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
