@@ -86,23 +86,9 @@ spec:
               - secretRef:
                   name: openwebui-secret-env
             ports:
-              - containerPort: &port 8080
+              - containerPort: 8080
                 name: http
                 protocol: TCP
-            probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /healthz
-                    port: *port
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-              startup:
-                enabled: true
             resources:
               requests:
                 cpu: 10m
