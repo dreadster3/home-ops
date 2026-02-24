@@ -34,7 +34,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: 1.18.x
+      version: 1.19.x
       interval: 24h
       sourceRef:
         kind: HelmRepository
