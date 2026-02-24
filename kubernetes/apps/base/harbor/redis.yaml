@@ -28,7 +28,7 @@ spec:
             storage: 1Gi
   redisExporter:
     enabled: true
-    image: quay.io/opstree/redis-exporter:v1.79.0
+    image: quay.io/opstree/redis-exporter:v1.80.2
     resources:
       requests:
         cpu: 5m
@@ -59,7 +59,7 @@ spec:
     redisReplicationName: harbor-redis
   redisExporter:
     enabled: true
-    image: quay.io/opstree/redis-exporter:v1.79.0
+    image: quay.io/opstree/redis-exporter:v1.80.2
     resources:
       requests:
         cpu: 5m
