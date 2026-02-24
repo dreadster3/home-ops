@@ -33,10 +33,10 @@
       "minimumGroupSize": 2
     },
     {
-      "description": "Rook-Ceph Group",
-      "groupName": "Rook-Ceph",
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["rook.ceph"],
+      "description": "Ceph Group",
+      "groupName": "Ceph",
+      "matchDatasources": ["docker", "helm-values"],
+      "matchPackageNames": ["rook-ceph", "rook-ceph-cluster", "ceph/ceph"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
