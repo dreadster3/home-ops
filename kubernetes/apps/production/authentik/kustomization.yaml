@@ -10,8 +10,3 @@ labels:
 resources:
   - ../../base/authentik
   - ingress.yaml
-
-patches:
-  - target:
-      kind: HelmRelease
-    path: helm.yaml
