@@ -34,7 +34,6 @@ spec:
             env:
               TZ: Europe/Lisbon
               UPTIME_KUMA_DB_TYPE: sqlite
-              NODE_EXTRA_CA_CERTS: /var/run/config/home-bundle-ca/ca-bundle.crt
             ports:
               - containerPort: 3001
                 name: http
@@ -86,16 +85,6 @@ spec:
             secretName: uptime-ingress-tls
 
     persistence:
-      certs:
-        enabled: true
-        type: configMap
-        name: home-bundle-ca
-        advancedMounts:
-          main:
-            main:
-              - path: /var/run/config/home-bundle-ca/ca-bundle.crt
-                readOnly: true
-                subPath: ca-bundle.crt
       data:
         enabled: true
         type: persistentVolumeClaim
