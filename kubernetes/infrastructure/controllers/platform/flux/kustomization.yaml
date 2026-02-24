@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: flux-system
 
+components:
+  - ../../../../components/substitute
+
 resources:
   - operator.yaml
   - instance.yaml
