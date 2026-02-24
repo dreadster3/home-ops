@@ -5,7 +5,7 @@
       "description": "Barman Cloud Group",
       "groupName": "Barman Cloud",
       "matchDatasources": ["docker", "github-releases"],
-      "matchPackagePatterns": ["plugin-barman-cloud"],
+      "matchPackageNames": ["/plugin-barman-cloud/"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
@@ -15,7 +15,7 @@
       "description": "Flux Operator Group",
       "groupName": "Flux Operator",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["flux-operator", "flux-instance"],
+      "matchPackageNames": ["/flux-operator/", "/flux-instance/"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
@@ -25,7 +25,7 @@
       "description": "Immich Group",
       "groupName": "Immich",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["immich"],
+      "matchPackageNames": ["/immich/"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
@@ -33,20 +33,20 @@
       "minimumGroupSize": 2
     },
     {
-      "description": "Ceph Group",
-      "groupName": "Ceph",
-      "matchDatasources": ["docker", "helm"],
-      "matchPackagePatterns": ["rook-ceph", "rook-ceph-cluster", "ceph"],
+      "description": "Rook Ceph Group",
+      "groupName": "Rook Ceph",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["/rook-ceph/", "/rook-ceph-cluster/"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
-      "minimumGroupSize": 1
+      "minimumGroupSize": 2
     },
     {
       "description": "Talos Group",
       "groupName": "Talos",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["siderolabs/talosctl", "siderolabs/installer"],
+      "matchPackageNames": ["siderolabs/talosctl", "siderolabs/installer"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
@@ -56,12 +56,12 @@
       "description": "Kubernetes Group",
       "groupName": "Kubernetes",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": [
-        "kube-apiserver",
-        "kube-controller-manager",
-        "kube-proxy",
-        "kube-scheduler",
-        "kubelet"
+      "matchPackageNames": [
+        "/kube-apiserver/",
+        "/kube-controller-manager/",
+        "/kube-proxy/",
+        "/kube-scheduler/",
+        "/kubelet/"
       ],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
@@ -72,7 +72,7 @@
       "description": "Redis Group",
       "groupName": "Redis",
       "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["redis", "redis-exporter"],
+      "matchPackageNames": ["/redis/", "/redis-exporter/"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
