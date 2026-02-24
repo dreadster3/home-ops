@@ -24,7 +24,7 @@ spec:
   chart:
     spec:
       chart: vault
-      version: 0.31.x
+      version: 0.32.x
       interval: 24h
       sourceRef:
         kind: HelmRepository
