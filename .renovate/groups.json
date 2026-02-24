@@ -33,14 +33,14 @@
       "minimumGroupSize": 2
     },
     {
-      "description": "Rook-Ceph Group",
-      "groupName": "Rook-Ceph",
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["rook.ceph"],
+      "description": "Ceph Group",
+      "groupName": "Ceph",
+      "matchDatasources": ["docker", "helm"],
+      "matchPackagePatterns": ["rook-ceph", "rook-ceph-cluster", "ceph"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
-      "minimumGroupSize": 2
+      "minimumGroupSize": 1
     },
     {
       "description": "Talos Group",
@@ -56,7 +56,7 @@
       "description": "Kubernetes Group",
       "groupName": "Kubernetes",
       "matchDatasources": ["docker"],
-      "matchPackageNames": [
+      "matchPackagePatterns": [
         "kube-apiserver",
         "kube-controller-manager",
         "kube-proxy",
