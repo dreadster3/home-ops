@@ -11,7 +11,7 @@ cluster:
     extraArgs:
       bind-address: 0.0.0.0
   scheduler:
-    image: registry.k8s.io/kube-scheduler:v1.35.0 # The container image used in the scheduler manifest.
+    image: registry.k8s.io/kube-scheduler:v1.35.1 # The container image used in the scheduler manifest.
     extraArgs:
       bind-address: 0.0.0.0
   etcd:
