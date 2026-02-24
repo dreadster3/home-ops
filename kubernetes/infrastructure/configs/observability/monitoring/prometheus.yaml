@@ -41,7 +41,7 @@ spec:
         retentionSize: 45GB
 
         thanos:
-          image: quay.io/thanos/thanos:v0.40.1
+          image: quay.io/thanos/thanos:v0.41.0
           resources:
             requests:
               cpu: 10m
