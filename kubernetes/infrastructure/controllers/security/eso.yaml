@@ -28,7 +28,7 @@ spec:
   chart:
     spec:
       chart: external-secrets
-      version: 1.x.x
+      version: 2.x
       interval: 24h
       sourceRef:
         kind: HelmRepository
