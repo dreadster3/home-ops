@@ -67,6 +67,16 @@
         "commitMessageTopic": "{{{groupName}}} group"
       },
       "minimumGroupSize": 5
+    },
+    {
+      "description": "Redis Group",
+      "groupName": "Redis",
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["redis", "redis-exporter"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
     }
   ]
 }
