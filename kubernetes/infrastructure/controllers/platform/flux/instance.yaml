@@ -41,7 +41,7 @@ spec:
       sync:
         interval: 1m
         kind: GitRepository
-        path: clusters/production
+        path: kubernetes/clusters/production
         pullSecret: flux-system
         ref: refs/heads/main
-        url: https://github.com/dreadster3/kubernetes
+        url: https://github.com/dreadster3/home-ops
