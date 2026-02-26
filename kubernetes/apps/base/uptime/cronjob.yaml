@@ -26,8 +26,6 @@ spec:
                   value: /var/run/secrets/s3/config
                 - name: AWS_SHARED_CREDENTIALS_FILE
                   value: /var/run/secrets/s3/credentials
-                - name: AWS_CA_BUNDLE
-                  value: /var/run/secrets/bundle-ca/ca-bundle.crt
                 - name: RETENTION_DAYS
                   value: "30"
               command:
@@ -36,9 +34,6 @@ spec:
               volumeMounts:
                 - name: scripts
                   mountPath: /scripts
-                  readOnly: true
-                - name: bundle-ca
-                  mountPath: /var/run/secrets/bundle-ca
                   readOnly: true
                 - name: backup-s3-credentials
                   mountPath: /var/run/secrets/s3
@@ -68,9 +63,6 @@ spec:
               configMap:
                 name: uptime-backup-scripts
                 defaultMode: 0755
-            - name: bundle-ca
-              secret:
-                secretName: home-bundle-ca
             - name: backup-s3-credentials
               secret:
                 secretName: uptime-backup-s3-credentials
