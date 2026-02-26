@@ -9,3 +9,4 @@ resources:
   - pool.yaml
   - cluster-policies.yaml
   - traefik
+  - netbird.yaml
