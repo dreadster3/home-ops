@@ -8,3 +8,4 @@ labels:
 resources:
   - cilium
   - traefik.yaml
+  - netbird.yaml
