@@ -47,11 +47,11 @@ spec:
 
               ENABLE_WEBSOCKET_SUPPORT: "true"
               WEBSOCKET_MANAGER: "redis"
-              WEBSOCKET_SENTINEL_HOSTS: "openwebui-redis-sentinel"
-              WEBSOCKET_SENTINEL_PORT: "26379"
+              WEBSOCKET_SENTINEL_HOSTS: &sentinels "openwebui-redis-sentinel-0.openwebui-redis-sentinel-headless,openwebui-redis-sentinel-1.openwebui-redis-sentinel-headless,openwebui-redis-sentinel-2.openwebui-redis-sentinel-headless"
+              WEBSOCKET_SENTINEL_PORT: &sentinelPort "26379"
 
-              REDIS_SENTINEL_HOSTS: "openwebui-redis-sentinel"
-              REDIS_SENTINEL_PORT: "26379"
+              REDIS_SENTINEL_HOSTS: *sentinels
+              REDIS_SENTINEL_PORT: *sentinelPort
 
               WEBUI_URL: https://openwebui.${EXTERNAL_DOMAIN}
 
