@@ -2,15 +2,26 @@
 version: "3"
 
 tasks:
+  reconcile:
+    desc: Reconcile the kubernetes cluster source
+    cmd: flux reconcile source git flux-system
+    preconditions:
+      - sh: which flux
+
   diff:
     desc: Output the diff of the current changes
     cmd: flux-local diff ks
     preconditions:
       - sh: which flux-local
         msg: flux-local is not installed
+      - sh: which flux
+        msg: flux is not installed
+
   test:
     desc: Verify that resources are valid
     cmd: flux-local test --all-namespaces --enable-helm {{if .CLI_VERBOSE}}--verbose{{end}}
     preconditions:
       - sh: which flux-local
         msg: flux-local is not installed
+      - sh: which flux
+        msg: flux is not installed

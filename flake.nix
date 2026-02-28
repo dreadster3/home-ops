@@ -46,6 +46,7 @@
               go-task
               fluxcd
               fluxcd-operator
+              yq-go
             ];
           };
         };
