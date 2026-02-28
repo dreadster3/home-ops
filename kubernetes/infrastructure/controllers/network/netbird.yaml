@@ -63,13 +63,15 @@ spec:
       namespace: cert-manager
   values:
     managementURL: https://netbird.${EXTERNAL_DOMAIN}
+    routingClientImage: ghcr.io/netbirdio/netbird:0.66.0-rootless
 
     clusterSecretsPermissions:
-      allowAllSecrets: false
+      allowAllSecrets: true
 
     operator:
       ingress:
         enabled: true
+        allowAutomaticPolicyCreation: true
 
     netbirdAPI:
       keyFromSecret:

@@ -48,6 +48,7 @@ spec:
         values:
           - traefik
           - portainer
+          - netbird-router
   ingressDeny:
     - fromEntities:
         - "world"
