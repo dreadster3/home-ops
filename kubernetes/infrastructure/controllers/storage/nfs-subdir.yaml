@@ -17,6 +17,8 @@ kind: HelmRelease
 metadata:
   name: nfs-subdir
   namespace: nfs-subdir
+  labels:
+    nfsMount: "true"
 spec:
   interval: 1h
   install:
@@ -35,6 +37,9 @@ spec:
         name: nfs-subdir
   values:
     replicaCount: 1
+    labels:
+      nfsMount: "true"
+
     nfs:
       server: 192.168.30.20
       path: /mnt/main/Cluster/Production/Volumes

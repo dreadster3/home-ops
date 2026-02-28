@@ -12,6 +12,8 @@ kind: HelmRelease
 metadata:
   name: immich
   namespace: immich
+  labels:
+    nfsMount: "true"
 spec:
   interval: 1h
   install:
@@ -57,6 +59,8 @@ spec:
     server:
       controllers:
         main:
+          labels:
+            nfsMount: "true"
           containers:
             main:
               resources:
