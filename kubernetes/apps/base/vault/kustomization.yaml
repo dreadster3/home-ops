@@ -9,6 +9,9 @@ labels:
 
 configMapGenerator:
   - name: vault-backup-scripts
+    options:
+      labels:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
     files:
       - scripts/backup.sh
 
