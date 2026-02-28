@@ -60,7 +60,8 @@ spec:
       enabled: true
 
     kubeApiServer:
-      enabled: true
+      # BUG: https://github.com/kubernetes/kubernetes/issues/134080
+      enabled: false
 
     kubelet:
       enabled: true
