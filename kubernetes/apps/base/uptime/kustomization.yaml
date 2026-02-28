@@ -12,6 +12,8 @@ configMapGenerator:
     namespace: *app
     options:
       disableNameSuffixHash: true
+      labels:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
     files:
       - scripts/backup.sh
 

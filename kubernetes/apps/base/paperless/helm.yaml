@@ -65,7 +65,7 @@ spec:
               - secretRef:
                   name: paperless-secret-env
             ports:
-              - containerPort: &port 8000
+              - containerPort: 8000
                 name: http
                 protocol: TCP
             resources:
@@ -90,7 +90,7 @@ spec:
               startup:
                 enabled: true
                 spec:
-                  initialDelaySeconds: 30
+                  initialDelaySeconds: 120
                   timeoutSeconds: 3
                   failureThreshold: 15
                   periodSeconds: 10

@@ -19,7 +19,7 @@ spec:
               image: alpine:latest
               env:
                 - name: S3_ENDPOINT
-                  value: https://192.168.30.20:30292
+                  value: https://truenas.${INTERNAL_DOMAIN}:30292
                 - name: S3_BUCKET
                   value: uptime
                 - name: AWS_CONFIG_FILE
@@ -44,12 +44,6 @@ spec:
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities: { drop: ["ALL"] }
-              resources:
-                requests:
-                  cpu: 60m
-                  memory: 90Mi
-                limits:
-                  memory: 90Mi
           securityContext:
             runAsUser: 0
             runAsGroup: 0
