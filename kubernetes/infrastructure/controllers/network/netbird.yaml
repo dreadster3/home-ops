@@ -65,11 +65,12 @@ spec:
     managementURL: https://netbird.${EXTERNAL_DOMAIN}
 
     clusterSecretsPermissions:
-      allowAllSecrets: false
+      allowAllSecrets: true
 
     operator:
       ingress:
         enabled: true
+        allowAutomaticPolicyCreation: true
 
     netbirdAPI:
       keyFromSecret:

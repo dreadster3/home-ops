@@ -72,3 +72,6 @@ dashboards:
   labelValue: "true"
   annotations:
     grafana/folder: Cilium
+
+bpf:
+  lbExternalClusterIP: true
