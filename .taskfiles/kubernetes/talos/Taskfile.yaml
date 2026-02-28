@@ -1,0 +1,82 @@
+---
+version: "3"
+
+tasks:
+  schematic:
+    desc: Get the schematic ID
+    vars:
+      SCHEMATIC: "{{.ROOT_DIR}}/kubernetes/talos/prd/schematic.yaml"
+    cmds:
+      - curl -sX POST --data-binary "@{{.SCHEMATIC}}" "https://factory.talos.dev/schematics" | jq -r .id
+
+  upgrade:
+    desc: Upgrade Node in cluster
+    vars:
+      SCHEMATIC: "{{.ROOT_DIR}}/kubernetes/talos/prd/schematic.yaml"
+      SCHEMATIC_ID:
+        sh: task {{.TASK | splitList ":" | initial | join ":"}}:schematic
+      NODES:
+        sh: task {{.TASK | splitList ":" | initial | join ":"}}:hostname-to-node
+    requires:
+      vars: [VERSION]
+    prompt:
+      - "Are you sure you want to upgrade node {{.HOSTNAME}}[{{.NODE}}] to version {{.VERSION}}?"
+    cmds:
+      - talosctl --nodes "{{.NODES}}" upgrade --image factory.talos.dev/nocloud-installer/{{.SCHEMATIC_ID}}:{{.VERSION}}
+
+  upgrade-kubernetes:
+    desc: Upgrade Kubernetes Node in cluster
+    vars:
+      NODE:
+        sh: talosctl config info --output json | jq -r '.endpoints[]' | shuf -n 1
+    requires:
+      vars: [NODE, VERSION]
+    prompt:
+      - "Are you sure you want to upgrade kubernetes through node {{.NODE}} to version {{.VERSION}}?"
+    cmds:
+      - talosctl --nodes {{.NODE}} upgrade-k8s --to {{.VERSION}} {{ .CLI_ARGS }}
+
+  shutdown:
+    desc: Shutdown a talos node
+    vars:
+      NODES:
+        sh: task {{.TASK | splitList ":" | initial | join ":"}}:hostname-to-node
+    prompt:
+      - "Are you sure you want to shutdown nodes {{.NODES}}?"
+    cmds:
+      - talosctl --nodes "{{.NODES}}" shutdown
+
+  reboot:
+    desc: Shutdown a talos node
+    vars:
+      NODES:
+        sh: task {{.TASK | splitList ":" | initial | join ":"}}:hostname-to-node
+    prompt:
+      - "Are you sure you want to reboot nodes {{.NODES}}?"
+    cmds:
+      - talosctl --nodes "{{.NODES}}" reboot
+
+  hostname-to-node:
+    desc: Convert hostname to node
+    silent: true
+    vars:
+      NODES:
+        sh: |
+          {{ if not (empty .HOSTNAME) }}
+            {{ $root_dir := .ROOT_DIR -}}
+            {{ $hostnames := splitList "," .HOSTNAME -}}
+            nodes=()
+            {{ range $idx, $element := $hostnames -}}
+              file=$(grep -rl "hostname: {{$element}}" {{$root_dir}}/kubernetes/talos/prd/)
+              nodes+=($(yq 'select(.kind == "LinkConfig") | .addresses[0].address | split("/") | .[0]' $file))
+            {{ end }}
+            IFS=","
+            echo "${nodes[*]}"
+          {{ else if not (empty .NODE) }}
+            echo '{{.NODE | splitList "," | join " "}}'
+          {{ end }}
+    preconditions:
+      - sh: '[ -n "{{.HOSTNAME}}" ] || [ -n "{{.NODE}}" ]'
+        msg: "Either HOSTNAME or NODE must be provided"
+    cmds:
+      - echo {{.NODES}}

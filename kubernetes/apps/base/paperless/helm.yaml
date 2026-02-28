@@ -3,6 +3,8 @@ kind: HelmRelease
 metadata:
   name: paperless
   namespace: paperless
+  labels:
+    nfsMount: "true"
 spec:
   interval: 1h
   install:
@@ -24,6 +26,8 @@ spec:
   values:
     controllers:
       main:
+        labels:
+          nfsMount: "true"
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
