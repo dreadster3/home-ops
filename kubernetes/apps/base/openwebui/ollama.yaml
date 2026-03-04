@@ -30,7 +30,7 @@ spec:
           main:
             image:
               repository: ollama/ollama
-              tag: 0.17.4@sha256:b165fa2700dc374f8d4f9e8314d81c7be75487c76eee2b46ef4b511a496b736c
+              tag: 0.17.6@sha256:8318e7716a2d43ce66a3cfb8670153a4ca850fb757be45021370756938c15140
             env:
               TZ: Europe/Lisbon
               OLLAMA_HOST: 0.0.0.0
