@@ -1,0 +1,20 @@
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:v3.6
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+      - ./logs/traefik:/var/log/traefik
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+
+volumes:
+  letsencrypt:
+    driver: local

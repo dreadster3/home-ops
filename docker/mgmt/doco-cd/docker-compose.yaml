@@ -3,6 +3,7 @@ services:
     container_name: doco-cd
     image: ghcr.io/kimdre/doco-cd:latest
     environment:
+      TZ: Europe/Lisbon
       HTTP_PORT: 8080
       LOG_LEVEL: debug
       POLL_CONFIG_FILE: /etc/doco-cd/poll-config.yaml
@@ -23,6 +24,11 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
 
 configs:
   poll-config.yaml:

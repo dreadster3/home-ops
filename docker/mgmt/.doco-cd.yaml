@@ -1,5 +1,2 @@
-name: doco-cd
-working_dir: docker/mgmt/doco-cd
----
 name: it-tools
 working_dir: docker/mgmt/it-tools
