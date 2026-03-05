@@ -1,2 +1,5 @@
 name: it-tools
 working_dir: docker/mgmt/it-tools
+---
+name: traefik
+working_dir: docker/mgmt/traefik
