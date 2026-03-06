@@ -1,0 +1,22 @@
+services:
+  home-assistant:
+    container_name: home-assistant
+    image: ghcr.io/home-assistant/home-assistant:2026.3.0@sha256:4fb4ad85fad2250ccff6ec0670827bdcdc46b8bab2b9cbfb8ecdc28da7210630
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Lisbon
+    volumes:
+      - /opt/docker/home-assistant:/config
+      - /run/dbus:/run/dbus:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.homeassistant.entrypoints=websecure"
+      - "traefik.http.routers.homeassistant.tls.certresolver=letsencrypt"
+      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

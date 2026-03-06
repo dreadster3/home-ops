@@ -12,3 +12,10 @@ name: speedtracker
 working_dir: docker/mgmt/speedtracker
 compose_files:
   - compose.yaml
+---
+name: home-assistant
+working_dir: docker/mgmt/home-assistant
+env_files:
+  - ../base.env
+compose_files:
+  - compose.yaml
