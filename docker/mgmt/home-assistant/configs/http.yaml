@@ -1,4 +1,3 @@
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.22.1.2
+use_x_forwarded_for: true
+trusted_proxies:
+  - 172.22.1.2
