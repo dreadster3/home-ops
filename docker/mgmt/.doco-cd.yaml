@@ -22,3 +22,8 @@ name: omada-controller
 working_dir: docker/mgmt/omada-controller
 compose_files:
   - compose.yaml
+---
+name: dockhand
+working_dir: docker/mgmt/dockhand
+compose_files:
+  - compose.yaml
