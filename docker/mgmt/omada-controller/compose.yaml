@@ -31,6 +31,10 @@ services:
       - "traefik.http.routers.omada-controller.tls.certresolver=letsencrypt"
       - "traefik.http.services.omada-controller.loadbalancer.server.port=8043"
       - "traefik.http.services.omada-controller.loadbalancer.server.scheme=https"
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
     logging:
       driver: "json-file"
 
