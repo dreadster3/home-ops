@@ -3,6 +3,7 @@ services:
     container_name: omada-controller
     image: docker.io/mbentley/omada-controller:6.1.0.19@sha256:ae11f51e773d9c17f8578b951ced11253b2ef7cfa9c8d46ef99ecdcd8cc25278
     restart: unless-stopped
+    user: "508:508"
     environment:
       TZ: Europe/Lisbon
       ROOTLESS: true
@@ -24,7 +25,6 @@ services:
     volumes:
       - data:/opt/tplink/EAPController/data
       - /var/log/docker/omada-controller:/opt/tplink/EAPController/logs
-
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.omada-controller.rule=Host(`omada.${INTERNAL_DOMAIN}`)"
@@ -32,6 +32,8 @@ services:
       - "traefik.http.routers.omada-controller.tls.certresolver=letsencrypt"
       - "traefik.http.services.omada-controller.loadbalancer.server.port=8043"
       - "traefik.http.services.omada-controller.loadbalancer.server.scheme=https"
+    logging:
+      driver: "json-file"
 
   mongo:
     container_name: omada-controller-db
