@@ -43,9 +43,13 @@ services:
       TZ: Europe/Lisbon
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
+    volumes:
+      - db_data:/data/db
 
 volumes:
   data:
+    driver: local
+  db_data:
     driver: local
 
 networks:
