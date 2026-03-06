@@ -12,6 +12,7 @@ services:
       - mongo
     networks:
       - proxy
+      - default
     ports:
       - 8088:8088
       - 8043:8043
@@ -41,6 +42,8 @@ services:
       TZ: Europe/Lisbon
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
+    networks:
+      - default
     volumes:
       - db_data:/data/db
 
@@ -51,5 +54,6 @@ volumes:
     driver: local
 
 networks:
+  default:
   proxy:
     external: true
