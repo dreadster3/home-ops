@@ -8,6 +8,7 @@ services:
       LOG_LEVEL: debug
       POLL_CONFIG_FILE: /etc/doco-cd/poll-config.yaml
       DEPLOY_CONFIG_BASE_DIR: ./docker/mgmt
+      SOPS_AGE_KEY_FILE: /var/run/secrets/doco-cd/age.key
     restart: unless-stopped
     configs:
       - source: poll-config.yaml
@@ -15,6 +16,7 @@ services:
     volumes:
       - data:/data
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/secrets/doco-cd:/var/run/secrets/doco-cd
     healthcheck:
       test:
         - CMD

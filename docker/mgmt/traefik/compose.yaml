@@ -1,7 +1,55 @@
+configs:
+  traefik.yaml:
+    content: |
+      providers:
+        docker:
+          exposedByDefault: false
+          network: traefik_default
+
+      entryPoints:
+        web:
+          address: ":80"
+          http:
+            redirections:
+              entrypoint:
+                to: websecure
+                scheme: https
+        websecure:
+          address: ":443"
+          http:
+            tls:
+              certResolver: "letsencrypt"
+
+      certificatesResolvers:
+        letsencrypt:
+          acme:
+            email: "afonso.antunes@live.com.pt"
+            storage: "/letsencrypt/acme.json"
+            caServer: "https://acme-v02.api.letsencrypt.org/directory"
+            dnsChallenge:
+              provider: cloudflare  # or your DNS provider
+              resolvers:
+                - "1.1.1.1:53"
+                - "8.8.8.8:53"
+
+      log:
+        filePath: /var/log/traefik/traefik.log
+        format: json
+        level: DEBUG
+
+      accessLog:
+        filePath: /var/log/traefik/access.log
+        format: json
+
+      serversTransport:
+        insecureSkipVerify: true
+
 services:
   traefik:
     container_name: traefik
     image: traefik:v3.6.9@sha256:f67a287e3fdac92334fb44f291b6f264338964fd7e7a0e135b8e9e16da6d41d5
+    env_file:
+      - .env
     ports:
       - 80:80
       - 443:443
@@ -9,6 +57,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - letsencrypt:/letsencrypt
       - /var/log/docker/traefik:/var/log/traefik
+    configs:
+      - source: traefik.yaml
+        target: /etc/traefik/traefik.yaml
     logging:
       driver: "json-file"
       options:
@@ -18,3 +69,7 @@ services:
 volumes:
   letsencrypt:
     driver: local
+
+networks:
+  proxy:
+    driver: bridge
