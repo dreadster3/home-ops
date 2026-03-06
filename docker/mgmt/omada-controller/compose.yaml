@@ -3,10 +3,8 @@ services:
     container_name: omada-controller
     image: docker.io/mbentley/omada-controller:6.1.0.19@sha256:ae11f51e773d9c17f8578b951ced11253b2ef7cfa9c8d46ef99ecdcd8cc25278
     restart: unless-stopped
-    user: "508:508"
     environment:
       TZ: Europe/Lisbon
-      ROOTLESS: true
       EAP_MONGOD_URI: mongodb://${DB_USER}:${DB_PASS}@mongo:27017/omada
       MONGO_EXTERNAL: true
       SHOW_SERVER_LOGS: true
