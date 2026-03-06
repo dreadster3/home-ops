@@ -4,7 +4,7 @@ configs:
       providers:
         docker:
           exposedByDefault: false
-          network: traefik_default
+          network: proxy
 
       entryPoints:
         web:
@@ -74,4 +74,5 @@ volumes:
 
 networks:
   proxy:
+    name: proxy
     driver: bridge
