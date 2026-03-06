@@ -15,7 +15,5 @@ compose_files:
 ---
 name: home-assistant
 working_dir: docker/mgmt/home-assistant
-env_files:
-  - ../base.env
 compose_files:
   - compose.yaml
