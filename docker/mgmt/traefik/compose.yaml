@@ -65,6 +65,12 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`mgmt.proxy.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.service=api@internal"
     networks:
       - proxy
 
