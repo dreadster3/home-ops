@@ -1,6 +1,10 @@
 configs:
   traefik.yaml:
     content: |
+      api:
+        dashboard: true
+        insecure: true
+
       providers:
         docker:
           exposedByDefault: false
