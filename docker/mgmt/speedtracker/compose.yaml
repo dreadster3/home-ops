@@ -1,8 +1,8 @@
 services:
-  speedtest-tracker:
+  speedtracker:
     image: lscr.io/linuxserver/speedtest-tracker:latest
     restart: unless-stopped
-    container_name: speedtest-tracker
+    container_name: speedtracker
     environment:
       - TZ=Europe/Lisbon
       - APP_TIMEZONE=Europe/Lisbon
@@ -33,6 +33,7 @@ services:
       - default
       - proxy
   db:
+    container_name: speedtracker-db
     image: postgres:18
     restart: always
     environment:
