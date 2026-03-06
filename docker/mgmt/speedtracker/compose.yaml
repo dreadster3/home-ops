@@ -1,0 +1,60 @@
+services:
+  speedtest-tracker:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    restart: unless-stopped
+    container_name: speedtest-tracker
+    environment:
+      - TZ=Europe/Lisbon
+      - APP_TIMEZONE=Europe/Lisbon
+      - PUID=1000
+      - PGID=1000
+      - APP_KEY=${APP_KEY} # Required
+      - APP_URL=https://speedtracker.${INTERNAL_DOMAIN}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=speedtest_tracker
+      - DB_USERNAME=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - SPEEDTEST_SCHEDULE="0 */1 * * *"
+    volumes:
+      - config:/config
+    depends_on:
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.speedtracker.rule=Host(`speedtracker.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.speedtracker.entrypoints=websecure"
+      - "traefik.http.routers.speedtracker.tls.certresolver=letsencrypt"
+      - "traefik.http.services.speedtracker.loadbalancer.server.port=80"
+      - "traefik.http.services.speedtracker.loadbalancer.server.scheme=http"
+
+    networks:
+      - default
+      - proxy
+  db:
+    image: postgres:18
+    restart: always
+    environment:
+      - POSTGRES_DB=speedtest_tracker
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/
+    volumes:
+      - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    networks:
+      - default
+
+volumes:
+  config:
+  db:
+
+networks:
+  default:
+  proxy:
+    external: true

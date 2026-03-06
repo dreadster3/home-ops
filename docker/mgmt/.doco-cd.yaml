@@ -1,9 +1,14 @@
+name: traefik
+working_dir: docker/mgmt/traefik
+compose_files:
+  - compose.yaml
+---
 name: it-tools
 working_dir: docker/mgmt/it-tools
 compose_files:
   - compose.yaml
 ---
-name: traefik
-working_dir: docker/mgmt/traefik
+name: speedtracker
+working_dir: docker/mgmt/speedtracker
 compose_files:
   - compose.yaml
