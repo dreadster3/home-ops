@@ -65,6 +65,8 @@ services:
       options:
         max-size: "500m"
         max-file: "2"
+    networks:
+      - proxy
 
 volumes:
   letsencrypt:

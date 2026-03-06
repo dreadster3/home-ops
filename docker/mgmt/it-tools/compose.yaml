@@ -14,3 +14,10 @@ services:
       - "traefik.http.routers.ittools.entrypoints=websecure,web"
       - "traefik.http.routers.ittools.tls.certresolver=letsencrypt"
       - "traefik.http.services.ittools.loadbalancer.server.port=80"
+      - "traefik.http.services.ittools.loadbalancer.server.scheme=http"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
