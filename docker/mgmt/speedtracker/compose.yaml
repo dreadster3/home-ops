@@ -1,6 +1,6 @@
 services:
   speedtracker:
-    image: lscr.io/linuxserver/speedtest-tracker:latest
+    image: ghcr.io/linuxserver/speedtest-tracker:v1.13.10-ls139@sha256:4023b3e993d3764efe41d65eb4d1be8d9ff2ad8d756eb71de35fe805882ff0b5
     restart: unless-stopped
     container_name: speedtracker
     environment:
@@ -34,7 +34,7 @@ services:
       - proxy
   db:
     container_name: speedtracker-db
-    image: postgres:18
+    image: postgres:18.3-trixie@sha256:e47309bc9a186ae58078b35a385dc89216d922c0f2f5cbb2bd6390e878dce27e
     restart: always
     environment:
       - POSTGRES_DB=speedtest_tracker
