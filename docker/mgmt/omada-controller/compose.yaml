@@ -3,13 +3,16 @@ services:
     container_name: omada-controller
     image: docker.io/mbentley/omada-controller:6.1.0.19@sha256:ae11f51e773d9c17f8578b951ced11253b2ef7cfa9c8d46ef99ecdcd8cc25278
     restart: unless-stopped
+    stop_grace_period: 60s
     environment:
       TZ: Europe/Lisbon
       EAP_MONGOD_URI: mongodb://${DB_USER}:${DB_PASS}@mongo:27017/omada
       MONGO_EXTERNAL: true
       SHOW_SERVER_LOGS: true
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
+        restart: true
     networks:
       - proxy
       - default
@@ -42,10 +45,18 @@ services:
       TZ: Europe/Lisbon
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
+      MONGO_INITDB_DATABASE: omada
     networks:
       - default
     volumes:
       - db_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
 
 volumes:
   data:
