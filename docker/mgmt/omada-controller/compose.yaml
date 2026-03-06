@@ -39,17 +39,19 @@ services:
 
   mongo:
     container_name: omada-controller-db
-    image: mongo:8.2.5
+    image: mongo:8.2.5@sha256:3c615e75a6c37cdf38c4cf5690834f302813f4b4edcf25620960159d0dbec93f
     restart: unless-stopped
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
     environment:
       TZ: Europe/Lisbon
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
       MONGO_INITDB_DATABASE: omada
     networks:
       - default
     volumes:
       - db_data:/data/db
+      - db_init:/docker-entrypoint-initdb.d/
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
       interval: 30s
@@ -58,10 +60,51 @@ services:
       start_period: 30s
       start_interval: 5s
 
+  bootstrap:
+    image: busybox:latest
+    container_name: omada-bootstrap
+    env_file:
+      - .env
+    command:
+      - sh
+      - -c
+      - |
+        cat > /init/omada.js << 'EOF'
+        db.createUser(
+          {
+            user: "${DB_USER}",
+            pwd: "${DB_PASS}",
+            roles: [
+              {
+                role: "readWrite",
+                db: "omada"
+              },
+              {
+                role: "dbOwner",
+                db: "omada"
+              },
+              {
+                role: "readWrite",
+                db: "omada_data"
+              },
+              {
+                role: "dbOwner",
+                db: "omada_data"
+              }
+            ]
+          }
+        );
+        EOF
+        echo "omada.js created successfully"
+    volumes:
+      - db_init:/init
+
 volumes:
   data:
     driver: local
   db_data:
+    driver: local
+  db_init:
     driver: local
 
 networks:
