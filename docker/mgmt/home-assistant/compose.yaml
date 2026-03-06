@@ -1,3 +1,9 @@
+configs:
+  configuration.yaml:
+    file: ./configs/configuration.yaml
+  http.yaml:
+    file: ./configs/http.yaml
+
 services:
   home-assistant:
     container_name: home-assistant
@@ -5,6 +11,11 @@ services:
     restart: unless-stopped
     environment:
       TZ: Europe/Lisbon
+    configs:
+      - source: configuration.yaml
+        target: /config/configuration.yaml
+      - source: http.yaml
+        target: /config/http.yaml
     volumes:
       - /opt/docker/home-assistant:/config
       - /run/dbus:/run/dbus:ro

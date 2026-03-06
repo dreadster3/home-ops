@@ -52,6 +52,8 @@ services:
   traefik:
     container_name: traefik
     image: traefik:v3.6.9@sha256:f67a287e3fdac92334fb44f291b6f264338964fd7e7a0e135b8e9e16da6d41d5
+    cap_drop:
+      - ALL
     env_file:
       - traefik.env
     ports:
@@ -76,7 +78,8 @@ services:
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.dashboard.service=api@internal"
     networks:
-      - proxy
+      proxy:
+        ipv4_address: 172.22.1.2
 
 volumes:
   letsencrypt:
@@ -86,3 +89,7 @@ networks:
   proxy:
     name: proxy
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.1.0/24
+          gateway: 172.22.1.1
