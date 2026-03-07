@@ -46,7 +46,7 @@ services:
 
   mongo:
     container_name: omada-controller-db
-    image: mongo:8.2.5@sha256:3c615e75a6c37cdf38c4cf5690834f302813f4b4edcf25620960159d0dbec93f
+    image: docker.io/mongo:8.2.5@sha256:3c615e75a6c37cdf38c4cf5690834f302813f4b4edcf25620960159d0dbec93f
     restart: unless-stopped
     depends_on:
       bootstrap:
