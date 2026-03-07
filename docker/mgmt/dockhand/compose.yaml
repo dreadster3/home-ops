@@ -3,31 +3,27 @@ services:
     image: tecnativa/docker-socket-proxy:v0.4.2@sha256:1f3a6f303320723d199d2316a3e82b2e2685d86c275d5e3deeaf182573b47476
     container_name: dockhand-socket-proxy
     environment:
+      # Default
       - EVENTS=1
       - PING=1
       - VERSION=1
-      # Security critical
-      - AUTH=0
-      - SECRETS=0
+      # Required for Dockhand core functionality
       - POST=1
-      # Not always needed
-      - BUILD=0
-      - COMMIT=0
-      - CONFIGS=0
       - CONTAINERS=1
-      - DISTRIBUTION=0
-      - EXEC=1
       - IMAGES=1
-      - INFO=1
       - NETWORKS=1
-      - NODES=0
-      - PLUGINS=0
-      - SERVICES=0
-      - SESSION=0
-      - SWARM=0
-      - SYSTEM=0
-      - TASKS=0
       - VOLUMES=1
+      - DELETE=1
+      # Required for dashboard host info and disk usage
+      - INFO=1
+      - SYSTEM=1
+      # Required for vulnerability scanning
+      - ALLOW_START=1
+      - ALLOW_STOP=1
+      - ALLOW_RESTARTS=1
+      # Optional: enable for terminal access
+      - EXEC=1
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
