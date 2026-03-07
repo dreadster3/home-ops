@@ -1,18 +1,32 @@
 services:
+  bootstrap:
+    image: busybox:latest
+    container_name: home-assistant-bootstrap
+    command:
+      - sh
+      - -c
+      - |
+        cp -vr /config/* /homeassistant
+        touch /homeassistant/scenes.yaml
+        touch /homeassistant/automations.yaml
+        touch /homeassistant/scripts.yaml
+        echo "Configuration files copied successfully"
+    volumes:
+      - ./config:/config
+      - /opt/docker/home-assistant/config:/homeassistant
+    networks: []
+
   home-assistant:
     container_name: home-assistant
     image: ghcr.io/home-assistant/home-assistant:2026.3.1@sha256:0e091dfce3068339c3e1d14382e6c34141e05cd589a1972ebd4d9a8e6b5d8969
     restart: unless-stopped
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
     environment:
       TZ: Europe/Lisbon
     volumes:
       - /opt/docker/home-assistant/config:/config
-      - ./config/configuration.yaml:/config/configuration.yaml
-      - ./config/scripts:/config/scripts
-      - ./config/scenes:/config/scenes
-      - ./config/themes:/config/themes
-      - ./config/automations:/config/automations
-      - ./config/integrations:/config/integrations
       - /opt/docker/home-assistant/backups:/config/backups
       - /run/dbus:/run/dbus:ro
       # Editor files
