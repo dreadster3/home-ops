@@ -4,7 +4,9 @@ openid:
     configure_url: ENC[AES256_GCM,data:f+CMWOgE12KShEd2rdUuBgunvL+ldpx7WUO0w8lrJTxrYsayXAqg97TBFbF44ADManw41lwtErA3N/8mVdhX4VYO4kGwcI74m8wZCko+bySDbO7fspEYCuxRTf73Qid9z8dMIg==,iv:yI+/vdBhwpxxqmN+KuYIimRQE/YodCZvcTj0bfpBTvg=,tag:Xr/ubXteJl+9+C3sv4JE3A==,type:str]
     scope: openid profile email
     username_field: preferred_username
-    block_login: false
+    block_login: true
+    openid_text: Login with Authentik
+    create_user: true
 sops:
     age:
         - recipient: age1usemhw8v2nnr5nuxddrc7gsy3525hhv0na4hk2ur7tjara5cp90s7cpeen
@@ -16,7 +18,7 @@ sops:
             dWpLQ3k5a3NhU2RxdXhGNGhTZ3JIUG8Kxl5zgOPbxL1lpb7yEhvFbXkHNfeN6+Dr
             0JQkX6bl4usLamWEnNZF0wud73ke1DMIv0J6a6hCkFss0BqMvaOSmg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-07T19:02:56Z"
-    mac: ENC[AES256_GCM,data:FDSh+/wAX8RDuEc6NN89kuaFgt7yUYlDpOpKAPM/vfVf23cBwn9nHARRVZ/7Nma6oVmtu8U2VjCw5ULQ6qBaDV4Aao3HXiTgg4CEXTFhVaEFihgrN/CFAbsvYfmxcheNN53h2dMGP2L2Vzux5I/2hrbLOuVNwJWaWMD5taIdw+w=,iv:VWcMmxlWeauouwVJIvqjp2tgxqHSJeXb3GN+tCSoiaQ=,tag:CsIYMIIl4QdKukkpV5F8bQ==,type:str]
+    lastmodified: "2026-03-07T19:13:13Z"
+    mac: ENC[AES256_GCM,data:eaQ2ITemTPWHYlcAgMroBXVv4WnalW1T3JZkZVoJdKrJdxJyJMzrL/k3p3KzOpxWbh35VieHt+wyuDOQDIELB2M9m0eImZ6eZGq9uTm2Xe5F716A5vzkaOAjtkuSYqiyilBrdQC66Bh+e8pt0T+0PbJ1X46WkfPyPxuUm8vuuFk=,iv:TXyAzNCvHo0y6EcsnGyGMjUBaLCRe0Cv2HOgp9EbEK0=,tag:Q7sFOtnefORvzNB3mcOImg==,type:str]
     encrypted_regex: ^(client_id|client_secret|configure_url)$
     version: 3.11.0
