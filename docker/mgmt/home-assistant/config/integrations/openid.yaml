@@ -1,0 +1,7 @@
+openid:
+  client_id: !secret authentik_client_id
+  client_secret: !secret authentik_client_secret
+  configure_url: !secret authentik_configure_url
+  scope: "openid profile email"
+  username_field: "preferred_username"
+  block_login: false
