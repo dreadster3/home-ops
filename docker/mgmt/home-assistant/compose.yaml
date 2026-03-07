@@ -12,8 +12,6 @@ services:
     environment:
       TZ: Europe/Lisbon
     configs:
-      - source: configuration.yaml
-        target: /config/configuration.yaml
       - source: http.yaml
         target: /config/http.yaml
     volumes:
