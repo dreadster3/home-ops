@@ -1,9 +1,3 @@
-configs:
-  configuration.yaml:
-    file: ./configs/configuration.yaml
-  http.yaml:
-    file: ./configs/http.yaml
-
 services:
   home-assistant:
     container_name: home-assistant
@@ -11,11 +5,9 @@ services:
     restart: unless-stopped
     environment:
       TZ: Europe/Lisbon
-    configs:
-      - source: http.yaml
-        target: /config/http.yaml
     volumes:
-      - /opt/docker/home-assistant:/config
+      - ./config:/config
+      - /opt/docker/home-assistnat/backups:/config/backups
       - /run/dbus:/run/dbus:ro
     labels:
       - "traefik.enable=true"
