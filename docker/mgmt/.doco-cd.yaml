@@ -27,8 +27,3 @@ name: dockhand
 working_dir: docker/mgmt/dockhand
 compose_files:
   - compose.yaml
----
-name: arcane
-working_dir: docker/mgmt/arcane
-compose_files:
-  - compose.yaml
