@@ -6,9 +6,16 @@ services:
     environment:
       TZ: Europe/Lisbon
     volumes:
-      - ./config:/config
-      - /opt/docker/home-assistnat/backups:/config/backups
+      - /opt/docker/home-assistant/config:/config
+      - ./config/configuration.yaml:/config/configuration.yaml
+      - ./config/scripts:/config/scripts
+      - ./config/scenes:/config/scenes
+      - ./config/themes:/config/themes
+      - ./config/automations:/config/automations
+      - ./config/integrations:/config/integrations
+      - /opt/docker/home-assistant/backups:/config/backups
       - /run/dbus:/run/dbus:ro
+      # Editor files
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.${INTERNAL_DOMAIN}`)"
