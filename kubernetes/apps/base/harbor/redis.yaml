@@ -12,9 +12,9 @@ spec:
     resources:
       requests:
         cpu: 15m
-        memory: 32Mi
+        memory: &memory 40Mi
       limits:
-        memory: 32Mi
+        memory: *memory
   podSecurityContext:
     runAsUser: 1000
     fsGroup: 1000

@@ -69,17 +69,17 @@ spec:
       registry:
         resources:
           requests:
-            memory: 128Mi
+            memory: &registryMemory 192Mi
             cpu: 5m
           limits:
-            memory: 128Mi
+            memory: *registryMemory
       controller:
         resources:
           requests:
             cpu: 5m
-            memory: 25Mi
+            memory: &controllerMemory 32Mi
           limits:
-            memory: 25Mi
+            memory: *controllerMemory
 
     portal:
       resources:

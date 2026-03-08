@@ -99,9 +99,9 @@ spec:
       resources:
         requests:
           cpu: 10m
-          memory: 700Mi
+          memory: &memory 875Mi
         limits:
-          memory: 700Mi
+          memory: *memory
       networkPolicy:
         enabled: false
 
