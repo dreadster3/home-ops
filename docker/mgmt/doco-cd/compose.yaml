@@ -1,0 +1,44 @@
+services:
+  doco-cd:
+    container_name: doco-cd
+    image: ghcr.io/kimdre/doco-cd:latest
+    environment:
+      TZ: Europe/Lisbon
+      HTTP_PORT: 8080
+      LOG_LEVEL: debug
+      POLL_CONFIG_FILE: /etc/doco-cd/poll-config.yaml
+      DEPLOY_CONFIG_BASE_DIR: ./docker/mgmt
+      SOPS_AGE_KEY_FILE: /var/run/secrets/doco-cd/age.key
+    restart: unless-stopped
+    configs:
+      - source: poll-config.yaml
+        target: /etc/doco-cd/poll-config.yaml
+    volumes:
+      - data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/docker/doco-cd:/var/run/secrets/doco-cd
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+
+configs:
+  poll-config.yaml:
+    content: |
+      - url: https://github.com/dreadster3/home-ops.git
+        interval: 180
+        reference: refs/heads/main
+
+volumes:
+  data:
+    driver: local

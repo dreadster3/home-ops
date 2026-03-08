@@ -1,0 +1,29 @@
+name: traefik
+working_dir: docker/mgmt/traefik
+compose_files:
+  - compose.yaml
+---
+name: it-tools
+working_dir: docker/mgmt/it-tools
+compose_files:
+  - compose.yaml
+---
+name: speedtracker
+working_dir: docker/mgmt/speedtracker
+compose_files:
+  - compose.yaml
+---
+name: home-assistant
+working_dir: docker/mgmt/home-assistant
+compose_files:
+  - compose.yaml
+---
+name: omada-controller
+working_dir: docker/mgmt/omada-controller
+compose_files:
+  - compose.yaml
+---
+name: dockhand
+working_dir: docker/mgmt/dockhand
+compose_files:
+  - compose.yaml

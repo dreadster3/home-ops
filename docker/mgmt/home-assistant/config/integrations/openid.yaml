@@ -1,0 +1,24 @@
+openid:
+    client_id: ENC[AES256_GCM,data:FpH+HuSWvTtufRViFHp/tbCXw7j5LlXOhwPB8zswxKFJDG1vgNxqMg==,iv:xysmShcdp4kxRanGzu7vkt5k5yAt+0Oyh+neDHTcLV8=,tag:goGTp/0y2mWuJMcUed/+Zw==,type:str]
+    client_secret: ENC[AES256_GCM,data:Q0DNyzHEQ+nLF8LvuqWCTHCf/gMSZMcUKaKnBiSmKX/QVoP1sP0HP2ydtIX9S452vKVUiTJJcDFwdn9TDN4DyiG6/jqVkeWO3VqYYjBuNvZ00LxoxzG0yUGdnsQjY/pcjgqr5OK9yQ+0n65drQ4ymOGnHgLQTxYKf4LLWz8zs3U=,iv:2KsnHJsEL/3bb7TvjjIHdjxhuiO9Uw4Ecjb1nhPlsBc=,tag:QNXzzq72ZZ5dWsZtWVOkmQ==,type:str]
+    configure_url: ENC[AES256_GCM,data:f+CMWOgE12KShEd2rdUuBgunvL+ldpx7WUO0w8lrJTxrYsayXAqg97TBFbF44ADManw41lwtErA3N/8mVdhX4VYO4kGwcI74m8wZCko+bySDbO7fspEYCuxRTf73Qid9z8dMIg==,iv:yI+/vdBhwpxxqmN+KuYIimRQE/YodCZvcTj0bfpBTvg=,tag:Xr/ubXteJl+9+C3sv4JE3A==,type:str]
+    scope: openid profile email
+    username_field: preferred_username
+    block_login: true
+    openid_text: Login with Authentik
+    create_user: true
+sops:
+    age:
+        - recipient: age1usemhw8v2nnr5nuxddrc7gsy3525hhv0na4hk2ur7tjara5cp90s7cpeen
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBmSDh5TnVIQWVPaGVWcFdl
+            RTNqaEVFYkREMEY4d0RlRFFIYndlSHpqdlNRCmVNdGFHOHRqWmcvTDNiUUtFZkQy
+            SHovSzVTT3VZbjY3L2hrNlBsM0xvNzAKLS0tIC8rKzViSUZMbmZXUjdSKzZKV0VJ
+            dWpLQ3k5a3NhU2RxdXhGNGhTZ3JIUG8Kxl5zgOPbxL1lpb7yEhvFbXkHNfeN6+Dr
+            0JQkX6bl4usLamWEnNZF0wud73ke1DMIv0J6a6hCkFss0BqMvaOSmg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-07T19:13:13Z"
+    mac: ENC[AES256_GCM,data:eaQ2ITemTPWHYlcAgMroBXVv4WnalW1T3JZkZVoJdKrJdxJyJMzrL/k3p3KzOpxWbh35VieHt+wyuDOQDIELB2M9m0eImZ6eZGq9uTm2Xe5F716A5vzkaOAjtkuSYqiyilBrdQC66Bh+e8pt0T+0PbJ1X46WkfPyPxuUm8vuuFk=,iv:TXyAzNCvHo0y6EcsnGyGMjUBaLCRe0Cv2HOgp9EbEK0=,tag:Q7sFOtnefORvzNB3mcOImg==,type:str]
+    encrypted_regex: ^(client_id|client_secret|configure_url)$
+    version: 3.11.0

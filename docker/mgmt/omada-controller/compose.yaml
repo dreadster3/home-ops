@@ -1,0 +1,122 @@
+services:
+  omada-controller:
+    container_name: omada-controller
+    image: docker.io/mbentley/omada-controller:6.1.0.19@sha256:ae11f51e773d9c17f8578b951ced11253b2ef7cfa9c8d46ef99ecdcd8cc25278
+    restart: unless-stopped
+    stop_grace_period: 60s
+    environment:
+      TZ: Europe/Lisbon
+      EAP_MONGOD_URI: mongodb://${DB_USER}:${DB_PASS}@mongo:27017/omada
+      MONGO_EXTERNAL: true
+      SHOW_SERVER_LOGS: true
+      MANAGE_HTTPS_PORT: 8443
+    depends_on:
+      mongo:
+        condition: service_healthy
+        restart: true
+    networks:
+      - proxy
+      - default
+    ports:
+      - 8043:8043 # Upgrade firmware
+      - 19810:19810/udp
+      - 27001:27001/udp
+      - 29810:29810/udp
+      - 29811-29817:29811-29817
+    volumes:
+      - data:/opt/tplink/EAPController/data
+      - /var/log/docker/omada-controller:/opt/tplink/EAPController/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.omada-controller.rule=Host(`omada.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.omada-controller.entrypoints=websecure"
+      - "traefik.http.routers.omada-controller.tls.certresolver=letsencrypt"
+      - "traefik.http.services.omada-controller.loadbalancer.server.port=8443"
+      - "traefik.http.services.omada-controller.loadbalancer.server.scheme=https"
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
+    logging:
+      driver: "json-file"
+    deploy:
+      resources:
+        reservations:
+          memory: 1G
+        limits:
+          memory: 1G
+
+  mongo:
+    container_name: omada-controller-db
+    image: docker.io/mongo:8.2.5@sha256:3c615e75a6c37cdf38c4cf5690834f302813f4b4edcf25620960159d0dbec93f
+    restart: unless-stopped
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+    environment:
+      TZ: Europe/Lisbon
+      MONGO_INITDB_DATABASE: omada
+    networks:
+      - default
+    volumes:
+      - db_data:/data/db
+      - db_init:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+
+  bootstrap:
+    image: busybox:latest
+    container_name: omada-bootstrap
+    env_file:
+      - .env
+    command:
+      - sh
+      - -c
+      - |
+        cat > /init/omada.js << 'EOF'
+        db.createUser(
+          {
+            user: "${DB_USER}",
+            pwd: "${DB_PASS}",
+            roles: [
+              {
+                role: "readWrite",
+                db: "omada"
+              },
+              {
+                role: "dbOwner",
+                db: "omada"
+              },
+              {
+                role: "readWrite",
+                db: "omada_data"
+              },
+              {
+                role: "dbOwner",
+                db: "omada_data"
+              }
+            ]
+          }
+        );
+        EOF
+        echo "omada.js created successfully"
+    volumes:
+      - db_init:/init
+
+volumes:
+  data:
+    driver: local
+  db_data:
+    driver: local
+  db_init:
+    driver: local
+
+networks:
+  default:
+  proxy:
+    external: true
