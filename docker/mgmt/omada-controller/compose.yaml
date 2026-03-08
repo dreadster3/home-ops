@@ -9,6 +9,7 @@ services:
       EAP_MONGOD_URI: mongodb://${DB_USER}:${DB_PASS}@mongo:27017/omada
       MONGO_EXTERNAL: true
       SHOW_SERVER_LOGS: true
+      MANAGE_HTTPS_PORT: 8443
     depends_on:
       mongo:
         condition: service_healthy
@@ -30,7 +31,7 @@ services:
       - "traefik.http.routers.omada-controller.rule=Host(`omada.${INTERNAL_DOMAIN}`)"
       - "traefik.http.routers.omada-controller.entrypoints=websecure"
       - "traefik.http.routers.omada-controller.tls.certresolver=letsencrypt"
-      - "traefik.http.services.omada-controller.loadbalancer.server.port=8043"
+      - "traefik.http.services.omada-controller.loadbalancer.server.port=8443"
       - "traefik.http.services.omada-controller.loadbalancer.server.scheme=https"
     ulimits:
       nofile:
