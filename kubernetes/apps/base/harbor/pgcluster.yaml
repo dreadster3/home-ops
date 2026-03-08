@@ -43,9 +43,9 @@ spec:
   resources:
     requests:
       cpu: 25m
-      memory: 192Mi
+      memory: 256Mi
     limits:
-      memory: 192Mi
+      memory: 256Mi
 
   monitoring:
     enablePodMonitor: true
