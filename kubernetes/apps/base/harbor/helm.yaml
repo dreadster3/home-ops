@@ -69,10 +69,10 @@ spec:
       registry:
         resources:
           requests:
-            memory: 128Mi
+            memory: 192Mi
             cpu: 5m
           limits:
-            memory: 128Mi
+            memory: 192Mi
       controller:
         resources:
           requests:
