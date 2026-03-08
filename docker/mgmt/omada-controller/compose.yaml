@@ -17,6 +17,7 @@ services:
       - proxy
       - default
     ports:
+      - 8043:8043 # Upgrade firmware
       - 19810:19810/udp
       - 27001:27001/udp
       - 29810:29810/udp
