@@ -37,7 +37,7 @@ configs:
     content: |
       - url: https://github.com/dreadster3/home-ops.git
         interval: 180
-        reference: refs/heads/feat/doco/mgmt
+        reference: refs/heads/main
 
 volumes:
   data:
