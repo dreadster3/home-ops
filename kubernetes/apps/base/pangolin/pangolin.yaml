@@ -49,10 +49,10 @@ spec:
       resources:
         requests:
           cpu: 25m
-          memory: 128Mi
+          memory: 256Mi
         limits:
           cpu: 75m
-          memory: 200Mi
+          memory: 256Mi
 
     newtInstances:
       - name: kubernetes-1
