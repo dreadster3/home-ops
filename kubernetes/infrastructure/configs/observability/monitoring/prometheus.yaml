@@ -27,7 +27,7 @@ spec:
         enabled: true
 
       prometheusSpec:
-        replicas: 2
+        replicas: 1
 
         image:
           tag: v3.7.3
