@@ -39,6 +39,7 @@ services:
       - socket-proxy
     volumes:
       - data:/app/data
+      - doco_data:/data:ro
     networks:
       - proxy
       - default
@@ -52,6 +53,8 @@ services:
 
 volumes:
   data:
+  doco_data:
+    external: true
 
 networks:
   default:
