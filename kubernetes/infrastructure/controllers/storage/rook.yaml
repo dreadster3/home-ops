@@ -32,7 +32,7 @@ spec:
   chart:
     spec:
       chart: rook-ceph
-      version: 1.18.x
+      version: 1.19.x
       interval: 24h
       sourceRef:
         kind: HelmRepository
