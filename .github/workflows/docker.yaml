@@ -1,0 +1,28 @@
+name: Docker
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "docker/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Docker Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Install Go Task
+        uses: go-task/setup-task@v1
+        with:
+          version: "3.x"
+
+      - name: Validate
+        run: task docker:validate

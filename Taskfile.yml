@@ -4,6 +4,7 @@ version: "3"
 
 includes:
   kubernetes: .taskfiles/kubernetes
+  docker: .taskfiles/docker
 
 tasks:
   default:

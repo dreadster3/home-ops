@@ -1,0 +1,13 @@
+---
+version: "3"
+
+tasks:
+  validate:
+    desc: Validate docker-compose files
+    cmds:
+      - |
+        set -e
+        find . -name 'compose.yaml' -o -name 'compose.yml' -o -name 'docker-compose.yaml' -o -name 'docker-compose.yml' | while read -r file; do
+          echo "Validating $file"
+          docker compose -f "$file" config --quiet
+        done
