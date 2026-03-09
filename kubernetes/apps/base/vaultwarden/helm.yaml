@@ -42,9 +42,6 @@ spec:
               WEB_VAULT_ENABLED: true
               ORG_GROUPS_ENABLED: true
               ORG_EVENTS_ENABLED: true
-              WEBSOCKET_ENABLED: "true"
-              WEBSOCKET_ADDRESS: 0.0.0.0
-              WEBSOCKET_PORT: 3012
               SMTP_HOST: smtp.gmail.com
               SMTP_SECURITY: starttls
               SMTP_PORT: 587
@@ -72,9 +69,6 @@ spec:
               - containerPort: 80
                 name: http
                 protocol: TCP
-              - containerPort: 3012
-                name: websocket
-                protocol: TCP
         pod:
           securityContext:
             runAsUser: 1000
@@ -94,10 +88,6 @@ spec:
           http:
             port: 80
             targetPort: http
-          websocket:
-            enabled: true
-            port: 3012
-            targetPort: websocket
 
     ingress:
       # -- Enable and configure ingress settings for the chart under this key.
@@ -113,16 +103,6 @@ spec:
                 service:
                   identifier: main
                   port: http
-              - path: /notifications/hub/negotiate
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-              - path: /notifications/hub
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: websocket
         tls:
           - hosts:
               - *domain
