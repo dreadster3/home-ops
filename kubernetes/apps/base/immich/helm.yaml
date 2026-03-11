@@ -242,6 +242,13 @@ spec:
       library:
         enabled: true
         existingClaim: library
+        advancedMounts:
+          api:
+            main:
+              - path: /data
+          microservices:
+            main:
+              - path: /data
 
       external-library:
         type: nfs
