@@ -236,17 +236,8 @@ spec:
 
     persistence:
       library:
-        type: persistentVolumeClaim
-        accessMode: ReadWriteMany
-        storageClass: nfs
-        size: 4Ti
-        advancedMounts:
-          api:
-            main:
-              - path: /data
-          microservices:
-            main:
-              - path: /data
+        enabled: true
+        existingClaim: library
 
       external-library:
         type: nfs
