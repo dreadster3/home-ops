@@ -39,6 +39,8 @@ spec:
 
     controllers:
       api:
+        type: deployment
+        strategy: RollingUpdate
         replicas: 2
         containers:
           main:
@@ -102,6 +104,8 @@ spec:
             fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
       microservices:
+        type: deployment
+        strategy: RollingUpdate
         replicas: 3
         containers:
           main:
@@ -120,6 +124,8 @@ spec:
             securityContext: *securityContext
         pod: *pod
       machine-learning:
+        type: deployment
+        strategy: RollingUpdate
         replicas: 2
         containers:
           main:
