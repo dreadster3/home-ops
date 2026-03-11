@@ -212,7 +212,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: api
+                  identifier: main
                   port: http
         tls:
           - hosts:
