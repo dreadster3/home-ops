@@ -42,6 +42,8 @@ spec:
         type: deployment
         strategy: RollingUpdate
         replicas: 2
+        labels:
+          nfsMount: "true"
         containers:
           main:
             image: &image
@@ -107,6 +109,8 @@ spec:
         type: deployment
         strategy: RollingUpdate
         replicas: 3
+        labels:
+          nfsMount: "true"
         containers:
           main:
             image: *image
