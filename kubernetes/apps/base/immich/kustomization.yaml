@@ -22,5 +22,4 @@ resources:
   - network.yaml
   - secrets.yaml
   - helm.yaml
-  - hpa.yaml
   - service.yaml

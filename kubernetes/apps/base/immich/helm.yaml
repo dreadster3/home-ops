@@ -25,86 +25,241 @@ spec:
       retries: 3
   chart:
     spec:
-      chart: immich
-      version: 0.*
+      chart: app-template
+      version: 4.6.x
       interval: 24h
       sourceRef:
         kind: HelmRepository
-        name: immich
+        name: bjw-s
+        namespace: flux-system
   values:
     defaultPodOptions:
       annotations:
         reloader.stakater.com/auto: "true"
 
     controllers:
-      main:
+      api:
+        replicas: 2
         containers:
           main:
-            image:
-              tag: v2.5.6
+            image: &image
+              repository: ghcr.io/immich-app/immich-server
+              tag: &tag v2.5.6
             env:
+              IMMICH_WORKERS_INCLUDE: api
+              TZ: ${TIMEZONE}
               DB_DATABASE_NAME: immich
               DB_HOSTNAME: immich-cluster-rw
+              IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning
+              IMMICH_TELEMETRY_INCLUDE: all
+              IMMICH_LOG_LEVEL: log
             envFrom:
               - secretRef:
                   name: immich-secret-env
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/server/ping
+                    port: http
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/server/ping
+                    port: http
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 30
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            ports:
+              - name: http
+                containerPort: 2283
+                protocol: TCP
+              - name: metrics-api
+                containerPort: 8081
+                protocol: TCP
+              - name: metrics-ms
+                containerPort: 8082
+                protocol: TCP
+        pod: &pod
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+      microservices:
+        replicas: 3
+        containers:
+          main:
+            image: *image
+            env:
+              IMMICH_WORKERS_EXCLUDE: api
+              TZ: ${TIMEZONE}
+              DB_DATABASE_NAME: immich
+              DB_HOSTNAME: immich-cluster-rw
+              IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning
+              IMMICH_TELEMETRY_INCLUDE: all
+              IMMICH_LOG_LEVEL: log
+            envFrom:
+              - secretRef:
+                  name: immich-secret-env
+            securityContext: *securityContext
+        pod: *pod
+      machine-learning:
+        replicas: 2
+        containers:
+          main:
+            image:
+              repository: ghcr.io/immich-app/immich-machine-learning
+              tag: *tag
+            env:
+              TRANSFORMERS_CACHE: /cache
+              MPLCONFIGDIR: /cache/matplotlib
+              HF_XET_CACHE: /cache/huggingface-xet
+              TZ: ${TIMEZONE}
+              DB_DATABASE_NAME: immich
+              DB_HOSTNAME: immich-cluster-rw
+              IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning
+              IMMICH_LOG_LEVEL: log
+            envFrom:
+              - secretRef:
+                  name: immich-secret-env
+            ports:
+              - name: http
+                containerPort: 3003
+                protocol: TCP
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: http
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: http
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 60
+            resources:
+              limits:
+                memory: 1760Mi
+              requests:
+                cpu: 205m
+                memory: 1760Mi
+            securityContext: *securityContext
+        pod: *pod
 
-    immich:
-      metrics:
+    service:
+      main:
+        controller: api
+        ports:
+          http:
+            port: 80
+            primary: true
+            targetPort: http
+            protocol: HTTP
+          metrics-api:
+            port: 8081
+            targetPort: metrics-api
+            protocol: HTTP
+          metrics-ms:
+            port: 8082
+            targetPort: metrics-ms
+            protocol: HTTP
+      machine-learning:
+        controller: machine-learning
+        ports:
+          http:
+            port: 80
+            targetPort: http
+            protocol: HTTP
+
+    ingress:
+      main:
         enabled: true
-      persistence:
-        library:
-          existingClaim: library
+        className: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+        hosts:
+          - host: &host immich.${INTERNAL_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: api
+                  port: http
+        tls:
+          - hosts:
+              - *host
+            secretName: immich-ingress-tls
 
-    server:
-      controllers:
-        main:
-          labels:
-            nfsMount: "true"
-          containers:
-            main:
-              resources:
-                requests:
-                  cpu: 100m
-                  memory: 2.5Gi
-                limits:
-                  memory: 2.5Gi
-      ingress:
-        main:
-          enabled: true
-          annotations:
-            cert-manager.io/cluster-issuer: letsencrypt
-          hosts:
-            - host: &host immich.${INTERNAL_DOMAIN}
-              paths:
-                - path: "/"
-                  service:
-                    identifier: main
-          tls:
-            - secretName: immich-ingress-tls
-              hosts:
-                - *host
-      persistence:
-        external-library:
-          enabled: true
-          type: nfs
-          server: 192.168.30.20
-          path: /mnt/main/Cluster/Production/ImmichExternalLibrary
+    servicemonitor:
+      api:
+        enabled: true
+        endpoints:
+          - port: metrics-api
+            scheme: http
+          - port: metrics-ms
+            scheme: http
 
-    machine-learning:
-      enabled: true
-      controllers:
-        main:
-          containers:
+    persistence:
+      library:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteMany
+        storageClass: nfs
+        size: 4Ti
+        advancedMounts:
+          api:
             main:
-              resources:
-                requests:
-                  cpu: 205m
-                  memory: 1760Mi
-                limits:
-                  memory: 1760Mi
-      persistence:
-        cache:
-          type: persistentVolumeClaim
-          accessMode: ReadWriteMany
-          storageClass: ceph-filesystem
+              - path: /data
+          microservices:
+            main:
+              - path: /data
+
+      external-library:
+        type: nfs
+        server: 192.168.30.20
+        path: /mnt/main/Cluster/Production/ImmichExternalLibrary
+        advancedMounts:
+          api:
+            main:
+              - path: /external-library
+          microservices:
+            main:
+              - path: /external-library
+
+      cache:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteMany
+        storageClass: ceph-filesystem
+        size: 10Gi
+        advancedMounts:
+          machine-learning:
+            main:
+              - path: /cache
