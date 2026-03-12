@@ -230,7 +230,7 @@ spec:
               - *host
             secretName: immich-ingress-tls
 
-    servicemonitor:
+    serviceMonitor:
       api:
         enabled: true
         endpoints:
