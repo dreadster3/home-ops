@@ -186,8 +186,9 @@ spec:
         pod: *pod
 
     service:
-      main:
+      api:
         controller: api
+        primary: true
         ports:
           http:
             port: 80
@@ -222,7 +223,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: main
+                  identifier: api
                   port: http
         tls:
           - hosts:
