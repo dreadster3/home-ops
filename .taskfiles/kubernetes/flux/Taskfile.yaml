@@ -19,7 +19,11 @@ tasks:
 
   diff:
     desc: Output the diff of the current changes
-    cmd: flux-local diff ks
+    cmds:
+      - flux-local diff ks --sources flux-system --path {{.PATH}}
+      - flux-local diff hr --sources flux-system --path {{.PATH}}
+    vars:
+      PATH: "kubernetes/clusters/production"
     preconditions:
       - sh: which flux-local
         msg: flux-local is not installed
@@ -28,7 +32,10 @@ tasks:
 
   test:
     desc: Verify that resources are valid
-    cmd: flux-local test --all-namespaces --enable-helm {{if .CLI_VERBOSE}}--verbose{{end}}
+    cmds:
+      - flux-local test --all-namespaces --path {{.PATH}} --enable-helm {{if .CLI_VERBOSE}}--verbose{{end}}
+    vars:
+      PATH: "kubernetes/clusters/production"
     preconditions:
       - sh: which flux-local
         msg: flux-local is not installed
