@@ -233,6 +233,8 @@ spec:
     serviceMonitor:
       api:
         enabled: true
+        service:
+          identifier: api
         endpoints:
           - port: metrics-api
             scheme: http
