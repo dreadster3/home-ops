@@ -157,7 +157,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": cnpg-system
+            io.kubernetes.pod.namespace: cnpg-system
       toPorts:
         - ports:
             - port: postgresql
