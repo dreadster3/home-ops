@@ -65,7 +65,8 @@ spec:
               protocol: TCP
     - toFQDNs:
         - matchPattern: "*.${EXTERNAL_DOMAIN}"
-        - matchName: "uptime.kuma.pet"
+        - matchName: uptime.kuma.pet
+        - matchName: data.iana.org
       toPorts:
         - ports:
             - port: "443"
@@ -74,8 +75,8 @@ spec:
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: immich
-            app.kubernetes.io/instance: immich
-            app.kubernetes.io/name: server
+            app.kubernetes.io/name: immich
+            app.kubernetes.io/controller: api
       toPorts:
         - ports:
             - port: "2283"
@@ -83,8 +84,8 @@ spec:
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: immich
-            app.kubernetes.io/instance: immich
-            app.kubernetes.io/name: machine-learning
+            app.kubernetes.io/name: immich
+            app.kubernetes.io/controller: machine-learning
       toPorts:
         - ports:
             - port: "3003"
