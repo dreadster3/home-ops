@@ -31,10 +31,10 @@ spec:
         enabled: true
       resources:
         requests:
-          cpu: 90m
-          memory: 2Gi
+          cpu: 120m
+          memory: &memory 1700Mi
         limits:
-          memory: 2Gi
+          memory: *memory
       extraEnv:
         - name: NODE_NAME
           valueFrom:
