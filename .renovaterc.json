@@ -17,7 +17,7 @@
     "local>dreadster3/home-ops//.renovate/customManagers.json"
   ],
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
-  "ignorePaths": ["**/*.enc.*", "**/.archive/**", "**/talos/**"],
+  "ignorePaths": ["**/*.enc.*", "**/.archive/**", "**/talos/**", "**/*.env"],
   "flux": {
     "managerFilePatterns": ["/\\.yaml(?:\\.j2)?$/"]
   },
