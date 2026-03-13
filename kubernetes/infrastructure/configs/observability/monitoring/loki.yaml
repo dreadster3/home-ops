@@ -59,9 +59,9 @@ spec:
       resources:
         requests:
           cpu: 25m
-          memory: 800Mi
+          memory: &memory 650Mi
         limits:
-          memory: 800Mi
+          memory: *memory
 
     read:
       replicas: 2
@@ -160,10 +160,10 @@ spec:
       push: false
       resources:
         requests:
-          cpu: 10m
-          memory: 100Mi
+          cpu: 5m
+          memory: &memory 60Mi
         limits:
-          memory: 100Mi
+          memory: *memory
       extraEnv:
         - name: NODE_NAME
           valueFrom:
