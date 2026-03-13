@@ -84,20 +84,23 @@ spec:
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 30
-            securityContext: &securityContext
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
             ports:
               - name: http
                 containerPort: 2283
                 protocol: TCP
-              - name: metrics-api
+              - name: metrics
                 containerPort: 8081
                 protocol: TCP
-              - name: metrics-ms
-                containerPort: 8082
-                protocol: TCP
+            resources:
+              limits:
+                memory: &apimemory 600Mi
+              requests:
+                cpu: 85m
+                memory: *apimemory
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
         pod: &pod
           securityContext:
             runAsNonRoot: true
@@ -125,6 +128,16 @@ spec:
             envFrom:
               - secretRef:
                   name: immich-secret-env
+            resources:
+              limits:
+                memory: &msmemory 1625Mi
+              requests:
+                cpu: 50m
+                memory: *msmemory
+            ports:
+              - name: metrics
+                containerPort: 8082
+                protocol: TCP
             securityContext: *securityContext
         pod: *pod
       machine-learning:
@@ -178,10 +191,10 @@ spec:
                   failureThreshold: 60
             resources:
               limits:
-                memory: 1760Mi
+                memory: &mlmemory 2200Mi
               requests:
-                cpu: 205m
-                memory: 1760Mi
+                cpu: 1200m
+                memory: *mlmemory
             securityContext: *securityContext
         pod: *pod
 
@@ -195,13 +208,16 @@ spec:
             primary: true
             targetPort: http
             protocol: HTTP
-          metrics-api:
+          metrics:
             port: 8081
-            targetPort: metrics-api
+            targetPort: metrics
             protocol: HTTP
-          metrics-ms:
+      microservices:
+        controller: microservices
+        ports:
+          metrics:
             port: 8082
-            targetPort: metrics-ms
+            targetPort: metrics
             protocol: HTTP
       machine-learning:
         controller: machine-learning
@@ -236,9 +252,14 @@ spec:
         service:
           identifier: api
         endpoints:
-          - port: metrics-api
+          - port: metrics
             scheme: http
-          - port: metrics-ms
+      microservices:
+        enabled: true
+        service:
+          identifier: microservices
+        endpoints:
+          - port: metrics
             scheme: http
 
     persistence:
