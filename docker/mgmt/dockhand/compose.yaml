@@ -33,7 +33,7 @@ services:
       - no-new-privileges:true
   dockhand:
     container_name: dockhand
-    image: docker.io/fnsys/dockhand:v1.0.20@sha256:99f05818ef535cbbb59e53e5efd0687dac2c5fa118f673085f0441ba0d027563
+    image: docker.io/fnsys/dockhand:v1.0.21@sha256:34747d8a8ed505c8991163d8f573339ae5e0a424bce1271600c45c233d845133
     restart: unless-stopped
     depends_on:
       - socket-proxy
