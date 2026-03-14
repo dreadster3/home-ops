@@ -5,10 +5,10 @@
       "description": "Auto-merge GitHub Actions",
       "matchManagers": ["github-actions"],
       "automerge": true,
+      "ignoreTests": true,
       "automergeType": "branch",
       "matchUpdateTypes": ["minor", "patch", "digest"],
-      "minimumReleaseAge": "3 days",
-      "ignoreTests": true
+      "minimumReleaseAge": "3 days"
     }
   ]
 }

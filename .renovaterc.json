@@ -18,6 +18,9 @@
   ],
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "ignorePaths": ["**/*.enc.*", "**/.archive/**", "**/talos/**", "**/*.env"],
+  "docker-compose": {
+    "managerFilePatterns": ["/(^|/)(?:docker-)?compose[^/]*\\.ya?ml$/"]
+  },
   "flux": {
     "managerFilePatterns": ["/\\.yaml(?:\\.j2)?$/"]
   },
