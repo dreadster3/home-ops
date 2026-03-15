@@ -166,6 +166,14 @@ spec:
         - ports:
             - port: http
               protocol: TCP
+  # Allow immich to access github.com
+  egress:
+    - toFQDNs:
+        - matchName: api.github.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -187,6 +195,14 @@ spec:
       toPorts:
         - ports:
             - port: metrics
+              protocol: TCP
+  egress:
+    # Allow immich to access github.com
+    - toFQDNs:
+        - matchName: api.github.com
+      toPorts:
+        - ports:
+            - port: "443"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
