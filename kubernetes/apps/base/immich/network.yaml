@@ -153,9 +153,7 @@ spec:
             app.kubernetes.io/name: alloy
       toPorts:
         - ports:
-            - port: metrics-api
-              protocol: TCP
-            - port: metrics-ms
+            - port: metrics
               protocol: TCP
 
     # Uptime to immich
@@ -167,6 +165,28 @@ spec:
       toPorts:
         - ports:
             - port: http
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-microservices
+  namespace: immich
+spec:
+  description: "Allow traffic from and to immich microservices"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: immich
+      app.kubernetes.io/controller: microservices
+  ingress:
+    # Alloy to immich
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: metrics
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
