@@ -43,6 +43,13 @@ spec:
     nfs:
       server: 192.168.30.20
       path: /mnt/main/Cluster/Production/Volumes
+      mountOptions:
+        - nfsvers=4.1
+        - rsize=131072
+        - wsize=131072
+        - noac
+        - timeo=600
+        - retrans=2
 
     storageClass:
       name: nfs
