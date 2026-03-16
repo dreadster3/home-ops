@@ -15,9 +15,9 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 100Mi
+        memory: &memory 125Mi
       limits:
-        memory: 100Mi
+        memory: *memory
   podSecurityContext:
     runAsUser: 1000
     fsGroup: 1000
@@ -35,9 +35,9 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 100Mi
+        memory: &memory 15Mi
       limits:
-        memory: 100Mi
+        memory: *memory
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -70,9 +70,9 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 100Mi
+        memory: &memory 20Mi
       limits:
-        memory: 100Mi
+        memory: *memory
   kubernetesConfig:
     image: quay.io/opstree/redis-sentinel:v8.4.2
     imagePullPolicy: IfNotPresent
@@ -82,6 +82,6 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 100Mi
+        memory: &memory 20Mi
       limits:
-        memory: 100Mi
+        memory: *memory

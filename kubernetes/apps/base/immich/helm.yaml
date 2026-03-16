@@ -93,9 +93,9 @@ spec:
                 protocol: TCP
             resources:
               limits:
-                memory: &apimemory 600Mi
+                memory: &apimemory 750Mi
               requests:
-                cpu: 85m
+                cpu: 155m
                 memory: *apimemory
             securityContext: &securityContext
               allowPrivilegeEscalation: false
@@ -111,7 +111,7 @@ spec:
       microservices:
         type: deployment
         strategy: RollingUpdate
-        replicas: 3
+        replicas: 2
         labels:
           nfsMount: "true"
         containers:
@@ -130,9 +130,9 @@ spec:
                   name: immich-secret-env
             resources:
               limits:
-                memory: &msmemory 1625Mi
+                memory: &msmemory 2.5Gi
               requests:
-                cpu: 50m
+                cpu: 495m
                 memory: *msmemory
             ports:
               - name: metrics
@@ -191,9 +191,9 @@ spec:
                   failureThreshold: 60
             resources:
               limits:
-                memory: &mlmemory 2200Mi
+                memory: &mlmemory 2.5Gi
               requests:
-                cpu: 1200m
+                cpu: 2000m
                 memory: *mlmemory
             securityContext: *securityContext
         pod: *pod
