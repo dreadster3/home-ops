@@ -43,6 +43,8 @@
           # Dev shells
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
+              # Formatter for alloy config file
+              grafana-alloy
               go-task
               fluxcd
               fluxcd-operator
