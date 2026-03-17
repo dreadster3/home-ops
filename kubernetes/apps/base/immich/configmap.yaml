@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: immich-configmap
+data:
+  TZ: ${TIMEZONE}
+  IMMICH_LOG_FORMAT: json
+  IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning
+  IMMICH_TELEMETRY_INCLUDE: all
+  IMMICH_LOG_LEVEL: log
+  DB_DATABASE_NAME: immich
+  DB_HOSTNAME: immich-cluster-rw
