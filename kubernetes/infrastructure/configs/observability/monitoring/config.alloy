@@ -198,6 +198,10 @@ discovery.relabel "loki_pods" {
 
 // Read the log files
 loki.source.kubernetes "pods" {
+	clustering {
+		enabled = true
+	}
+
     targets    = discovery.relabel.loki_pods.output
     forward_to = [loki.process.canary_pods.receiver]
 }
