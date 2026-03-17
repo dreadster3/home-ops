@@ -51,15 +51,11 @@ spec:
               tag: &tag v2.5.6
             env:
               IMMICH_WORKERS_INCLUDE: api
-              TZ: ${TIMEZONE}
-              DB_DATABASE_NAME: immich
-              DB_HOSTNAME: immich-cluster-rw
-              IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning
-              IMMICH_TELEMETRY_INCLUDE: all
-              IMMICH_LOG_LEVEL: log
             envFrom:
               - secretRef:
                   name: immich-secret-env
+              - configMapRef:
+                  name: immich-configmap
             probes:
               liveness: &probes
                 enabled: true
@@ -119,15 +115,11 @@ spec:
             image: *image
             env:
               IMMICH_WORKERS_EXCLUDE: api
-              TZ: ${TIMEZONE}
-              DB_DATABASE_NAME: immich
-              DB_HOSTNAME: immich-cluster-rw
-              IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning
-              IMMICH_TELEMETRY_INCLUDE: all
-              IMMICH_LOG_LEVEL: log
             envFrom:
               - secretRef:
                   name: immich-secret-env
+              - configMapRef:
+                  name: immich-configmap
             resources:
               limits:
                 memory: &msmemory 2.5Gi
@@ -153,14 +145,11 @@ spec:
               TRANSFORMERS_CACHE: /cache
               MPLCONFIGDIR: /cache/matplotlib
               HF_XET_CACHE: /cache/huggingface-xet
-              TZ: ${TIMEZONE}
-              DB_DATABASE_NAME: immich
-              DB_HOSTNAME: immich-cluster-rw
-              IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning
-              IMMICH_LOG_LEVEL: log
             envFrom:
               - secretRef:
                   name: immich-secret-env
+              - configMapRef:
+                  name: immich-configmap
             ports:
               - name: http
                 containerPort: 3003
