@@ -1,0 +1,33 @@
+configs:
+  settings.yml:
+    content: |
+      NUT_SERVERS:
+        - HOST: pve30.${INTERNAL_DOMAIN}
+          PORT: 3493
+          USERNAME: ${NUT_USERNAME}
+          PASSWORD: ${NUT_PASSWORD}
+services:
+  peanut:
+    image: brandawg93/peanut:5.22.0
+    container_name: peanut
+    restart: unless-stopped
+    environment:
+      - WEB_PORT=8080
+    configs:
+      - source: settings.yml
+        target: /config/settings.yml
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.peanut.rule=Host(`peanut.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.peanut.entrypoints=websecure"
+      - "traefik.http.routers.peanut.tls.certresolver=letsencrypt"
+      - "traefik.http.services.peanut.loadbalancer.server.port=8080"
+      - "traefik.http.services.peanut.loadbalancer.server.scheme=http"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
