@@ -18,6 +18,8 @@ services:
     configs:
       - source: settings.yaml
         target: /config/settings.yaml
+    security_opt:
+      - no-new-privileges:true
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.speedtracker.rule=Host(`peanut.${INTERNAL_DOMAIN}`)"
