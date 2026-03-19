@@ -385,6 +385,26 @@ prometheus.scrape "services" {
 	forward_to      = [prometheus.remote_write.prometheus.receiver]
 }
 
+prometheus.scrape "peanut" {
+	clustering {
+		enabled = true
+	}
+
+	targets = [
+		{
+			"__address__" = "peanut.${INTERNAL_DOMAIN}",
+			"service"     = "peanut",
+		},
+	]
+
+	scrape_interval = "15s"
+	scrape_timeout  = "5s"
+	metrics_path    = "/api/v1/metrics"
+	job_name        = "peanut"
+	scheme          = "https"
+	forward_to      = [prometheus.remote_write.prometheus.receiver]
+}
+
 prometheus.exporter.self "alloy" { }
 
 prometheus.scrape "alloy" {

@@ -21,3 +21,13 @@ configMapGenerator:
         app.kubernetes.io/component: config
     files:
       - config.alloy
+  - name: grafana-dashboards
+    namespace: monitoring
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana/dashboard: "true"
+      annotations:
+        grafana/folder: Other
+    files:
+      - dashboards/peanut.json
