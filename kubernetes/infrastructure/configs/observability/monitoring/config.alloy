@@ -405,6 +405,26 @@ prometheus.scrape "peanut" {
 	forward_to      = [prometheus.remote_write.prometheus.receiver]
 }
 
+prometheus.scrape "speedtracker" {
+	clustering {
+		enabled = true
+	}
+
+	targets = [
+		{
+			"__address__" = "speedtracker.${INTERNAL_DOMAIN}",
+			"service"     = "speedtracker",
+		},
+	]
+
+	scrape_interval = "15s"
+	scrape_timeout  = "5s"
+	metrics_path    = "/prometheus"
+	job_name        = "speedtracker"
+	scheme          = "https"
+	forward_to      = [prometheus.remote_write.prometheus.receiver]
+}
+
 prometheus.exporter.self "alloy" { }
 
 prometheus.scrape "alloy" {
