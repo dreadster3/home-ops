@@ -10,7 +10,7 @@ spec:
     disable: true
   cephVersion:
     allowUnsupported: false
-    image: quay.io/ceph/ceph:v19.2.3
+    image: quay.io/ceph/ceph:v20.2.0
   healthCheck:
     daemonHealth:
       mon:
