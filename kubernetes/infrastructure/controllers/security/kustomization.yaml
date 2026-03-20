@@ -9,3 +9,4 @@ resources:
   - cert-manager.yaml
   - trust-manager.yaml
   - eso.yaml
+  - oidc.yaml
