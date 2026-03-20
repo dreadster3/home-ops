@@ -1,0 +1,35 @@
+services:
+  duplicati:
+    container_name: duplicati
+    image: duplicati/duplicati:2.2.0.106
+    restart: unless-stopped
+    environment:
+      DUPLICATI__WEBSERVICE_ALLOWED_HOSTNAMES: duplicati.${INTERNAL_DOMAIN}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.duplicati.rule=Host(`duplicati.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.duplicati.entrypoints=websecure"
+      - "traefik.http.routers.duplicati.tls.certresolver=letsencrypt"
+      - "traefik.http.services.duplicati.loadbalancer.server.port=8200"
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - data:/data
+      - omada-controller_data:/backups/omada-controller:ro
+    networks:
+      - proxy
+
+volumes:
+  data:
+    driver: local
+  omada-controller_data:
+    external: true
+
+networks:
+  proxy:
+    external: true

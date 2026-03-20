@@ -32,3 +32,8 @@ name: peanut
 working_dir: docker/mgmt/peanut
 compose_files:
   - compose.yaml
+---
+name: duplicati
+working_dir: docker/mgmt/duplicati
+compose_files:
+  - compose.yaml
