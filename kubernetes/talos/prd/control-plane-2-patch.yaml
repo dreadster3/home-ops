@@ -10,6 +10,8 @@ cluster:
       oidc-client-id: kubernetes
       oidc-username-claim: preferred_username
       oidc-groups-claim: groups
+      oidc-groups-prefix: "oidc:"
+      oidc-username-prefix: "oidc:"
   controllerManager:
     extraArgs:
       bind-address: 0.0.0.0

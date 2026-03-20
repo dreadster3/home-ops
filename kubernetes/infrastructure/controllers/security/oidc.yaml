@@ -9,5 +9,5 @@ roleRef:
   name: cluster-admin
 subjects:
   - kind: Group
-    name: AuthentikAdmins # must match exactly what's in the token
+    name: oidc:AuthentikAdmins # must match exactly what's in the token
     apiGroup: rbac.authorization.k8s.io
