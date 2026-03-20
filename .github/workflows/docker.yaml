@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Install Go Task
-        uses: go-task/setup-task@70f2430ad412f838533de8c0515c749ffb2b8bd3 # v1
+        uses: go-task/setup-task@3be4020d41929789a01026e0e427a4321ce0ad44 # v2
         with:
           version: "3.x"
 
