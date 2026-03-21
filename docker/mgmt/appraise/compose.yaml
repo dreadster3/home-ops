@@ -1,0 +1,40 @@
+services:
+  appraise:
+    container_name: appraise
+    image: caronc/apprise:2.2.0.106
+    restart: unless-stopped
+    environment:
+      APPRISE_STATEFUL_MODE: simple
+      APPRISE_WORKER_COUNT: 1
+      APPRISE_ADMIN: y
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.appraise.rule=Host(`appraise.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.appraise.entrypoints=websecure"
+      - "traefik.http.routers.appraise.tls.certresolver=letsencrypt"
+      - "traefik.http.services.appraise.loadbalancer.server.port=8000"
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - config:/config
+      - plugins:/plugin
+      - attachments:/attach
+    networks:
+      - proxy
+
+volumes:
+  config:
+    driver: local
+  plugins:
+    driver: local
+  attachments:
+    driver: local
+
+networks:
+  proxy:
+    external: true
