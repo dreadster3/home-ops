@@ -1,0 +1,34 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure
+  namespace: flux-system
+spec:
+  interval: 1m
+  retryInterval: 30s
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./kubernetes/infrastructure/overlays/dev
+  prune: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substitute:
+      TIMEZONE: Europe/Lisbon
+      INTERNAL_DOMAIN: internal.localhost
+      EXTERNAL_DOMAIN: localhost
+  patches:
+    - target:
+        kind: Namespace
+        name: cilium-system
+      patch: |
+        - op: add
+          path: /metadata/labels
+          value:
+            pod-security.kubernetes.io/enforce: privileged
+            pod-security.kubernetes.io/audit: privileged
+            pod-security.kubernetes.io/warn: privileged
