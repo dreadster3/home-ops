@@ -13,7 +13,7 @@ spec:
       kind: HelmRelease
       name: *app
       namespace: *namespace
-  path: ./kubernetes/infrastructure/base/databases/redis-operator/app
+  path: ./kubernetes/infrastructure/base/databases/cnpg/app
   prune: true
   sourceRef:
     kind: GitRepository
