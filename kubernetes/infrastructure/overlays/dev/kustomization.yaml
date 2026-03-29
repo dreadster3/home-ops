@@ -7,4 +7,5 @@ labels:
       app.kubernetes.io/environment: dev
 
 resources:
+  - ../../base/security
   - ../../base/databases
