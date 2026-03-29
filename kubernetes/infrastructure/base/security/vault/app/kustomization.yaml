@@ -1,11 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: vault
+
 labels:
   - pairs:
-      app.kubernetes.io/subcategory: security
+      app.kubernetes.io/module: vault
 
 resources:
-  - cert-manager
-  - external-secrets
-  - vault
+  - certificates.yaml
+  - helm.yaml
