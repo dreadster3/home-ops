@@ -40,14 +40,7 @@ tasks:
     cmds:
       - minikube start --cni cilium --cpus no-limit --memory no-limit --nodes {{.NODES}}
       - minikube addons enable metrics-server
-
-  dev:cluster:bootstrap:
-    desc: Bootstrap a development cluster
-    cmds:
-      - flux install
-      - task kubernetes:build PATH=kubernetes/infrastructure/controllers/security | kubectl apply -f -
-      - task kubernetes:build PATH=kubernetes/infrastructure/controllers/observability | kubectl apply -f -
-      - task kubernetes:build PATH=kubernetes/infrastructure/controllers/databases | kubectl apply -f -
+      - minikube addons enable storage-provisioner-rancher
 
 includes:
   eso: ./eso
