@@ -9,3 +9,4 @@ labels:
 resources:
   - ../../base/security
   - ../../base/databases
+  - ../../base/observability
