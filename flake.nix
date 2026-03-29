@@ -49,7 +49,14 @@
               fluxcd
               fluxcd-operator
               yq-go
+              minikube
+              vault
+              awscli2
             ];
+
+            shellHook = ''
+              export AWS_PROFILE=rook
+            '';
           };
         };
       flake = {
