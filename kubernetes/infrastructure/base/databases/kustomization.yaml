@@ -7,3 +7,4 @@ labels:
 
 resources:
   - redis-operator
+  - cnpg
