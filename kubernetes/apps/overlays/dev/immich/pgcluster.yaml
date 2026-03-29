@@ -7,13 +7,6 @@ metadata:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18.3
-  storage:
-    storageClass: standard
-
-  postgresql:
-    shared_preload_libraries:
-      - "vchord.so"
-
   bootstrap:
     recovery: null
     initdb:
