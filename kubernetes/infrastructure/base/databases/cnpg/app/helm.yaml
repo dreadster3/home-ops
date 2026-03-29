@@ -34,8 +34,6 @@ spec:
         kind: HelmRepository
         name: cnpg
   dependsOn:
-    - name: cert-manager
-      namespace: cert-manager
     - name: prometheus-operator
       namespace: monitoring
   values:
@@ -76,9 +74,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: cnpg
-  dependsOn:
-    - name: cert-manager
-      namespace: cert-manager
   values:
     crds:
       create: true
