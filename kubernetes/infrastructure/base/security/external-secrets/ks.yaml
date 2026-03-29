@@ -1,0 +1,28 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app external-secrets
+  namespace: *app
+spec:
+  targetNamespace: *app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/module: *app
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: *app
+      namespace: *app
+  path: ./kubernetes/infrastructure/base/security/external-secrets/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  dependsOn:
+    - name: cert-manager
+      namespace: cert-manager
+    - name: prometheus-operator
+      namespace: monitoring
+  interval: 1h
+  timeout: 5m
