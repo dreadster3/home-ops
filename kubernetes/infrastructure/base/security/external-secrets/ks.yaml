@@ -20,8 +20,6 @@ spec:
     name: flux-system
     namespace: flux-system
   dependsOn:
-    - name: cert-manager
-      namespace: cert-manager
     - name: prometheus-operator
       namespace: monitoring
   interval: 1h
