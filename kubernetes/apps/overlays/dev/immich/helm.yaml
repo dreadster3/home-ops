@@ -1,0 +1,63 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: immich
+  namespace: immich
+  labels:
+    nfsMount: "true"
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    ingress:
+      main:
+        enabled: false
+
+    controllers:
+      api:
+        replicas: 1
+      microservices:
+        replicas: 1
+      machine-learning:
+        replicas: 1
+
+    persistence:
+      library:
+        enabled: true
+        existingClaim: library
+        advancedMounts:
+          api:
+            main:
+              - path: /data
+          microservices:
+            main:
+              - path: /data
+
+      external-library:
+        enabled: false
+
+      cache:
+        enabled: false
+
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          machine-learning:
+            main:
+              - path: /tmp
+                subPath: tmp

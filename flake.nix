@@ -51,7 +51,14 @@
               yq-go
               gitleaks
               pre-commit
+              minikube
+              vault
+              awscli2
             ];
+
+            shellHook = ''
+              export AWS_PROFILE=rook
+            '';
           };
         };
       flake = {

@@ -41,8 +41,6 @@ spec:
   dependsOn:
     - name: cert-manager
       namespace: cert-manager
-    - name: cilium
-      namespace: cilium-system
   chartRef:
     kind: HelmChart
     name: prometheus
