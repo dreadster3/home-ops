@@ -1,9 +1,0 @@
-apiVersion: redis.redis.opstreelabs.in/v1beta2
-kind: RedisReplication
-metadata:
-  name: immich-redis
-spec:
-  storage:
-    volumeClaimTemplate:
-      spec:
-        storageClassName: standard

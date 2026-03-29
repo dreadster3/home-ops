@@ -20,4 +20,3 @@ patches:
   - path: pgcluster.yaml
     target:
       kind: Cluster
-  - path: redis.yaml
