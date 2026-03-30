@@ -40,19 +40,13 @@ spec:
       volumeMounts:
         - name: vault-internal-tls
           mountPath: /var/run/config/vault-internal-tls
-        - name: cluster-bundle-ca
-          mountPath: /var/run/config/cluster-bundle-ca
       volumes:
         - name: vault-internal-tls
           secret:
             defaultMode: 420
             secretName: vault-internal-tls
-        - name: cluster-bundle-ca
-          configMap:
-            name: cluster-bundle-ca
-            defaultMode: 420
       extraEnvironmentVars:
-        VAULT_CACERT: /var/run/config/cluster-bundle-ca/ca-bundle.crt
+        VAULT_CACERT: /var/run/config/vault-internal-tls/ca.crt
       ha:
         enabled: true
         raft:
