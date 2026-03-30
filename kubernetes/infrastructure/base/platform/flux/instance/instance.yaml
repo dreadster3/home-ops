@@ -1,4 +1,12 @@
-instance:
+apiVersion: fluxcd.controlplane.io/v1
+kind: FluxInstance
+metadata:
+  name: flux
+  namespace: flux-system
+spec:
+  distribution:
+    version: "2.x"
+    registry: "ghcr.io/fluxcd"
   components:
     - source-controller
     - kustomize-controller
@@ -6,8 +14,11 @@ instance:
     - notification-controller
     - source-watcher
   cluster:
+    type: kubernetes
     size: small
     networkPolicy: true
+    multitenant: false
+    domain: "cluster.local"
   sync:
     interval: 1m
     kind: GitRepository
