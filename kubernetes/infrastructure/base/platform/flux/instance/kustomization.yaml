@@ -3,3 +3,10 @@ kind: Kustomization
 
 resources:
   - helm.yaml
+
+configMapGenerator:
+  - name: flux-instance-helm-values
+    options:
+      disableNameSuffixHash: true
+    files:
+      - values.yaml
