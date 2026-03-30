@@ -11,3 +11,12 @@ resources:
   - ../../base/databases
   - ../../base/observability
   - ../../base/platform
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /data/values\.yaml/instance/sync/path
+        value: kubernetes/clusters/dev
+    target:
+      kind: ConfigMap
+      name: flux-instance-helm-values
