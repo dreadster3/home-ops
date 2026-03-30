@@ -42,6 +42,11 @@ tasks:
       - minikube addons enable metrics-server
       - minikube addons enable storage-provisioner-rancher
 
+  dev:cluster:stop:
+    desc: Stop a development cluster
+    cmds:
+      - minikube delete
+
 includes:
   eso: ./eso
   flux: ./flux
