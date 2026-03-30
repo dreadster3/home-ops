@@ -1,0 +1,18 @@
+keys:
+  - &primary age1usemhw8v2nnr5nuxddrc7gsy3525hhv0na4hk2ur7tjara5cp90s7cpeen
+
+creation_rules:
+  - path_regex: ^.+\.sops\.ya?ml$
+    encrypted_regex: ^(data|stringData|crt|key|token|secretboxencryptionsecret|bootstraptoken|secret|id)$
+    key_groups:
+      - age:
+          - *primary
+  - path_regex: ^.*\.env$
+    key_groups:
+      - age:
+          - *primary
+  - path_regex: ^docker/mgmt/home-assistant/config/integrations/openid.yaml$
+    encrypted_regex: ^(client_id|client_secret|configure_url)$
+    key_groups:
+      - age:
+          - *primary
