@@ -8,4 +8,3 @@ labels:
 resources:
   - cert-manager
   - external-secrets
-  - vault
