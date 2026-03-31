@@ -8,6 +8,6 @@ spec:
       auth:
         secretRef:
           dopplerToken:
-            name: doppler-token
+            name: doppler-secret
             key: token
             namespace: external-secrets
