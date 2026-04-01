@@ -21,7 +21,6 @@ resources:
   - redis.yaml
   - network.yaml
   - external-secrets.yaml
-  - push-secrets.yaml
   - configmap.yaml
   - helm.yaml
   - service.yaml
