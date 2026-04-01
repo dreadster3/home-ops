@@ -18,7 +18,6 @@ patches:
   - target:
       kind: Secret
       name: secrets
-      namespace: flux-system
     patch: |-
       - op: replace
         path: /stringData/INTERNAL_DOMAIN
