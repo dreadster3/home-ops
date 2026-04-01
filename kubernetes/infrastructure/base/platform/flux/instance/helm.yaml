@@ -1,0 +1,78 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: flux-instance
+spec:
+  interval: 15m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 0.43.0
+  url: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: flux-instance
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: flux-instance
+  interval: 1h
+  values:
+    instance:
+      distribution:
+        version: "2.x"
+        registry: "ghcr.io/fluxcd"
+      components:
+        - source-controller
+        - kustomize-controller
+        - helm-controller
+        - notification-controller
+        - source-watcher
+      cluster:
+        type: kubernetes
+        size: small
+        networkPolicy: true
+        multitenant: false
+        domain: "cluster.local"
+      sync:
+        interval: 1m
+        kind: GitRepository
+        path: kubernetes/clusters/production
+        pullSecret: flux-system
+        ref: refs/heads/main
+        url: https://github.com/dreadster3/home-ops
+      kustomize:
+        patches:
+          - # Flux near OOM detection for Helm
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --feature-gates=OOMWatch=true
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --oom-watch-memory-threshold=95
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --oom-watch-interval=500ms
+            target:
+              kind: Deployment
+              name: helm-controller
+          - # Controller-level SOPS decryption
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --sops-age-secret=sops-age
+            target:
+              kind: Deployment
+              name: kustomize-controller
+          - # Watch configmaps and secrets attached to HelmReleases and Kustomizations
+            patch: |-
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --watch-configs-label-selector=owner!=helm
+            target:
+              kind: Deployment
+              name: (helm-controller|kustomize-controller)
