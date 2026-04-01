@@ -40,9 +40,9 @@ spec:
       sync:
         interval: 1m
         kind: GitRepository
-        path: kubernetes/clusters/production
+        path: kubernetes/clusters/dev
         pullSecret: flux-system
-        ref: refs/heads/main
+        ref: refs/heads/feature/gateway_api
         url: https://github.com/dreadster3/home-ops
       kustomize:
         patches:
