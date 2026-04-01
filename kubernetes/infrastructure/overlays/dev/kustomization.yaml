@@ -11,6 +11,7 @@ resources:
   - ../../base/databases
   - ../../base/observability
   - ../../base/platform
+  - ../../base/networking
   - platform
 
 patches:
