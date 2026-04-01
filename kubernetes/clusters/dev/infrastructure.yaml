@@ -80,11 +80,9 @@ spec:
             substituteFrom:
               - kind: ConfigMap
                 name: settings
-                namespace: flux-system
                 optional: false
               - kind: Secret
                 name: secrets
-                namespace: flux-system
                 optional: false
       target:
         group: kustomize.toolkit.fluxcd.io
