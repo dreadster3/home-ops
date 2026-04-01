@@ -20,7 +20,10 @@ spec:
     secretRef:
       name: sops-age
   postBuild:
-    substitute:
-      TIMEZONE: Europe/Lisbon
-      INTERNAL_DOMAIN: internal.localhost
-      EXTERNAL_DOMAIN: localhost
+    substituteFrom:
+      - kind: ConfigMap
+        name: settings
+        optional: false
+      - kind: Secret
+        name: secrets
+        optional: false

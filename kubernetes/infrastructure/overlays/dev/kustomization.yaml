@@ -11,3 +11,27 @@ resources:
   - ../../base/databases
   - ../../base/observability
   - ../../base/platform
+
+patches:
+  - target:
+      kind: HelmRelease
+      name: flux-instance
+      namespace: flux-system
+    patch: |-
+      - op: replace
+        path: /spec/values/instance/sync/path
+        value: kubernetes/clusters/dev
+      - op: replace
+        path: /spec/values/instance/sync/ref
+        value: refs/heads/feature/gateway_api
+  - target:
+      kind: Secret
+      name: secrets
+      namespace: flux-system
+    patch: |-
+      - op: replace
+        path: /stringData/INTERNAL_DOMAIN
+        value: internal.localhost
+      - op: replace
+        path: /stringData/EXTERNAL_DOMAIN
+        value: localhost
