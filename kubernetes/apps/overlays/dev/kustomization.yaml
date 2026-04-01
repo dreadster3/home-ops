@@ -4,6 +4,3 @@ labels:
   - pairs:
       app.kubernetes.io/category: apps
       app.kubernetes.io/environment: dev
-
-resources:
-  - immich
