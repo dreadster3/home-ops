@@ -1,0 +1,37 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "letsencrypt-internal-domain-tls"
+spec:
+  duration: 2160h
+  renewBefore: 720h
+  dnsNames:
+    - "${INTERNAL_DOMAIN}"
+    - "*.${INTERNAL_DOMAIN}"
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-production
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  secretName: "internal-domain-tls"
+  usages:
+    - digital signature
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "letsencrypt-external-domain-tls"
+spec:
+  duration: 2160h
+  renewBefore: 720h
+  dnsNames:
+    - "${EXTERNAL_DOMAIN}"
+    - "*.${EXTERNAL_DOMAIN}"
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-production
+  secretName: "external-domain-tls"
+  usages:
+    - digital signature
