@@ -4,3 +4,5 @@ kind: Kustomization
 resources:
   - doppler.yaml
   - doppler-token.sops.yaml
+  - infisical.yaml
+  - infisical-credentials.sops.yaml
