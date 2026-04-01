@@ -33,6 +33,39 @@ spec:
         url: https://github.com/dreadster3/home-ops
       kustomize:
         patches:
+          - # Add Kustomization defaults for all child Kustomizations
+            patch: |-
+              apiVersion: kustomize.toolkit.fluxcd.io/v1
+              kind: Kustomization
+              metadata:
+                name: _
+              spec:
+                deletionPolicy: WaitForTermination
+                patches:
+                  - patch: |-
+                      apiVersion: helm.toolkit.fluxcd.io/v2
+                      kind: HelmRelease
+                      metadata:
+                        name: _
+                      spec:
+                        install:
+                          crds: CreateReplace
+                        rollback:
+                          cleanupOnFail: true
+                        upgrade:
+                          cleanupOnFail: true
+                          crds: CreateReplace
+                          strategy:
+                            name: RemediateOnFailure
+                          remediation:
+                            remediateLastFailure: true
+                            retries: 2
+                    target:
+                      group: helm.toolkit.fluxcd.io
+                      kind: HelmRelease
+            target:
+              group: kustomize.toolkit.fluxcd.io
+              kind: Kustomization
           - # Flux near OOM detection for Helm
             patch: |
               - op: add
@@ -62,4 +95,21 @@ spec:
                 value: --watch-configs-label-selector=owner!=helm
             target:
               kind: Deployment
-              name: (helm-controller|kustomize-controller)
+          - # Add postBuild to all Kustomizations
+            patch: |-
+              apiVersion: kustomize.toolkit.fluxcd.io/v1
+              kind: Kustomization
+              metadata:
+                name: not-used
+              spec:
+                postBuild:
+                  substituteFrom:
+                    - kind: ConfigMap
+                      name: settings
+                      optional: false
+                    - kind: Secret
+                      name: secrets
+                      optional: false
+            target:
+              group: kustomize.toolkit.fluxcd.io
+              kind: Kustomization
