@@ -35,11 +35,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/module: *namespace
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      name: *app
-      namespace: *app
   path: ./kubernetes/infrastructure/base/security/external-secrets/store
   prune: true
   sourceRef:
