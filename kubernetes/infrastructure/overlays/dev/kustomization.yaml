@@ -12,3 +12,18 @@ resources:
   - ../../base/observability
   - ../../base/platform
   - platform
+
+patches:
+  - target:
+      kind: Secret
+      name: secrets
+      namespace: flux-system
+    patch: |-
+      - op: replace
+        path: /stringData/INTERNAL_DOMAIN
+        value: internal.localhost
+      - op: replace
+        path: /stringData/EXTERNAL_DOMAIN
+        value: localhost
+      - op: remove
+        path: /sops
