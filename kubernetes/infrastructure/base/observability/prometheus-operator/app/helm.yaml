@@ -27,12 +27,6 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1h
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    remediation:
-      retries: 3
   dependsOn:
     - name: cert-manager
       namespace: cert-manager
