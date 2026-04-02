@@ -24,10 +24,6 @@ spec:
         name: bjw-s
         namespace: flux-system
   values:
-    ingress:
-      main:
-        enabled: false
-
     controllers:
       api:
         replicas: 1
