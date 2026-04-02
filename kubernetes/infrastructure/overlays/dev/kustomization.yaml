@@ -28,8 +28,20 @@ patches:
       - op: remove
         path: /sops
   - target:
-      kind: Certificate
+      kind: Kustomization
+      name: cert-manager-issuers
     patch: |-
-      - op: replace
-        path: /spec/issuerRef/name
-        value: cluster-root
+      - op: add
+        path: /patches/-
+        value: |-
+          - patch: |-
+              apiVersion: cert-manager.io/v1
+              kind: ClusterIssuer
+              metadata:
+                name: letsencrypt-production
+              spec:
+                ca:
+                  secretName: cluster-intermediate-ca
+            target:
+              kind: ClusterIssuer
+              name: letsencrypt-production
