@@ -200,24 +200,18 @@ spec:
             targetPort: http
             protocol: HTTP
 
-    ingress:
+    route:
       main:
-        enabled: true
-        className: traefik
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt
-        hosts:
-          - host: &host immich.${INTERNAL_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: api
-                  port: http
-        tls:
-          - hosts:
-              - *host
-            secretName: immich-ingress-tls
+        hostnames:
+          - immich.${INTERNAL_DOMAIN}
+          - photos.${INTERNAL_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: networking
+        rules:
+          - backendRefs:
+              - identifier: api
+                port: http
 
     serviceMonitor:
       api:

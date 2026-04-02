@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - certificates.yaml
   - envoy.yaml
-  - external.yaml
   - internal.yaml
