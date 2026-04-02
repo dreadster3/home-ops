@@ -27,3 +27,9 @@ patches:
         value: localhost
       - op: remove
         path: /sops
+  - target:
+      kind: Certificate
+    patch: |-
+      - op: replace
+        path: /spec/issuerRef/name
+        value: cluster-root
