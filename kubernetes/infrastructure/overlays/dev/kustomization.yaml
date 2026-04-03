@@ -49,11 +49,21 @@ patches:
       apiVersion: kustomize.toolkit.fluxcd.io/v1
       kind: Kustomization
       metadata:
-        name: &app cilium
-        namespace: &namespace cilium-system
+        name: cilium
+        namespace: cilium-system
   - target:
       kind: Kustomization
       name: cilium-policies
     patch: |-
       - op: remove
         path: /spec/dependsOn
+  - target:
+      kind: Kustomization
+      name: external-dns
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: external-dns
+        namespace: external-dns
