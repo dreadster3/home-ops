@@ -48,7 +48,7 @@ tasks:
       CLUSTER_NAME: dev
     cmds:
       - helm install flux-operator oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator --namespace flux-system --create-namespace
-      - cat kubernetes/infrastructure/overlays/dev/platform/flux/instance/helm.yaml | yq ".spec.values" | helm install flux-instance oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance --namespace flux-system --create-namespace -f -
+      - kustomize build kubernetes/infrastructure/overlays/{{.CLUSTER_NAME}}/platform/flux/instance | yq "select(document_index == 0) | .spec.values" | helm install flux-instance oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance --namespace flux-system --create-namespace -f -
       - kubectl create secret generic -n flux-system flux-system
       - kubectl create secret generic -n flux-system secrets
       - kubectl create configmap -n flux-system settings
