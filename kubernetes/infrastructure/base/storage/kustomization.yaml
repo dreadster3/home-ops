@@ -3,8 +3,9 @@ kind: Kustomization
 
 labels:
   - pairs:
-      app.kubernetes.io/subcategory: observability
+      app.kubernetes.io/subcategory: storage
 
 resources:
-  - prometheus-operator
-  - metrics-server
+  - local-storage
+  - nfs-subdir
+  - rook
