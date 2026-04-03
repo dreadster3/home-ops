@@ -87,13 +87,3 @@ spec:
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
-    - target:
-        kind: Namespace
-        name: cilium-system
-      patch: |
-        - op: add
-          path: /metadata/labels
-          value:
-            pod-security.kubernetes.io/enforce: privileged
-            pod-security.kubernetes.io/audit: privileged
-            pod-security.kubernetes.io/warn: privileged
