@@ -14,4 +14,3 @@ resources:
   - network.yaml
   - secrets.yaml
   - helm.yaml
-  - old-ingress.yaml
