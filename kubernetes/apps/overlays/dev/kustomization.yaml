@@ -6,4 +6,5 @@ labels:
       app.kubernetes.io/environment: dev
 
 resources:
+  - authentik
   - immich
