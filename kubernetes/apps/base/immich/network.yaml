@@ -125,11 +125,11 @@ spec:
       app.kubernetes.io/name: immich
       app.kubernetes.io/controller: api
   ingress:
-    # Traefik to immich
+    # Envoy to immich
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik-system
-            app.kubernetes.io/name: traefik
+            io.kubernetes.pod.namespace: networking
+            app.kubernetes.io/name: envoy
       toPorts:
         - ports:
             - port: http
