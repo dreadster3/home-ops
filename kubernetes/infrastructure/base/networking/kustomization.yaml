@@ -6,6 +6,6 @@ labels:
       app.kubernetes.io/subcategory: networking
 
 resources:
-  - namespace.yaml
   - envoy-gateway
   - cilium
+  - external-dns
