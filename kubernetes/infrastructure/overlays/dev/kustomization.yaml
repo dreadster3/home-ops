@@ -13,3 +13,17 @@ resources:
   - ../../base/platform
   - networking
   - platform
+
+patches:
+  - target:
+      kind: Secret
+      name: secrets
+    patch: |-
+      - op: replace
+        path: /stringData/INTERNAL_DOMAIN
+        value: intra.localhost
+      - op: replace
+        path: /stringData/EXTERNAL_DOMAIN
+        value: localhost
+      - op: remove
+        path: /sops
