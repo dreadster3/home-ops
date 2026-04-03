@@ -10,8 +10,7 @@ resources:
   - ../../base/security
   - ../../base/databases
   - ../../base/observability
-  - ../../base/platform
-  - networking
+  - ../../base/networking
   - platform
 
 patches:
@@ -27,3 +26,17 @@ patches:
         value: localhost
       - op: remove
         path: /sops
+  - target:
+      kind: Kustomization
+      name: envoy-gateway-config
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/networking/envoy-gateway/config
+  - target:
+      kind: Kustomization
+      name: flux-instance
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/platform/flux/instance
