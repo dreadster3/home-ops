@@ -5,9 +5,6 @@ labels:
   - pairs:
       app.kubernetes.io/subcategory: networking
 
-components:
-  - ../../../components/substitute
-
 resources:
   - namespace.yaml
   - envoy-gateway
