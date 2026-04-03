@@ -51,3 +51,9 @@ patches:
       metadata:
         name: &app cilium
         namespace: &namespace cilium-system
+  - target:
+      kind: Kustomization
+      name: cilium-policies
+    patch: |-
+      - op: remove
+        path: /spec/dependsOn
