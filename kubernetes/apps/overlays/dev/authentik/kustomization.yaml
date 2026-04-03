@@ -14,3 +14,6 @@ patches:
   - path: helm.yaml
     target:
       kind: HelmRelease
+  - path: pgcluster.yaml
+    target:
+      kind: Cluster
