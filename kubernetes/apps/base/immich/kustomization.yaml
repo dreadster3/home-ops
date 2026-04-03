@@ -20,7 +20,7 @@ resources:
   - pgcluster.yaml
   - redis.yaml
   - network.yaml
-  - external-secrets.yaml
+  - secrets.yaml
   - configmap.yaml
   - helm.yaml
   - service.yaml
