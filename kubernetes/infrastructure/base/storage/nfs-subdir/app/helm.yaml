@@ -1,0 +1,46 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: nfs-subdir
+  namespace: nfs-subdir
+spec:
+  interval: 24h
+  url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nfs-subdir
+  namespace: nfs-subdir
+  labels:
+    nfsMount: "true"
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: nfs-subdir-external-provisioner
+      version: 4.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: nfs-subdir
+  values:
+    replicaCount: 1
+    labels:
+      nfsMount: "true"
+
+    nfs:
+      server: 192.168.30.20
+      path: /mnt/main/Cluster/Production/Volumes
+      mountOptions:
+        - vers=4.2
+        - rsize=1048576
+        - wsize=1048576
+        - noac
+        - timeo=600
+        - retrans=2
+
+    storageClass:
+      name: nfs
+      pathPattern: "$${.PVC.namespace}/$${.PVC.name}"
+      archiveOnDelete: true

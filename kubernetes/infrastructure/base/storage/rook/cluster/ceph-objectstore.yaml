@@ -1,0 +1,30 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStore
+metadata:
+  name: k8s-ceph-objectstore
+  namespace: rook-ceph
+spec:
+  metadataPool:
+    failureDomain: host
+    replicated:
+      size: 3
+  dataPool:
+    failureDomain: host
+    erasureCoded:
+      dataChunks: 2
+      codingChunks: 1
+    parameters:
+      bulk: "true"
+  preservePoolsOnDelete: true
+  gateway:
+    port: 80
+    securePort: 443
+    sslCertificateRef: rook-rgw-gateway-tls
+    resources:
+      requests:
+        cpu: 50m
+        memory: 700Mi
+      limits:
+        memory: 700Mi
+    instances: 2
+    priorityClassName: system-cluster-critical

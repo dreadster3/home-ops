@@ -1,0 +1,26 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  external:
+    enable: true
+  crashCollector:
+    disable: true
+  cephVersion:
+    allowUnsupported: false
+    image: quay.io/ceph/ceph:v19.2.3
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s
+  monitoring:
+    enabled: true
+    externalMgrEndpoints:
+      - ip: 192.168.30.5
+      - ip: 192.168.30.6
+      - ip: 192.168.30.10
+    externalMgrPrometheusPort: 9283
+  dataDirHostPath: /var/lib/rook
