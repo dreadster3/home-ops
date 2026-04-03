@@ -1,0 +1,16 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentik-cluster
+  namespace: authentik
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.3-standard-trixie
+  bootstrap:
+    recovery: null
+    initdb:
+      database: authentik
+      owner: authentik
+      secret:
+        name: authentik-cluster-credentials
