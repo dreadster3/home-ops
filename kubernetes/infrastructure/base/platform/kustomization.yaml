@@ -7,3 +7,4 @@ labels:
 
 resources:
   - flux
+  - reloader

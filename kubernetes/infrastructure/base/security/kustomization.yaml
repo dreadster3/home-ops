@@ -6,5 +6,6 @@ labels:
       app.kubernetes.io/subcategory: security
 
 resources:
+  - oidc.yaml
   - cert-manager
   - external-secrets

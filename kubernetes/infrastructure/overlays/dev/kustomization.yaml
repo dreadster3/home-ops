@@ -67,3 +67,13 @@ patches:
       metadata:
         name: external-dns
         namespace: external-dns
+  - target:
+      kind: Kustomization
+      name: metrics-server
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: metrics-server
+        namespace: metrics-server

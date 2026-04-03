@@ -1,0 +1,38 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rook-ca-certificate
+  namespace: rook-ceph
+spec:
+  isCA: true
+  commonName: rook-ca
+  secretName: rook-ca-tls
+  duration: 70128h # 8y
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: ClusterIssuer
+    name: cluster-root
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: rook-ca-issuer
+  namespace: rook-ceph
+spec:
+  ca:
+    secretName: rook-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rook-rgw-gateway-tls
+  namespace: rook-ceph
+spec:
+  dnsNames:
+    - rook-ceph-rgw-k8s-ceph-objectstore.rook-ceph.svc
+  secretName: rook-rgw-gateway-tls
+  issuerRef:
+    name: rook-ca-issuer
