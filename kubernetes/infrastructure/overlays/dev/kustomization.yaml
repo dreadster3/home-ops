@@ -12,20 +12,9 @@ resources:
   - ../../base/observability
   - ../../base/platform
   - ../../base/networking
+  - ../../base/storage
 
 patches:
-  - target:
-      kind: Secret
-      name: secrets
-    patch: |-
-      - op: replace
-        path: /stringData/INTERNAL_DOMAIN
-        value: intra.localhost
-      - op: replace
-        path: /stringData/EXTERNAL_DOMAIN
-        value: localhost
-      - op: remove
-        path: /sops
   - target:
       kind: ConfigMap
       name: settings
@@ -118,3 +107,41 @@ patches:
       metadata:
         name: netbird-operator-config
         namespace: netbird
+  - target:
+      kind: Kustomization
+      name: rook-ceph-cluster
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/storage/rook/cluster
+      - op: add
+        path: /spec/healthChecks
+        value:
+          - apiVersion: helm.toolkit.fluxcd.io/v2
+            kind: HelmRelease
+            name: rook-ceph-cluster
+            namespace: rook-ceph
+          - apiVersion: ceph.rook.io/v1
+            kind: CephCluster
+            name: rook-ceph
+            namespace: rook-ceph
+  - target:
+      kind: Kustomization
+      name: nfs-subdir
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: nfs-subdir
+        namespace: nfs-subdir
+  - target:
+      kind: Kustomization
+      name: local-path-storage
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: local-path-storage
+        namespace: local-path-storage

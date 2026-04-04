@@ -1,0 +1,100 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app rook-ceph-cluster
+  namespace: rook-ceph
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: *app
+      version: v1.19.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: rook
+  values:
+    cephClusterSpec:
+      mon:
+        count: 1
+      mgr:
+        count: 1
+
+      resources:
+        mgr:
+          limits:
+            memory: "512Mi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        mon:
+          limits:
+            memory: "1Gi"
+          requests:
+            cpu: "1000m"
+            memory: "1Gi"
+        osd:
+          limits:
+            memory: "1Gi"
+          requests:
+            cpu: "1000m"
+            memory: "1Gi"
+        prepareosd:
+          # limits: It is not recommended to set limits on the OSD prepare job
+          #         since it's a one-time burst for memory that must be allowed to
+          #         complete without an OOM kill.  Note however that if a k8s
+          #         limitRange guardrail is defined external to Rook, the lack of
+          #         a limit here may result in a sync failure, in which case a
+          #         limit should be added.  1200Mi may suffice for up to 15Ti
+          #         OSDs ; for larger devices 2Gi may be required.
+          #         cf. https://github.com/rook/rook/pull/11103
+          requests:
+            cpu: "500m"
+            memory: "50Mi"
+        mgr-sidecar:
+          limits:
+            memory: "100Mi"
+          requests:
+            cpu: "100m"
+            memory: "40Mi"
+        crashcollector:
+          limits:
+            memory: "60Mi"
+          requests:
+            cpu: "100m"
+            memory: "60Mi"
+        logcollector:
+          limits:
+            memory: "100Mi"
+          requests:
+            cpu: "100m"
+            memory: "100Mi"
+        cleanup:
+          limits:
+            memory: "100Mi"
+          requests:
+            cpu: "500m"
+            memory: "100Mi"
+        exporter:
+          limits:
+            memory: "128Mi"
+          requests:
+            cpu: "50m"
+            memory: "50Mi"
+
+    toolbox:
+      enabled: true
+
+    monitoring:
+      enabled: true
+      createPrometheusRules: true
+
+    route:
+      dashboard:
+        host:
+          name: ceph.${INTERNAL_DOMAIN}
+          path: /
+          pathType: PathPrefix
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
