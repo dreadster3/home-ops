@@ -38,14 +38,25 @@ tasks:
     vars:
       NODES: 3
     cmds:
-      - minikube start --cni cilium --cpus no-limit --memory no-limit --nodes {{.NODES}}
-      - minikube addons enable metrics-server
-      - minikube addons enable storage-provisioner-rancher
+      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes 3 --cpus 4 --memory 16G --addons metrics-server --addons storage-provisioner-rancher --kvm-network minikube
+    preconditions:
+      - sh: which minikube
+        msg: minikube is not installed
 
   dev:cluster:stop:
     desc: Stop a development cluster
     cmds:
       - minikube delete
+    preconditions:
+      - sh: which minikube
+        msg: minikube is not installed
+
+  dev:cluster:tunnel:
+    desc: Open a tunnel to the development cluster
+    vars:
+      BIND_ADDRESS: '{{.BIND_ADDRESS | default "127.0.0.1"}}'
+    cmds:
+      - minikube tunnel --bind-address={{.BIND_ADDRESS}}
 
 includes:
   eso: ./eso

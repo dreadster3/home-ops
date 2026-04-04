@@ -32,7 +32,7 @@ patches:
     patch: |-
       - op: replace
         path: /data/EXTERNAL_ADDRESS_POOL
-        value: 127.0.0.1/32
+        value: 10.6.0.64/26
   # - target:
   #     kind: Kustomization
   #     name: cilium-config
