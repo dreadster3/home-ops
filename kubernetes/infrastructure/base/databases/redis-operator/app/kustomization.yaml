@@ -5,6 +5,7 @@ namespace: redis-operator
 
 resources:
   - helm.yaml
+  - podmonitor.yaml
 
 configMapGenerator:
   - name: redis-dashboards
