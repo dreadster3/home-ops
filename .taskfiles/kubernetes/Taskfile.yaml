@@ -38,7 +38,7 @@ tasks:
     vars:
       NODES: 3
     cmds:
-      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes 3 --cpus 4 --memory 16G --addons metrics-server --addons storage-provisioner-rancher --kvm-network minikube
+      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes 3 --cpus 8 --memory 12G --addons metrics-server --addons storage-provisioner-rancher --kvm-network minikube
     preconditions:
       - sh: which minikube
         msg: minikube is not installed
