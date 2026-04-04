@@ -51,6 +51,13 @@ patches:
       metadata:
         name: cilium
         namespace: cilium-system
+  # Remove cilium-configs dependsOn
+  - target:
+      kind: Kustomization
+      name: cilium-config
+    patch: |-
+      - op: remove
+        path: /spec/dependsOn
   - target:
       kind: Kustomization
       name: cilium-policies
