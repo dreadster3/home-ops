@@ -207,7 +207,7 @@ spec:
           - photos.${INTERNAL_DOMAIN}
         parentRefs:
           - name: envoy-internal
-            namespace: networking
+            namespace: envoy
         rules:
           - backendRefs:
               - identifier: api
