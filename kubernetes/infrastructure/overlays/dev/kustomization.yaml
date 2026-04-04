@@ -33,13 +33,13 @@ patches:
       - op: replace
         path: /data/EXTERNAL_ADDRESS_POOL
         value: 127.0.0.1/32
-  - target:
-      kind: Kustomization
-      name: cilium-config
-    patch: |-
-      - op: replace
-        path: /spec/path
-        value: ./kubernetes/infrastructure/overlays/dev/networking/cilium/config
+  # - target:
+  #     kind: Kustomization
+  #     name: cilium-config
+  #   patch: |-
+  #     - op: replace
+  #       path: /spec/path
+  #       value: ./kubernetes/infrastructure/overlays/dev/networking/cilium/config
   - target:
       kind: Kustomization
       name: envoy-gateway-config
