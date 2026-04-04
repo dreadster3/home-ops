@@ -19,5 +19,8 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
+  dependsOn:
+    - name: prometheus-operator
+      namespace: monitoring
   interval: 1h
   timeout: 5m

@@ -4,3 +4,4 @@ metadata:
   name: settings
 data:
   TIMEZONE: "Europe/Lisbon"
+  EXTERNAL_ADDRESS_POOL: "192.168.30.240/28"
