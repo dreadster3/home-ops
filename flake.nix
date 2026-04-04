@@ -51,9 +51,13 @@
               yq-go
               gitleaks
               pre-commit
-              minikube
+              (minikube.override { withQemu = true; })
               vault
               awscli2
+            ];
+
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+              pkgs.libvirt
             ];
 
             shellHook = ''
