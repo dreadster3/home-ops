@@ -128,7 +128,7 @@ spec:
     # Envoy to immich
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: networking
+            io.kubernetes.pod.namespace: envoy
             app.kubernetes.io/name: envoy
       toPorts:
         - ports:
