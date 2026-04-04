@@ -83,7 +83,7 @@ spec:
             - authentik.${INTERNAL_DOMAIN}
           parentRefs:
             - name: envoy-internal
-              namespace: networking
+              namespace: envoy
           https: true
 
     worker:
