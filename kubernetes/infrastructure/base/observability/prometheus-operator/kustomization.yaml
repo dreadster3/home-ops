@@ -7,5 +7,4 @@ components:
   - ../../../../components/substitute
 
 resources:
-  - namespace.yaml
   - ks.yaml

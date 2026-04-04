@@ -39,14 +39,14 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app cilium-policies
+  name: &app cilium-config
   namespace: &namespace cilium-system
 spec:
   targetNamespace: *namespace
   commonMetadata:
     labels:
       app.kubernetes.io/module: cilium
-  path: ./kubernetes/infrastructure/base/networking/cilium/policies
+  path: ./kubernetes/infrastructure/base/networking/cilium/config
   prune: true
   sourceRef:
     kind: GitRepository
