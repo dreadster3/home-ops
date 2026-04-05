@@ -46,6 +46,7 @@ spec:
           - traefik
           - portainer
           - netbird-router
+          - envoy
   ingressDeny:
     - fromEntities:
         - "world"
