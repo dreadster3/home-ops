@@ -8,3 +8,4 @@ labels:
 resources:
   - authentik
   - immich
+  - harbor

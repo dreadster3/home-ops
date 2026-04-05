@@ -2,6 +2,15 @@
 version: "3"
 
 tasks:
+  get:secret:
+    desc: Get a secret from the cluster
+    requires:
+      vars:
+        - NAME
+        - NS
+    cmds:
+      - 'kubectl get secret -n {{.NS}} {{.NAME}} -o json | jq -r ".data | to_entries[] | \"\(.key): \(.value | @base64d)\""'
+
   reconcile:
     desc: Reconcile the kubernetes cluster source
     cmds:
