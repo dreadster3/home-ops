@@ -11,13 +11,13 @@ spec:
       replicas: 1
     registry:
       replicas: 1
-  expose:
-    type: route
-    tls:
-      enabled: false
-    route:
-      parentRefs:
-        - name: envoy-internal
-          namespace: envoy
-      hosts:
-        - harbor.${INTERNAL_DOMAIN}
+    expose:
+      type: route
+      tls:
+        enabled: false
+      route:
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
+        hosts:
+          - harbor.${INTERNAL_DOMAIN}
