@@ -20,6 +20,9 @@ spec:
       mgr:
         count: 2
 
+      dashboard:
+        ssl: false
+
       resources:
         mgr:
           limits:
@@ -149,3 +152,4 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: envoy
+            sectionName: https
