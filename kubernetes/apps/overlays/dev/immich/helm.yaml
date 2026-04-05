@@ -27,10 +27,19 @@ spec:
     controllers:
       api:
         replicas: 1
+        containers:
+          main:
+            resources: null
       microservices:
         replicas: 1
+        containers:
+          main:
+            resources: null
       machine-learning:
         replicas: 1
+        containers:
+          main:
+            resources: null
 
     persistence:
       external-library:
