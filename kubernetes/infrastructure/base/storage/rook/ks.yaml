@@ -41,6 +41,15 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
+  healthChecks:
+    - apiVersion: ceph.rook.io/v1
+      kind: CephCluster
+      name: rook-ceph
+  healthCheckExprs:
+    - apiVersion: ceph.rook.io/v1
+      kind: CephCluster
+      failed: status.ceph.health == 'HEALTH_ERR'
+      current: status.ceph.health in ['HEALTH_OK', 'HEALTH_WARN']
   dependsOn:
     - name: rook-ceph-operator
       namespace: rook-ceph

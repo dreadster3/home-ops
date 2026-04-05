@@ -16,14 +16,14 @@ spec:
   values:
     cephClusterSpec:
       mon:
-        count: 1
+        count: 2
       mgr:
-        count: 1
+        count: 2
 
       resources:
         mgr:
           limits:
-            memory: "512Mi"
+            memory: "1Gi"
           requests:
             cpu: "500m"
             memory: "512Mi"
@@ -35,7 +35,7 @@ spec:
             memory: "1Gi"
         osd:
           limits:
-            memory: "1Gi"
+            memory: "4Gi"
           requests:
             cpu: "1000m"
             memory: "1Gi"
