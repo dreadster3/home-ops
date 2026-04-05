@@ -3,6 +3,10 @@ kind: Kustomization
 
 namespace: immich
 
+labels:
+  - pairs:
+      app.kubernetes.io/module: immich
+
 configMapGenerator:
   - name: immich-dashboards
     options:

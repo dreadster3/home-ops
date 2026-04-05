@@ -15,20 +15,20 @@ resources:
   - ../../base/storage
 
 patches:
-  - target:
-      kind: ConfigMap
-      name: settings
-    patch: |-
-      - op: replace
-        path: /data/EXTERNAL_ADDRESS_POOL
-        value: 10.6.0.64/26
   # - target:
-  #     kind: Kustomization
-  #     name: cilium-config
+  #     kind: ConfigMap
+  #     name: settings
   #   patch: |-
   #     - op: replace
-  #       path: /spec/path
-  #       value: ./kubernetes/infrastructure/overlays/dev/networking/cilium/config
+  #       path: /data/EXTERNAL_ADDRESS_POOL
+  #       value: 10.7.0.64/29
+  - target:
+      kind: Kustomization
+      name: cilium-config
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/networking/cilium/config
   - target:
       kind: Kustomization
       name: envoy-gateway-config
