@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: infisical
+spec:
+  provider:
+    infisical:
+      hostAPI: https://app.infisical.com
+      auth:
+        universalAuthCredentials:
+          clientId:
+            name: infisical-credentials
+            key: clientId
+            namespace: external-secrets
+          clientSecret:
+            name: infisical-credentials
+            key: clientSecret
+            namespace: external-secrets
+      secretsScope:
+        projectSlug: home-lab
+        environmentSlug: dev
