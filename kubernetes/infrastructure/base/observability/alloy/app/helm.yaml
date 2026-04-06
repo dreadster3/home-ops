@@ -41,12 +41,6 @@ spec:
             secretKeyRef:
               name: loki-auth
               key: password
-      mounts:
-        extra:
-          - name: ca-bundle
-            subPath: ca-bundle.crt
-            mountPath: /etc/ssl/certs/ca-bundle.crt
-            readOnly: true
 
     configReloader:
       resources:
@@ -58,8 +52,3 @@ spec:
     controller:
       podAnnotations:
         reloader.stakater.com/auto: "true"
-      volumes:
-        extra:
-          - name: ca-bundle
-            configMap:
-              name: cluster-bundle-ca
