@@ -23,6 +23,7 @@ resources:
   - certificates.yaml
   - bucket.yaml
   - secrets.yaml
+  - secret-store.yaml
   - store.yaml
   - pgcluster.yaml
   - redis.yaml
