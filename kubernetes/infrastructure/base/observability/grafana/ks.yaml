@@ -8,11 +8,11 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/module: *app
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      name: *app
-      namespace: *namespace
+  # healthChecks:
+  #   - apiVersion: helm.toolkit.fluxcd.io/v2
+  #     kind: HelmRelease
+  #     name: *app
+  #     namespace: *namespace
   path: ./kubernetes/infrastructure/base/observability/grafana/app
   prune: true
   # Cannot wait since it depends on authentik that is deployed much after and needs manual intervention
