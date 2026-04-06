@@ -157,3 +157,10 @@ patches:
       metadata:
         name: local-path-storage
         namespace: local-path-storage
+  - target:
+      kind: Kustomization
+      name: thanos
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/thanos/app
