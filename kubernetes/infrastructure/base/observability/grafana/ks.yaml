@@ -1,7 +1,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app prometheus-operator
+  name: &app grafana
   namespace: &namespace monitoring
 spec:
   targetNamespace: *namespace
@@ -13,14 +13,18 @@ spec:
       kind: HelmRelease
       name: *app
       namespace: *namespace
-  path: ./kubernetes/infrastructure/base/observability/prometheus-operator/app
+  path: ./kubernetes/infrastructure/base/observability/grafana/app
   prune: true
+  # Cannot wait since it depends on authentik that is deployed much after and needs manual intervention
+  wait: false
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   dependsOn:
-    - name: cert-manager
-      namespace: cert-manager
+    - name: external-secrets
+      namespace: external-secrets
+    - name: loki
+      namespace: monitoring
   interval: 1h
-  timeout: 10m
+  timeout: 5m
