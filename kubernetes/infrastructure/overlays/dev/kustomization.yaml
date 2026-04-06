@@ -164,3 +164,31 @@ patches:
       - op: replace
         path: /spec/path
         value: ./kubernetes/infrastructure/overlays/dev/observability/thanos/app
+  - target:
+      kind: Kustomization
+      name: loki
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/loki/app
+  - target:
+      kind: Kustomization
+      name: prometheus
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/prometheus/app
+  - target:
+      kind: Kustomization
+      name: grafana
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/grafana/app
+  - target:
+      kind: Kustomization
+      name: alloy
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/alloy/app

@@ -1,0 +1,15 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: thanos
+  namespace: monitoring
+spec:
+  values:
+    query:
+      replicaCount: 1
+    queryFrontend:
+      replicaCount: 1
+    storegateway:
+      replicaCount: 1
+    compactor:
+      replicaCount: 1

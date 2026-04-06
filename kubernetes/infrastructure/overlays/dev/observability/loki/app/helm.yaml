@@ -1,0 +1,15 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: monitoring
+spec:
+  values:
+    write:
+      replicas: 1
+    read:
+      replicas: 1
+    backend:
+      replicas: 1
+    gateway:
+      replicas: 1
