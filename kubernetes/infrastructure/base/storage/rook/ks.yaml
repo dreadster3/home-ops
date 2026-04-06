@@ -56,4 +56,4 @@ spec:
     - name: cert-manager
       namespace: cert-manager
   interval: 1h
-  timeout: 5m
+  timeout: 10m
