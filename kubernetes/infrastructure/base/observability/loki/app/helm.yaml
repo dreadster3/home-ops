@@ -33,15 +33,6 @@ spec:
             name: loki-bucket
         - configMapRef:
             name: loki-bucket
-      extraVolumeMounts:
-        - name: ca-bundle
-          mountPath: /etc/ssl/certs/ca-bundle.crt
-          subPath: ca-bundle.crt
-          readOnly: true
-      extraVolumes:
-        - name: ca-bundle
-          configMap:
-            name: cluster-bundle-ca
 
     chunksCache:
       enabled: false
