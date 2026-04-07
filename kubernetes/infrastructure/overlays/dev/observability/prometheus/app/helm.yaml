@@ -12,15 +12,13 @@ spec:
         retentionSize: 5GB
         resources:
           requests:
-            cpu: 50m
-            memory: 512Mi
+            cpu: 0m
+            memory: 0Mi
         thanos:
           resources:
             requests:
-              cpu: 5m
-              memory: 64Mi
-            limits:
-              memory: 128Mi
+              cpu: 0m
+              memory: 0Mi
         storageSpec:
           volumeClaimTemplate:
             spec:
@@ -31,7 +29,5 @@ spec:
       alertmanagerSpec:
         resources:
           requests:
-            cpu: 5m
-            memory: 32Mi
-          limits:
-            memory: 64Mi
+            cpu: 0m
+            memory: 0Mi

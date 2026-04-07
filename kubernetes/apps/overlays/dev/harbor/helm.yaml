@@ -7,10 +7,43 @@ spec:
   values:
     core:
       replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
     jobservice:
       replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
     registry:
       replicas: 1
+      registry:
+        resources:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+      controller:
+        resources:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+    portal:
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
+    exporter:
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
+    trivy:
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
     expose:
       type: route
       tls:

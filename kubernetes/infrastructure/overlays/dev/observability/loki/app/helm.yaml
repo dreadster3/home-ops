@@ -7,9 +7,35 @@ spec:
   values:
     write:
       replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
     read:
       replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
     backend:
       replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
     gateway:
       replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
+    sidecar:
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
+    lokiCanary:
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
