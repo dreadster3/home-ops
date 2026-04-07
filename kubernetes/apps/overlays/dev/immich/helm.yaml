@@ -3,43 +3,33 @@ kind: HelmRelease
 metadata:
   name: immich
   namespace: immich
-  labels:
-    nfsMount: "true"
 spec:
-  interval: 1h
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
-  chart:
-    spec:
-      chart: app-template
-      version: 4.6.x
-      interval: 24h
-      sourceRef:
-        kind: HelmRepository
-        name: bjw-s
-        namespace: flux-system
   values:
     controllers:
       api:
         replicas: 1
         containers:
           main:
-            resources: null
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
       microservices:
         replicas: 1
         containers:
           main:
-            resources: null
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
       machine-learning:
         replicas: 1
         containers:
           main:
-            resources: null
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
 
     persistence:
       external-library:

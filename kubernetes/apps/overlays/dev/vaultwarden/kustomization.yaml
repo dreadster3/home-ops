@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: vaultwarden
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: vaultwarden
+
+resources:
+  - ../../../base/vaultwarden
+
+patches:
+  - path: helm.yaml
+    target:
+      kind: HelmRelease
+  - path: pgcluster.yaml
+    target:
+      kind: Cluster

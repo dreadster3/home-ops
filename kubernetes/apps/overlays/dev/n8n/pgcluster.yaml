@@ -1,15 +1,15 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: authentik-cluster
-  namespace: authentik
+  name: n8n-cluster
+  namespace: n8n
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
   bootstrap:
     recovery: null
     initdb:
-      database: authentik
-      owner: authentik
+      database: n8n
+      owner: n8n
       secret:
-        name: authentik-cluster-credentials
+        name: n8n-cluster-credentials
