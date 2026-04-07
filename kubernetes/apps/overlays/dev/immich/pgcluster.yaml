@@ -6,7 +6,6 @@ metadata:
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18.3
   bootstrap:
     recovery: null
     initdb:
