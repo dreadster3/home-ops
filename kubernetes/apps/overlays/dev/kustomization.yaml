@@ -7,5 +7,5 @@ labels:
 
 resources:
   - authentik
-  - immich
-  - harbor
+  # - immich
+  # - harbor
