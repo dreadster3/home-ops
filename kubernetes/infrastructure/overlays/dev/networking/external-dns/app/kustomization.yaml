@@ -10,8 +10,8 @@ patches:
       name: external-dns
     patch: |-
       - op: replace
-        path: /spec/values/extraArgs/-
+        path: /spec/values/extraArgs/3
         value: --rfc2136-tsig-keyname=k8s-external-dns-dev
       - op: replace
-        path: /spec/values/txtOwnerId: k8s-dev
+        path: /spec/values/txtOwnerId
         value: k8s-dev
