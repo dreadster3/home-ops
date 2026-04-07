@@ -19,13 +19,7 @@ patches:
       kind: Secret
       name: secrets
     path: ./secrets.sops.yaml
-  # - target:
-  #     kind: ConfigMap
-  #     name: settings
-  #   patch: |-
-  #     - op: replace
-  #       path: /data/EXTERNAL_ADDRESS_POOL
-  #       value: 10.7.0.64/29
+
   - target:
       kind: Kustomization
       name: cilium-config
