@@ -1,18 +1,16 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: authentik
-  namespace: authentik
+  name: alloy
+  namespace: monitoring
 spec:
   values:
-    server:
-      replicas: 1
+    alloy:
       resources:
         requests:
           cpu: 0m
           memory: 0Mi
-    worker:
-      replicas: 1
+    configReloader:
       resources:
         requests:
           cpu: 0m

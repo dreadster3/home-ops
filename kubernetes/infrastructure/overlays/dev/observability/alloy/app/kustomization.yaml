@@ -3,3 +3,9 @@ kind: Kustomization
 
 resources:
   - ../../../../../base/observability/alloy/app
+
+patches:
+  - path: helm.yaml
+    target:
+      kind: HelmRelease
+      name: alloy

@@ -6,3 +6,12 @@ metadata:
 spec:
   values:
     replicas: 1
+    resources:
+      requests:
+        cpu: 0m
+        memory: 0Mi
+    sidecar:
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
