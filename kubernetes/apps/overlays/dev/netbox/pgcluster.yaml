@@ -1,15 +1,15 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: authentik-cluster
-  namespace: authentik
+  name: netbox-cluster
+  namespace: netbox
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
   bootstrap:
     recovery: null
     initdb:
-      database: authentik
-      owner: authentik
+      database: netbox
+      owner: netbox
       secret:
-        name: authentik-cluster-credentials
+        name: netbox-cluster-credentials

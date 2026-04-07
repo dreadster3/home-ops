@@ -1,15 +1,15 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: authentik-cluster
-  namespace: authentik
+  name: paperless-cluster
+  namespace: paperless
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
   bootstrap:
     recovery: null
     initdb:
-      database: authentik
-      owner: authentik
+      database: paperless
+      owner: paperless
       secret:
-        name: authentik-cluster-credentials
+        name: paperless-cluster-credentials

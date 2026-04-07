@@ -1,0 +1,16 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vaultwarden
+  namespace: vaultwarden
+spec:
+  values:
+    controllers:
+      main:
+        replicas: 1
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi

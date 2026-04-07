@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: uptime
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: uptime
+
+resources:
+  - ../../../base/uptime
+
+patches:
+  - path: helm.yaml
+    target:
+      kind: HelmRelease

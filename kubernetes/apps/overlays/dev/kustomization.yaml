@@ -7,5 +7,14 @@ labels:
 
 resources:
   - authentik
-  # - immich
-  # - harbor
+  - harbor
+  - immich
+  - joplin
+  - n8n
+  - netbox
+  - paperless
+  - searxng
+  - termix
+  - uptime
+  - vault
+  - vaultwarden

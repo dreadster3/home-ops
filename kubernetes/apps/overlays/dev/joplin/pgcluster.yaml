@@ -1,15 +1,15 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: authentik-cluster
-  namespace: authentik
+  name: joplin-cluster
+  namespace: joplin
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
   bootstrap:
     recovery: null
     initdb:
-      database: authentik
-      owner: authentik
+      database: joplin
+      owner: joplin
       secret:
-        name: authentik-cluster-credentials
+        name: joplin-cluster-credentials
