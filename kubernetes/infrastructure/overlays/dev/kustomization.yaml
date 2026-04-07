@@ -18,15 +18,7 @@ patches:
   - target:
       kind: Secret
       name: secrets
-    patch: |-
-      - op: replace
-        path: /stringData/INTERNAL_DOMAIN
-        value: internal.dreadster.dev
-      - op: replace
-        path: /stringData/EXTERNAL_DOMAIN
-        value: dreadster.dev
-      - op: remove
-        path: /sops
+    path: ./secrets.sops.yaml
   # - target:
   #     kind: ConfigMap
   #     name: settings
