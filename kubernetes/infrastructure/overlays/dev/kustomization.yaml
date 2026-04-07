@@ -9,7 +9,7 @@ labels:
 resources:
   - ../../base/security
   - ../../base/databases
-  - ../../base/observability
+  # - ../../base/observability
   - ../../base/platform
   - ../../base/networking
   - ../../base/storage
