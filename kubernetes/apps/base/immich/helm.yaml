@@ -48,7 +48,7 @@ spec:
           main:
             image: &image
               repository: ghcr.io/immich-app/immich-server
-              tag: &tag v2.6.1
+              tag: &tag v2.7.2
             env:
               IMMICH_WORKERS_INCLUDE: api
             envFrom:
