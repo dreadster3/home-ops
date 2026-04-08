@@ -16,5 +16,4 @@ resources:
   - searxng
   - termix
   - uptime
-  - vault
   - vaultwarden
