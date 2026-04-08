@@ -24,7 +24,7 @@ spec:
   chart:
     spec:
       chart: authentik
-      version: 2026.2.1
+      version: 2026.2.2
       interval: 24h
       sourceRef:
         kind: HelmRepository
