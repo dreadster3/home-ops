@@ -23,7 +23,7 @@ jobs:
         uses: fluxcd/flux2/action@3cf3cb546fc549fa7e8a9ec6d3254accc027b46e # v2.8.4
 
       - name: Flux Local Test
-        uses: allenporter/flux-local/action/test@d4ebcae7ae08c8c8b8b7c1f515cf86759f9ca950 # 8.1.0
+        uses: allenporter/flux-local/action/test@4d666add25002f550dc0dbe8b2b2f25859169b34 # 8.2.0
         with:
           path: kubernetes/clusters/production
           enable-helm: true
@@ -46,7 +46,7 @@ jobs:
         uses: fluxcd/flux2/action@3cf3cb546fc549fa7e8a9ec6d3254accc027b46e # v2.8.4
 
       - name: Flux Local Diff
-        uses: allenporter/flux-local/action/diff@d4ebcae7ae08c8c8b8b7c1f515cf86759f9ca950 # 8.1.0
+        uses: allenporter/flux-local/action/diff@4d666add25002f550dc0dbe8b2b2f25859169b34 # 8.2.0
         id: diff
         with:
           live-branch: ${{ github.event.repository.default_branch }}
