@@ -38,6 +38,11 @@ working_dir: docker/mgmt/duplicati
 compose_files:
   - compose.yaml
 ---
+name: stirling-pdf
+working_dir: docker/mgmt/stirling-pdf
+compose_files:
+  - compose.yaml
+---
 name: appraise
 working_dir: docker/mgmt/appraise
 compose_files:
