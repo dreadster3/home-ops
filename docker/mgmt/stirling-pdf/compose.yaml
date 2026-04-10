@@ -3,18 +3,44 @@ services:
     image: stirlingtools/stirling-pdf:2.9.2@sha256:3fcfa4d6b6ff22fdbf96ff2aae98dc2fb6d8c1ba0afab1dd2fdfdcdc9ab543c4
     container_name: stirling-pdf
     restart: unless-stopped
+    environment:
+      SECURITY_ENABLELOGIN: true
+      SECURITY_LOGINMETHOD: oauth2
+      SECURITY_OAUTH2_ENABLED: true
+      SECURITY_OAUTH2_PROVIDER: authentik
+      SECURITY_OAUTH2_ISSUER: https://authentik.${INTERNAL_DOMAIN}/application/o/stirling-pdf/
+      SECURITY_OAUTH2_CLIENTID: ${AUTHENTIK_CLIENT_ID}
+      SECURITY_OAUTH2_CLIENTSECRET: ${AUTHENTIK_CLIENT_SECRET}
+      SECURITY_OAUTH2_SCOPES: openid, profile, email
+      SECURITY_OAUTH2_USEASUSERNAME: preferred_username
+      SECURITY_OAUTH2_AUTOCREATEUSER: true
+      SECURITY_OAUTH2_BLOCKREGISTRATION: false
     security_opt:
       - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.stifling.rule=Host(`stifling.${INTERNAL_DOMAIN}`) || Host(`pdf.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.stifling.rule=Host(`stirling.${INTERNAL_DOMAIN}`) || Host(`pdf.${INTERNAL_DOMAIN}`)"
       - "traefik.http.routers.stifling.entrypoints=websecure"
       - "traefik.http.routers.stifling.tls.certresolver=letsencrypt"
       - "traefik.http.services.stifling.loadbalancer.server.port=8080"
       - "traefik.http.services.stifling.loadbalancer.server.scheme=http"
     networks:
       - proxy
+    volumes:
+      - data:/configs
 
 networks:
   proxy:
     external: true
+
+volumes:
+  data:
+    driver: local
