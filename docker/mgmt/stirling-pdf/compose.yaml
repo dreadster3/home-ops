@@ -4,17 +4,7 @@ services:
     container_name: stirling-pdf
     restart: unless-stopped
     environment:
-      SECURITY_ENABLELOGIN: true
-      SECURITY_LOGINMETHOD: oauth2
-      SECURITY_OAUTH2_ENABLED: true
-      SECURITY_OAUTH2_PROVIDER: authentik
-      SECURITY_OAUTH2_ISSUER: https://authentik.${INTERNAL_DOMAIN}/application/o/stirling-pdf/
-      SECURITY_OAUTH2_CLIENTID: ${AUTHENTIK_CLIENT_ID}
-      SECURITY_OAUTH2_CLIENTSECRET: ${AUTHENTIK_CLIENT_SECRET}
-      SECURITY_OAUTH2_SCOPES: openid, profile, email
-      SECURITY_OAUTH2_USEASUSERNAME: preferred_username
-      SECURITY_OAUTH2_AUTOCREATEUSER: true
-      SECURITY_OAUTH2_BLOCKREGISTRATION: false
+      SECURITY_ENABLELOGIN: false
     security_opt:
       - no-new-privileges:true
     cap_drop:
