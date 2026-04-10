@@ -8,7 +8,7 @@ machine:
       feature-gates: CSIVolumeHealth=true
   install:
     disk: /dev/sda
-    image: factory.talos.dev/nocloud-installer/ddf38e55e30aa9b2bb0b765054ed63444dc00244ab8bb4ad4ad92486602285f8:v1.12.2
+    image: factory.talos.dev/nocloud-installer/ddf38e55e30aa9b2bb0b765054ed63444dc00244ab8bb4ad4ad92486602285f8:v1.12.6
   kernel:
     modules:
       - name: ipv6
