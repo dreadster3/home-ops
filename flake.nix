@@ -49,6 +49,8 @@
               fluxcd
               fluxcd-operator
               yq-go
+              gitleaks
+              pre-commit
             ];
           };
         };
