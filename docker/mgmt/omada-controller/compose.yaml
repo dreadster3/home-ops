@@ -48,7 +48,7 @@ services:
 
   mongo:
     container_name: omada-controller-db
-    image: docker.io/mongo:8.2.6@sha256:eea8506335198f8b359865b32004036310854a935fbd317083817c614152818f
+    image: docker.io/mongo:8.2.6@sha256:f071cbf97a6e52fb7f07ce9ca5d862ad79876bf0eba9ba97758337d740449638
     restart: unless-stopped
     stop_grace_period: 60s
     depends_on:
