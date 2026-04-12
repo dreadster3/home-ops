@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: n8n-cluster-bucket
+  namespace: n8n
+spec:
+  bucketName: n8n-cluster
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 1G

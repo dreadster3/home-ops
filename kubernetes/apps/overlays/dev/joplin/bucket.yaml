@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: joplin-cluster-bucket
+  namespace: joplin
+spec:
+  bucketName: joplin-cluster
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 1G
