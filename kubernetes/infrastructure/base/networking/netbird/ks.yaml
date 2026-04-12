@@ -22,7 +22,7 @@ spec:
   dependsOn:
     - name: cert-manager
       namespace: cert-manager
-    - name: external-secrets
+    - name: external-secrets-store
       namespace: external-secrets
   interval: 1h
   timeout: 5m
