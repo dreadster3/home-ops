@@ -8,18 +8,17 @@ labels:
 
 resources:
   - authentik
-  - external-dns
-  - harbor
+  - ../../base/harbor
   - ../../base/immich
-  - joplin
-  - n8n
-  - netbox
-  - openwebui
-  - pangolin
-  - paperless
+  - ../../base/joplin
+  - ../../base/n8n
+  - ../../base/netbox
+  - ../../openwebui
+  - ../../pangolin
+  - ../../paperless
   # - portainer
-  - searxng
-  - termix
-  - uptime
-  - vault
-  - vaultwarden
+  - ../../searxng
+  - ../../termix
+  - ../../uptime
+  - ../../vault
+  - ../../vaultwarden

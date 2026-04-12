@@ -9,4 +9,4 @@ labels:
 
 resources:
   - ../../base/authentik
-  - ingress.yaml
+  - ldap-route.yaml
