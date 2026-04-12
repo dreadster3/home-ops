@@ -13,3 +13,12 @@ spec:
               requests:
                 cpu: 0m
                 memory: 0Mi
+    persistence:
+      data:
+        storageClass: ceph-filesystem
+        size: 512Mi
+      media:
+        storageClass: ceph-filesystem
+        size: 512Mi
+      consume:
+        enabled: false
