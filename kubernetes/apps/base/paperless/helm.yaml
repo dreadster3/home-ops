@@ -98,8 +98,11 @@ spec:
                   periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
+                add:
+                  - CHOWN
         pod:
           # Needs to run as root to install OCR packages
           # TODO: Build a custom image with OCR packages builtin to remove this dependency and run as nonroot
