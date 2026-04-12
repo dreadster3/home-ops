@@ -103,9 +103,9 @@ spec:
         pod:
           securityContext:
             runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 4100
+            runAsGroup: 4100
+            fsGroup: 4100
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
