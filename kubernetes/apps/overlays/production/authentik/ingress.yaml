@@ -1,16 +1,16 @@
-apiVersion: traefik.io/v1alpha1
-kind: IngressRouteTCP
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TLSRoute
 metadata:
   name: ak-outpost-ldap
+  namespace: authentik
 spec:
-  entryPoints:
-    - ldaps
-  routes:
-    - match: HostSNI(`authentik.${INTERNAL_DOMAIN}`)
-      services:
+  parentRefs:
+    - name: envoy-internal
+      namespace: envoy
+      sectionName: ldaps
+  hostnames:
+    - authentik.${INTERNAL_DOMAIN}
+  rules:
+    - backendRefs:
         - name: ak-outpost-ldap
-          port: 389
-  tls:
-    secretName: authentik-ingress-tls
-    domains:
-      - main: authentik.${INTERNAL_DOMAIN}
+          port: ldap

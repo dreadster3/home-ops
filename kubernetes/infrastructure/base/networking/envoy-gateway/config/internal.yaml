@@ -28,3 +28,20 @@ spec:
         certificateRefs:
           - kind: Secret
             name: "internal-domain-tls"
+    - name: ldaps
+      protocol: TLS
+      port: 636
+      hostname: "authentik.${INTERNAL_DOMAIN}"
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: authentik
+        kinds:
+          - kind: TLSRoute
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: "internal-domain-tls"
