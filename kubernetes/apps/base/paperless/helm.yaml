@@ -155,3 +155,11 @@ spec:
           main:
             main:
               - path: *consume
+
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /run
+            subPath: run
