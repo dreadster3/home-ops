@@ -7,5 +7,5 @@ labels:
 
 resources:
   - dragonfly
-  - redis-operator
+  # - redis-operator
   - cnpg
