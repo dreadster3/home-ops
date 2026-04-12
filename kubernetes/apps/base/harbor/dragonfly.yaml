@@ -18,7 +18,7 @@ spec:
   authentication:
     passwordFromSecret:
       name: harbor-dragonfly-credentials
-      key: password
+      key: REDIS_PASSWORD
   resources:
     # Real resources required
     requests:
