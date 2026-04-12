@@ -47,7 +47,8 @@ spec:
                 memory: 512Mi
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              # Needs to be false for nginx files to work
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
         pod:
           securityContext:
@@ -87,7 +88,3 @@ spec:
         size: 1Gi
         globalMounts:
           - path: /app/data
-      tmpfs:
-        type: emptyDir
-        globalMounts:
-          - path: /app/nginx
