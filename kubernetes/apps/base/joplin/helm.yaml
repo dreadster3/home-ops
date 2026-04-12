@@ -69,6 +69,18 @@ spec:
             port: 80
             targetPort: http
 
+    route:
+      main:
+        hostnames:
+          - joplin.${INTERNAL_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
+        rules:
+          - backendRefs:
+              - identifier: main
+                port: http
+
     persistence:
       metadata:
         enabled: true

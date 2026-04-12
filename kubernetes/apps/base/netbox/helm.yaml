@@ -67,18 +67,15 @@ spec:
       enabled: false
 
     ingress:
+      enabled: false
+
+    httpRoute:
       enabled: true
-      className: traefik
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt
-      hosts:
-        - host: *host
-          paths:
-            - /
-      tls:
-        - secretName: netbox-ingress-tls
-          hosts:
-            - *host
+      parentRefs:
+        - name: envoy-internal
+          namespace: envoy
+      hostnames:
+        - netbox.${INTERNAL_DOMAIN}
 
     metrics:
       enabled: true
