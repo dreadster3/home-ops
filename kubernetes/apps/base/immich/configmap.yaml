@@ -10,3 +10,5 @@ data:
   IMMICH_LOG_LEVEL: log
   DB_DATABASE_NAME: immich
   DB_HOSTNAME: immich-cluster-rw
+  REDIS_HOSTNAME: immich-dragonfly
+  REDIS_DBINDEX: "0"
