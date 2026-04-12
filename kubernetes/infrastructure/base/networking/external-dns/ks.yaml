@@ -20,7 +20,7 @@ spec:
     name: flux-system
     namespace: flux-system
   dependsOn:
-    - name: external-secrets
+    - name: external-secrets-store
       namespace: external-secrets
     - name: prometheus-operator
       namespace: monitoring

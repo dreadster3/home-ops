@@ -22,7 +22,7 @@ spec:
   dependsOn:
     - name: prometheus-operator
       namespace: monitoring
-    - name: external-secrets
+    - name: external-secrets-store
       namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph
