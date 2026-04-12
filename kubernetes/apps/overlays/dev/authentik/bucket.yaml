@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: authentik-cluster-bucket
+  namespace: authentik
+spec:
+  bucketName: authentik-cluster
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 1G
