@@ -103,6 +103,10 @@ spec:
                 drop: ["ALL"]
                 add:
                   - CHOWN
+                  - DAC_OVERRIDE
+                  - FOWNER
+                  - SETGID
+                  - SETUID
         pod:
           # Needs to run as root to install OCR packages
           # TODO: Build a custom image with OCR packages builtin to remove this dependency and run as nonroot
