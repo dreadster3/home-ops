@@ -11,7 +11,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./kubernetes/infrastructure/controllers
-  prune: true
+  prune: false # Prepare for migration
   wait: true
   decryption:
     provider: sops
@@ -41,7 +41,7 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./kubernetes/infrastructure/configs
-  prune: true
+  prune: false # Prepare for migration
   decryption:
     provider: sops
     secretRef:
