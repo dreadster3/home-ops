@@ -6,7 +6,7 @@ metadata:
 spec:
   configuration:
     destinationPath: s3://netbox-cluster
-    endpointURL: rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+    endpointURL: http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
     s3Credentials:
       accessKeyId:
         name: netbox-cluster-bucket
