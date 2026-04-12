@@ -1,0 +1,18 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: harbor-dragonfly
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 15m
+      memory: &memory 50Mi
+    limits:
+      memory: *memory
+  authentication:
+    passwordFromSecret:
+      name: harbor-dragonfly-credentials
+      key: password

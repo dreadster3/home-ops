@@ -27,4 +27,5 @@ resources:
   - store.yaml
   - pgcluster.yaml
   - redis.yaml
+  - dragonfly.yaml
   - helm.yaml
