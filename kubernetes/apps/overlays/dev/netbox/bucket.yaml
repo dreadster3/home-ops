@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: netbox-cluster-bucket
+  namespace: netbox
+spec:
+  bucketName: netbox-cluster
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 1G
