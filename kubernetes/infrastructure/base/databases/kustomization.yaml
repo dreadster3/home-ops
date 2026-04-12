@@ -6,5 +6,6 @@ labels:
       app.kubernetes.io/subcategory: databases
 
 resources:
+  - dragonfly
   - redis-operator
   - cnpg
