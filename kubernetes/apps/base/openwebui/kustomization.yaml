@@ -14,5 +14,5 @@ resources:
   - secrets.yaml
   - redis.yaml
   # - ollama.yaml
-  - openwebui.yaml
+  - helm.yaml
   - network.yaml
