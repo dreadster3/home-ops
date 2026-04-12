@@ -12,7 +12,7 @@ resources:
   - store.yaml
   - pgcluster.yaml
   - secrets.yaml
-  - redis.yaml
+  - dragonfly.yaml
   # - ollama.yaml
   - helm.yaml
   - network.yaml

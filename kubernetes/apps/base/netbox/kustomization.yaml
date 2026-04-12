@@ -22,6 +22,6 @@ resources:
   - helm.yaml
   - namespace.yaml
   - pgcluster.yaml
-  - redis.yaml
+  - dragonfly.yaml
   - store.yaml
   - secrets.yaml

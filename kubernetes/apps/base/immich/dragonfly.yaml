@@ -1,0 +1,27 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: immich-dragonfly
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 2
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1Mi
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=2
+  authentication:
+    passwordFromSecret:
+      name: immich-dragonfly-credentials
+      key: DRAGONFLY_PASSWORD
+  resources:
+    requests:
+      cpu: 15m
+      memory: 50Mi
+    limits:
+      memory: 512Mi

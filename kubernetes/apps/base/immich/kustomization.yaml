@@ -22,7 +22,7 @@ resources:
   - library.yaml
   - store.yaml
   - pgcluster.yaml
-  - redis.yaml
+  - dragonfly.yaml
   - network.yaml
   - secrets.yaml
   - configmap.yaml
