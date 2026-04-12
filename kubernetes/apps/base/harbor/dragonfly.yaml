@@ -6,6 +6,19 @@ metadata:
     reloader.stakater.com/auto: "true"
 spec:
   replicas: 2
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1Mi
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=2
+  authentication:
+    passwordFromSecret:
+      name: harbor-dragonfly-credentials
+      key: password
   resources:
     # Real resources required
     requests:
@@ -13,8 +26,4 @@ spec:
       memory: 50Mi
     # Minimum required to initialize due to dragonfly-operator
     limits:
-      memory: 256Mi
-  authentication:
-    passwordFromSecret:
-      name: harbor-dragonfly-credentials
-      key: password
+      memory: 512Mi
