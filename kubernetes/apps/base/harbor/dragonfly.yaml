@@ -7,11 +7,13 @@ metadata:
 spec:
   replicas: 2
   resources:
+    # Real resources required
     requests:
       cpu: 15m
-      memory: &memory 50Mi
+      memory: 50Mi
+    # Minimum required to initialize due to dragonfly-operator
     limits:
-      memory: *memory
+      memory: 256Mi
   authentication:
     passwordFromSecret:
       name: harbor-dragonfly-credentials
