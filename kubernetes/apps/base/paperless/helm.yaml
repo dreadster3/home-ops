@@ -101,11 +101,13 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
         pod:
+          # Needs to run as root to install OCR packages
+          # TODO: Build a custom image with OCR packages builtin to remove this dependency and run as nonroot
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 4100
-            runAsGroup: 4100
-            fsGroup: 4100
+            runAsNonRoot: false
+            runAsUser: 0
+            runAsGroup: 0
+            fsGroup: 0
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
