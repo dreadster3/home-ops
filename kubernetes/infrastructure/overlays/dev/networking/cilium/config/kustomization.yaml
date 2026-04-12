@@ -14,3 +14,19 @@ patches:
       kind: CiliumLoadBalancerIPPool
       metadata:
         name: default-pool
+
+  - target:
+      kind: CiliumClusterwideNetworkPolicy
+      name: allow-cnpg-cluster
+    patch: |-
+      - op: replace
+        path: /spec/egress/0
+        value:
+          toEndpoints:
+            - matchLabels:
+                io.kubernetes.pod.namespace: rook-ceph
+                app.kubernetes.io/name: ceph-rgw
+          toPorts:
+            - ports:
+                - port: "8080"
+                  protocol: TCP
