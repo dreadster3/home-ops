@@ -8,5 +8,5 @@ labels:
       app.kubernetes.io/module: authentik
 
 resources:
-  - ../../base/authentik
+  - ../../../base/authentik
   - ldap-route.yaml
