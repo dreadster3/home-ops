@@ -5,7 +5,7 @@ metadata:
 spec:
   provider:
     infisical:
-      hostAPI: https://app.infisical.com
+      hostAPI: https://infisical.${INTERNAL_DOMAIN}
       auth:
         universalAuthCredentials:
           clientId:

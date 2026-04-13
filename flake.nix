@@ -54,6 +54,7 @@
               (minikube.override { withQemu = true; })
               vault
               awscli2
+              infisical
             ];
 
             LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
