@@ -13,12 +13,12 @@ resources:
   - ../../base/joplin
   - ../../base/n8n
   - ../../base/netbox
-  - ../../openwebui
-  - ../../pangolin
-  - ../../paperless
+  - ../../base/openwebui
+  - ../../base/pangolin
+  - ../../base/paperless
   # - portainer
-  - ../../searxng
-  - ../../termix
-  - ../../uptime
-  - ../../vault
-  - ../../vaultwarden
+  - ../../base/searxng
+  - ../../base/termix
+  - ../../base/uptime
+  - ../../base/vault
+  - ../../base/vaultwarden
