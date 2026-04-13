@@ -21,6 +21,13 @@ patches:
       kind: Secret
       name: secrets
     path: ./secrets.sops.yaml
+  - target:
+      kind: Kustomization
+      name: external-secrets-store
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/security/external-secrets/store
 
   - target:
       kind: Kustomization
