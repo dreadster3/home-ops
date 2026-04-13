@@ -24,7 +24,6 @@ spec:
     - group: ""
       kind: Service
       name: vault-active
-      sectionName: "8200"
   validation:
     hostname: vault-active.vault.svc.cluster.local
     caCertificateRefs:
