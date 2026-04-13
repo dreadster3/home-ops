@@ -47,3 +47,8 @@ name: appraise
 working_dir: docker/mgmt/appraise
 compose_files:
   - compose.yaml
+---
+name: infisical
+working_dir: docker/mgmt/infisical
+compose_files:
+  - compose.yaml
