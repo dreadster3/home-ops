@@ -10,33 +10,54 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    pull_policy: always
-    ports:
-      - 80:8080
     environment:
       SITE_URL: https://infisical.${INTERNAL_DOMAIN}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       AUTH_SECRET: ${AUTH_SECRET}
       DB_CONNECTION_URI: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-      REDIS_URL: redis://redis:6379
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       NODE_ENV: production
     networks:
-      - infisical
+      - default
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.infisical.rule=Host(`infisical.${INTERNAL_DOMAIN}`)
+      - traefik.http.routers.infisical.entrypoints=websecure
+      - traefik.http.routers.infisical.tls.certresolver=letsencrypt
+      - traefik.http.services.infisical.loadbalancer.server.port=8080
+    user: "non-root-user"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
 
   redis:
-    image: redis:8.6.2@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
+    image: redis:8.6.2-alpine@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
     container_name: infisical-redis
     restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     networks:
-      - infisical
+      - default
     volumes:
       - redis_data:/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "999:999"
 
   db:
     container_name: infisical-db
-    image: postgres:18-alpine
+    image: postgres:18.3-alpine@sha256:c5739fc99d1a3278c0a2113758a2433ce29ef964b30df705094fd77dfa5da2fa
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -45,12 +66,21 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - infisical
+      - default
     healthcheck:
       test: "pg_isready --username=${DB_USER} && psql --username=${DB_USER} --list"
       interval: 5s
       timeout: 10s
       retries: 10
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_READ_SEARCH
 
 volumes:
   db_data:
@@ -60,5 +90,6 @@ volumes:
 
 networks:
   default:
+    internal: true
   proxy:
     external: true
