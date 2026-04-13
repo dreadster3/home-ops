@@ -5,7 +5,7 @@ resources:
   - ../../../../../base/security/external-secrets/store
 
 patches:
-  - path: infiscal-credentials.yaml
+  - path: infisical-credentials.sops.yaml
     target:
       kind: Secret
       name: infisical-credentials
