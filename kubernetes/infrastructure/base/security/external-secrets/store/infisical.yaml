@@ -18,4 +18,4 @@ spec:
             namespace: external-secrets
       secretsScope:
         projectSlug: home-lab
-        environmentSlug: dev
+        environmentSlug: prod

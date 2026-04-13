@@ -9,3 +9,10 @@ patches:
     target:
       kind: Secret
       name: infisical-credentials
+  - target:
+      kind: ClusterSecretStore
+      name: infisical
+    patch: |-
+      - op: replace
+        path: /spec/provider/infisical/secretsScope/environmentSlug
+        value: dev
