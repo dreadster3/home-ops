@@ -12,7 +12,4 @@ patches:
   - target:
       kind: ClusterSecretStore
       name: infisical
-    patch: |-
-      - op: replace
-        path: /spec/provider/infisical/secretsScope/environmentSlug
-        value: dev
+    path: infisical.yaml
