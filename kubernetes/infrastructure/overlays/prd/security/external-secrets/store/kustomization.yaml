@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../../base/security/external-secrets/store
+
+patches:
+  - path: infisical-credentials.sops.yaml
+    target:
+      kind: Secret
+      name: infisical-credentials
