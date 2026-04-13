@@ -20,5 +20,5 @@ resources:
   - secrets.yaml
   - cronjob.yaml
   - certificates.yaml
-  - ingress.yaml
+  - httproute.yaml
   - helm.yaml
