@@ -28,19 +28,6 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: vault-ingress-tls
-  namespace: vault
-spec:
-  dnsNames:
-    - vault.${INTERNAL_DOMAIN}
-  secretName: vault-ingress-tls
-  issuerRef:
-    name: letsencrypt
-    kind: ClusterIssuer
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
   name: vault-internal-tls
   namespace: vault
 spec:
