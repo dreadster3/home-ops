@@ -141,7 +141,6 @@ spec:
       type: external
       external:
         addr: harbor-dragonfly:6379
-        existingSecret: harbor-dragonfly-credentials
 
     metrics:
       enabled: true
