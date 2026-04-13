@@ -18,6 +18,12 @@ services:
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
       NODE_ENV: production
       TELEMETRY_ENABLED: false
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_FROM_ADDRESS: no-reply@${EXTERNAL_DOMAIN}
+      SMTP_FROM_NAME: Infisical
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
     networks:
       - default
       - proxy
