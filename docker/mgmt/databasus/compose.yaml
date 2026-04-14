@@ -13,6 +13,7 @@ services:
       - "traefik.http.services.databasus.loadbalancer.server.port=4005"
     networks:
       - proxy
+      - database
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -25,5 +26,7 @@ services:
       - FOWNER
 
 networks:
+  database:
+    internal: true
   proxy:
     external: true
