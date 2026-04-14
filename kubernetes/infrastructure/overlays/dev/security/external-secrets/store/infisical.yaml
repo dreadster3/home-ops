@@ -7,5 +7,4 @@ spec:
     infisical:
       hostAPI: https://infisical.${HOME_DOMAIN}
       secretsScope:
-        projectSlug: home-lab
         environmentSlug: dev

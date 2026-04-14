@@ -17,5 +17,5 @@ spec:
             key: clientSecret
             namespace: external-secrets
       secretsScope:
-        projectSlug: home-lab
+        projectSlug: kubernetes
         environmentSlug: prod
