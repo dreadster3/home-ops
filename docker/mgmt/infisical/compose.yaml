@@ -24,6 +24,7 @@ services:
       SMTP_FROM_NAME: Infisical
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
+      ALLOW_INTERNAL_IP_CONNECTIONS: true
     networks:
       - default
       - proxy
@@ -77,7 +78,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: infisical
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
     networks:
       - default
       - database
