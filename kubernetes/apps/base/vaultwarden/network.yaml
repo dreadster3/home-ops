@@ -9,7 +9,7 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": vaultwarden
+            io.kubernetes.pod.namespace: vaultwarden
   ingress:
     - fromEndpoints:
         - matchLabels: {}
@@ -49,13 +49,11 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik-system
-            app.kubernetes.io/name: traefik
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
       toPorts:
         - ports:
             - port: http
-              protocol: TCP
-            - port: websocket
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
@@ -66,11 +64,7 @@ spec:
         - ports:
             - port: http
               protocol: TCP
-            - port: websocket
-              protocol: TCP
   egress:
-    # - toEntities:
-    #     - world
     - toFQDNs:
         - matchName: smtp.gmail.com
       toPorts:

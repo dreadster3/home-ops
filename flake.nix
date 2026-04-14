@@ -51,7 +51,19 @@
               yq-go
               gitleaks
               pre-commit
+              (minikube.override { withQemu = true; })
+              vault
+              awscli2
+              infisical
             ];
+
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+              pkgs.libvirt
+            ];
+
+            shellHook = ''
+              export AWS_PROFILE=rook
+            '';
           };
         };
       flake = {

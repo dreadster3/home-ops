@@ -14,13 +14,6 @@ metadata:
   namespace: harbor
 spec:
   interval: 1h
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
   chart:
     spec:
       chart: harbor
@@ -107,17 +100,15 @@ spec:
           memory: 1280Mi
 
     expose:
+      type: route
       tls:
-        certSource: secret
-        secret:
-          secretName: harbor-ingress-tls
-      ingress:
+        enabled: false
+      route:
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
         hosts:
-          core: harbor.${INTERNAL_DOMAIN}
-        className: traefik
-        annotations:
-          ingress.kubernetes.io/proxy-body-size: "0"
-          cert-manager.io/cluster-issuer: letsencrypt
+          - harbor.${INTERNAL_DOMAIN}
 
     cache:
       enabled: true
@@ -147,8 +138,7 @@ spec:
     redis:
       type: external
       external:
-        addr: harbor-redis-sentinel-0.harbor-redis-sentinel-headless:26379,harbor-redis-sentinel-1.harbor-redis-sentinel-headless:26379,harbor-redis-sentinel-2.harbor-redis-sentinel-headless:26379
-        sentinelMasterSet: myMaster
+        addr: harbor-dragonfly:6379
 
     metrics:
       enabled: true

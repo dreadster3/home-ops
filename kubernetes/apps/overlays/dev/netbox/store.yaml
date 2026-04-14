@@ -1,0 +1,16 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup-store
+  namespace: netbox
+spec:
+  configuration:
+    destinationPath: s3://netbox-cluster
+    endpointURL: http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+    s3Credentials:
+      accessKeyId:
+        name: netbox-cluster-bucket
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: netbox-cluster-bucket
+        key: AWS_SECRET_ACCESS_KEY

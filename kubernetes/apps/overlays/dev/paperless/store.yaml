@@ -1,0 +1,16 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup-store
+  namespace: paperless
+spec:
+  configuration:
+    destinationPath: s3://paperless-cluster
+    endpointURL: http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+    s3Credentials:
+      accessKeyId:
+        name: paperless-cluster-bucket
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: paperless-cluster-bucket
+        key: AWS_SECRET_ACCESS_KEY

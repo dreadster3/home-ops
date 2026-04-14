@@ -1,0 +1,10 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: flux-instance
+spec:
+  values:
+    instance:
+      sync:
+        path: kubernetes/clusters/dev
+        ref: refs/heads/feature/gateway_api

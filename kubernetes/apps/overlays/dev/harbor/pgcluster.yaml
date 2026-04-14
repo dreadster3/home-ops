@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: harbor-cluster
+  namespace: harbor
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  bootstrap:
+    recovery: null
+    initdb:
+      database: harbor
+      owner: harbor
+      secret:
+        name: harbor-cluster-credentials

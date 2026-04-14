@@ -36,6 +36,8 @@ spec:
               repository: ghcr.io/paperless-ngx/paperless-ngx
               tag: 2.20.13@sha256:4b05bcd28e6923768000b5d247cbf2c66fd49bdc3f3b05955bd4f6790a638b01
             env:
+              USERMAP_UID: 4100
+              USERMAP_GID: 4100
               PAPERLESS_TIME_ZONE: Europe/Lisbon
               PAPERLESS_DBENGINE: postgresql
               PAPERLESS_ALLOWED_HOSTS: paperless.${INTERNAL_DOMAIN},paperless.${EXTERNAL_DOMAIN}
@@ -59,8 +61,8 @@ spec:
               PAPERLESS_CONSUMER_POLLING: 30
               PAPERLESS_DISABLE_REGULAR_LOGIN: true
               PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
-              USERMAP_UID: 4100
-              USERMAP_GID: 4100
+              S6_READ_ONLY_ROOT: 1
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
             envFrom:
               - secretRef:
                   name: paperless-secret-env
@@ -94,6 +96,28 @@ spec:
                   timeoutSeconds: 3
                   failureThreshold: 15
                   periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
+                add:
+                  - CHOWN
+                  - DAC_OVERRIDE
+                  - FOWNER
+                  - SETGID
+                  - SETUID
+        pod:
+          # Needs to run as root to install OCR packages
+          # TODO: Build a custom image with OCR packages builtin to remove this dependency and run as nonroot
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            runAsGroup: 0
+            fsGroup: 0
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
 
     service:
       main:
@@ -103,24 +127,17 @@ spec:
             port: 80
             targetPort: http
 
-    ingress:
+    route:
       main:
-        enabled: true
-        className: traefik
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt
-        hosts:
-          - host: &host "paperless.${INTERNAL_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-        tls:
-          - hosts:
-              - *host
-            secretName: paperless-ingress-tls
+        hostnames:
+          - paperless.${INTERNAL_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
+        rules:
+          - backendRefs:
+              - identifier: main
+                port: http
 
     persistence:
       data:
@@ -149,3 +166,11 @@ spec:
           main:
             main:
               - path: *consume
+
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /run
+            subPath: run

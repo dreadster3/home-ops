@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: paperless
+  namespace: paperless
+spec:
+  values:
+    controllers:
+      main:
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
+    persistence:
+      data:
+        storageClass: ceph-filesystem
+        size: 512Mi
+      media:
+        storageClass: ceph-filesystem
+        size: 512Mi
+      consume:
+        enabled: false

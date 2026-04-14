@@ -9,10 +9,8 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": authentik
-  ingress:
-    - fromEndpoints:
-        - matchLabels: {}
+            io.kubernetes.pod.namespace: authentik
+  ingress: []
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -27,9 +25,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": cnpg-system
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": authentik
+            io.kubernetes.pod.namespace: authentik
             cnpg.io/cluster: authentik-cluster
       toPorts:
         - ports:
@@ -39,28 +35,11 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": authentik
+            io.kubernetes.pod.namespace: authentik
             app.kubernetes.io/name: authentik
       toPorts:
         - ports:
             - port: postgresql
-              protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": monitoring
-            app.kubernetes.io/name: alloy
-      toPorts:
-        - ports:
-            - port: metrics
-              protocol: TCP
-  egress:
-    - toEntities:
-        - kube-apiserver
-    - toCIDR:
-        - 192.168.30.20/32
-      toPorts:
-        - ports:
-            - port: "30292"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
@@ -76,7 +55,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": monitoring
+            io.kubernetes.pod.namespace: monitoring
             app.kubernetes.io/name: alloy
       toPorts:
         - ports:
@@ -113,15 +92,15 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik-system
-            app.kubernetes.io/name: traefik
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
       toPorts:
         - ports:
             - port: http
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": pangolin
+            io.kubernetes.pod.namespace: pangolin
             app.kubernetes.io/instance: pangolin
             app.kubernetes.io/component: newt
       toPorts:
@@ -138,14 +117,14 @@ metadata:
   name: authentik-ingress
   namespace: authentik
 spec:
-  description: "Allow ingress from any authentik component to other authentik components"
+  description: Allow ingress from any authentik component to other authentik components
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: authentik
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": authentik
+            io.kubernetes.pod.namespace: authentik
             app.kubernetes.io/name: authentik
       toPorts:
         - ports:
@@ -166,8 +145,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik-system
-            app.kubernetes.io/name: traefik
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
       toPorts:
         - ports:
             - port: ldaps
@@ -185,8 +164,10 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik-system
-            app.kubernetes.io/name: traefik
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+    - toFQDNs:
+        - matchName: "authentik.${EXTERNAL_DOMAIN}"
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -202,8 +183,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik-system
-            app.kubernetes.io/name: traefik
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
       toPorts:
         - ports:
             - port: http

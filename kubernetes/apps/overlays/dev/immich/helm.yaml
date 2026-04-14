@@ -1,0 +1,38 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: immich
+  namespace: immich
+spec:
+  values:
+    controllers:
+      api:
+        replicas: 1
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
+      microservices:
+        replicas: 1
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
+      machine-learning:
+        replicas: 1
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
+
+    persistence:
+      external-library:
+        enabled: false
+      cache:
+        enabled: false

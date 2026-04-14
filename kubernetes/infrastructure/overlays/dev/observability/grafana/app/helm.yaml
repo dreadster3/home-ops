@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  values:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 0m
+        memory: 0Mi
+    sidecar:
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi

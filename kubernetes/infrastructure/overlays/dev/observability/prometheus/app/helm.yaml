@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  values:
+    prometheus:
+      prometheusSpec:
+        replicas: 1
+        retention: 2d
+        retentionSize: 5GB
+        resources:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        thanos:
+          resources:
+            requests:
+              cpu: 0m
+              memory: 0Mi
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              resources:
+                requests:
+                  storage: 10Gi
+    alertmanager:
+      alertmanagerSpec:
+        resources:
+          requests:
+            cpu: 0m
+            memory: 0Mi

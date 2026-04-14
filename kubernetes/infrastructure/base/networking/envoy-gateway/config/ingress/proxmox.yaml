@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxmox
+spec:
+  ports:
+    - name: https
+      port: &port 8006
+      protocol: TCP
+      targetPort: *port
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: proxmox
+subsets:
+  - addresses:
+      - ip: 192.168.30.5
+        nodeName: pve01
+      - ip: 192.168.30.6
+        nodeName: pve02
+      - ip: 192.168.30.10
+        nodeName: pve30
+    ports:
+      - name: https
+        port: 8006
+        protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1alpha3
+kind: BackendTLSPolicy
+metadata:
+  name: proxmox
+spec:
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: proxmox
+      sectionName: https
+  validation:
+    hostname: proxmox.${INTERNAL_DOMAIN}
+    wellKnownCACertificates: System
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: proxmox
+spec:
+  hostnames:
+    - proxmox.intra.dreadster3.com
+  parentRefs:
+    - name: envoy-internal
+      namespace: envoy
+  rules:
+    - backendRefs:
+        - name: proxmox
+          port: 8006
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: netbox-cluster
+  namespace: netbox
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  bootstrap:
+    recovery: null
+    initdb:
+      database: netbox
+      owner: netbox
+      secret:
+        name: netbox-cluster-credentials

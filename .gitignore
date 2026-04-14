@@ -1,8 +1,4 @@
 # direnv
 .direnv
 .envrc
-
-*.sops.yaml
-*.sops.yml
-
-!.sops.yaml
+.infisical.json

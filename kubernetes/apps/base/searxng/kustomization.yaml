@@ -20,4 +20,4 @@ resources:
   - namespace.yaml
   - secrets.yaml
   - helm.yaml
-  - redis.yaml
+  - dragonfly.yaml

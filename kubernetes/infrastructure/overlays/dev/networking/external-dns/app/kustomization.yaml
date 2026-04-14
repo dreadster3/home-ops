@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../../../base/networking/external-dns/app
+
+patches:
+  - target:
+      kind: HelmRelease
+      name: external-dns
+    patch: |-
+      - op: replace
+        path: /spec/values/extraArgs/3
+        value: --rfc2136-tsig-keyname=k8s-external-dns-dev
+      - op: replace
+        path: /spec/values/txtOwnerId
+        value: k8s-dev

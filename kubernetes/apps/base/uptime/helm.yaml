@@ -64,25 +64,17 @@ spec:
             port: 80
             targetPort: http
 
-    ingress:
+    route:
       main:
-        enabled: true
-        className: traefik
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt
-          traefik.ingress.kubernetes.io/router.middlewares: traefik-system-authentik-proxy@kubernetescrd
-        hosts:
-          - host: &host "uptime.${INTERNAL_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-        tls:
-          - hosts:
-              - *host
-            secretName: uptime-ingress-tls
+        hostnames:
+          - uptime.${INTERNAL_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
+        rules:
+          - backendRefs:
+              - identifier: main
+                port: http
 
     persistence:
       data:

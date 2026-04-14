@@ -46,11 +46,19 @@ spec:
                 cpu: 100m
                 memory: 512Mi
             securityContext:
-              runAsNonRoot: false
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
-              fsGroupChangePolicy: OnRootMismatch
+              allowPrivilegeEscalation: false
+              # Needs to be false for nginx files to work
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
 
     service:
       main:
@@ -60,24 +68,17 @@ spec:
             port: 80
             targetPort: http
 
-    ingress:
+    route:
       main:
-        enabled: true
-        className: traefik
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt
-        hosts:
-          - host: &host "termix.${INTERNAL_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-        tls:
-          - hosts:
-              - *host
-            secretName: termix-ingress-tls
+        hostnames:
+          - termix.${INTERNAL_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
+        rules:
+          - backendRefs:
+              - identifier: main
+                port: http
 
     persistence:
       data:

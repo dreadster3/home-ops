@@ -47,70 +47,21 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: redis-cluster
+  name: dragonfly
   namespace: immich
 spec:
-  description: "Allow Redis pods access"
+  description: "Allow Dragonfly pods access"
   endpointSelector:
     matchLabels:
-      app: immich-redis
+      app: immich-dragonfly
   ingress:
-    # Immich pods to redis
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: immich
-            app.kubernetes.io/instance: immich
-      toPorts:
-        - ports:
-            - port: "6379"
-              protocol: TCP
-    # Redis to redis
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: immich
-            app: immich-redis
-      toPorts:
-        - ports:
-            - port: "6379"
-              protocol: TCP
-    # Sentinels to redis
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: immich
-            app: immich-redis-sentinel
-      toPorts:
-        - ports:
-            - port: "6379"
-              protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: redis-sentinel
-  namespace: immich
-spec:
-  description: "Allow Redis Sentinel pods access"
-  endpointSelector:
-    matchLabels:
-      app: immich-redis-sentinel
-  ingress:
-    # Immich pods to sentinels
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: immich
             app.kubernetes.io/name: immich
       toPorts:
         - ports:
-            - port: "26379"
-              protocol: TCP
-    # Sentinels to sentinels
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: immich
-            app: immich-redis-sentinel
-      toPorts:
-        - ports:
-            - port: "26379"
+            - port: "6379"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
@@ -125,11 +76,11 @@ spec:
       app.kubernetes.io/name: immich
       app.kubernetes.io/controller: api
   ingress:
-    # Traefik to immich
+    # Envoy to immich
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: traefik-system
-            app.kubernetes.io/name: traefik
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
       toPorts:
         - ports:
             - port: http

@@ -1,12 +1,3 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: immich
-  namespace: immich
-spec:
-  interval: 24h
-  url: https://immich-app.github.io/immich-charts
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -16,13 +7,6 @@ metadata:
     nfsMount: "true"
 spec:
   interval: 1h
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
   chart:
     spec:
       chart: app-template
@@ -216,24 +200,18 @@ spec:
             targetPort: http
             protocol: HTTP
 
-    ingress:
+    route:
       main:
-        enabled: true
-        className: traefik
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt
-        hosts:
-          - host: &host immich.${INTERNAL_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: api
-                  port: http
-        tls:
-          - hosts:
-              - *host
-            secretName: immich-ingress-tls
+        hostnames:
+          - immich.${INTERNAL_DOMAIN}
+          - photos.${INTERNAL_DOMAIN}
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
+        rules:
+          - backendRefs:
+              - identifier: api
+                port: http
 
     serviceMonitor:
       api:

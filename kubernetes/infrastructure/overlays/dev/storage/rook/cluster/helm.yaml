@@ -1,0 +1,121 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app rook-ceph-cluster
+  namespace: rook-ceph
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: *app
+      version: v1.19.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: rook
+  values:
+    cephClusterSpec:
+      mon:
+        count: 2
+      mgr:
+        count: 2
+
+      dashboard:
+        ssl: false
+
+      resources:
+        mgr:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        mon:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        osd:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        prepareosd:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        mgr-sidecar:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        crashcollector:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        logcollector:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        cleanup:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+        exporter:
+          requests:
+            cpu: 0m
+            memory: 0Mi
+
+    cephFileSystems:
+      - name: ceph-filesystem
+        spec:
+          metadataPool:
+            replicated:
+              size: 3
+          dataPools:
+            - failureDomain: host
+              replicated:
+                size: 3
+              name: data0
+          metadataServer:
+            activeCount: 1
+            activeStandby: true
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
+            priorityClassName: system-cluster-critical
+        storageClass:
+          enabled: true
+          isDefault: false
+          name: ceph-filesystem
+          pool: data0
+          reclaimPolicy: Delete
+          allowVolumeExpansion: true
+          volumeBindingMode: "Immediate"
+          annotations: {}
+          labels: {}
+          mountOptions: []
+          parameters:
+            csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+            csi.storage.k8s.io/provisioner-secret-namespace: "{{ .Release.Namespace }}"
+            csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+            csi.storage.k8s.io/controller-expand-secret-namespace: "{{ .Release.Namespace }}"
+            csi.storage.k8s.io/controller-publish-secret-name: rook-csi-cephfs-provisioner
+            csi.storage.k8s.io/controller-publish-secret-namespace: "{{ .Release.Namespace }}"
+            csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+            csi.storage.k8s.io/node-stage-secret-namespace: "{{ .Release.Namespace }}"
+            csi.storage.k8s.io/fstype: ext4
+
+    toolbox:
+      enabled: true
+
+    monitoring:
+      enabled: true
+      createPrometheusRules: true
+
+    route:
+      dashboard:
+        host:
+          name: ceph.${INTERNAL_DOMAIN}
+          path: /
+          pathType: PathPrefix
+        parentRefs:
+          - name: envoy-internal
+            namespace: envoy
+            sectionName: https

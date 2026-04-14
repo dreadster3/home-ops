@@ -1,0 +1,54 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: alloy
+  namespace: monitoring
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: alloy
+      version: v1.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+  values:
+    alloy:
+      configMap:
+        create: false
+        name: alloy
+      clustering:
+        enabled: true
+      resources:
+        requests:
+          cpu: 120m
+          memory: &memory 1700Mi
+        limits:
+          memory: *memory
+      extraEnv:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: LOKI_USER
+          valueFrom:
+            secretKeyRef:
+              name: loki-auth
+              key: username
+        - name: LOKI_PASS
+          valueFrom:
+            secretKeyRef:
+              name: loki-auth
+              key: password
+
+    configReloader:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+        limits:
+          memory: 50Mi
+    controller:
+      podAnnotations:
+        reloader.stakater.com/auto: "true"

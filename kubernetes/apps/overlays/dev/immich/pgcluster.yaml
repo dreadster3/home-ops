@@ -1,0 +1,18 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-cluster
+  namespace: immich
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  bootstrap:
+    recovery: null
+    initdb:
+      database: immich
+      owner: immich
+      secret:
+        name: immich-cluster-credentials
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS "vchord" CASCADE;
+        - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;

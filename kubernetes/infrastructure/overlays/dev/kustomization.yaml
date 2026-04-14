@@ -1,0 +1,196 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+  - pairs:
+      app.kubernetes.io/category: infrastructure
+      app.kubernetes.io/environment: dev
+
+resources:
+  - ../../base/security
+  - ../../base/databases
+  # - ../../base/observability
+  - ../../base/observability/prometheus
+  - ../../base/observability/namespace.yaml
+  - ../../base/platform
+  - ../../base/networking
+  - ../../base/storage
+
+patches:
+  - target:
+      kind: Secret
+      name: secrets
+    path: ./secrets.sops.yaml
+  - target:
+      kind: Kustomization
+      name: external-secrets-store
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/security/external-secrets/store
+
+  - target:
+      kind: Kustomization
+      name: cilium-config
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/networking/cilium/config
+  - target:
+      kind: Kustomization
+      name: envoy-gateway-config
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/networking/envoy-gateway/config
+  - target:
+      kind: Kustomization
+      name: flux-instance
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/platform/flux/instance
+  # Minikube has builtin Cilium
+  - target:
+      kind: Kustomization
+      name: cilium
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: cilium
+        namespace: cilium-system
+  # Remove cilium-configs dependsOn
+  - target:
+      kind: Kustomization
+      name: cilium-config
+    patch: |-
+      - op: remove
+        path: /spec/dependsOn
+  - target:
+      kind: Kustomization
+      name: cilium-policies
+    patch: |-
+      - op: remove
+        path: /spec/dependsOn
+  - target:
+      kind: Kustomization
+      name: external-dns
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/networking/external-dns/app
+  - target:
+      kind: Kustomization
+      name: prometheus
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: prometheus
+        namespace: monitoring
+  - target:
+      kind: Kustomization
+      name: metrics-server
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: metrics-server
+        namespace: metrics-server
+  - target:
+      kind: Kustomization
+      name: netbird-operator
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: netbird-operator
+        namespace: netbird
+  - target:
+      kind: Kustomization
+      name: netbird-operator-config
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: netbird-operator-config
+        namespace: netbird
+  - target:
+      kind: Kustomization
+      name: rook-ceph-cluster
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/storage/rook/cluster
+      - op: add
+        path: /spec/healthChecks
+        value:
+          - apiVersion: helm.toolkit.fluxcd.io/v2
+            kind: HelmRelease
+            name: rook-ceph-cluster
+            namespace: rook-ceph
+          - apiVersion: ceph.rook.io/v1
+            kind: CephCluster
+            name: rook-ceph
+            namespace: rook-ceph
+  - target:
+      kind: Kustomization
+      name: nfs-subdir
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: nfs-subdir
+        namespace: nfs-subdir
+  - target:
+      kind: Kustomization
+      name: local-path-storage
+    patch: |-
+      $patch: delete
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: local-path-storage
+        namespace: local-path-storage
+  - target:
+      kind: Kustomization
+      name: thanos
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/thanos/app
+  - target:
+      kind: Kustomization
+      name: loki
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/loki/app
+  - target:
+      kind: Kustomization
+      name: prometheus
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/prometheus/app
+  - target:
+      kind: Kustomization
+      name: grafana
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/grafana/app
+  - target:
+      kind: Kustomization
+      name: alloy
+    patch: |-
+      - op: replace
+        path: /spec/path
+        value: ./kubernetes/infrastructure/overlays/dev/observability/alloy/app

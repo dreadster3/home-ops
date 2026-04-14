@@ -76,17 +76,15 @@ spec:
         serviceMonitor:
           enabled: true
 
-      ingress:
-        enabled: true
-        ingressClassName: traefik
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt
-        hosts:
-          - &host authentik.${INTERNAL_DOMAIN}
-        tls:
-          - secretName: authentik-ingress-tls
-            hosts:
-              - *host
+      route:
+        main:
+          enabled: true
+          hostnames:
+            - authentik.${INTERNAL_DOMAIN}
+          parentRefs:
+            - name: envoy-internal
+              namespace: envoy
+          https: true
 
     worker:
       replicas: 2

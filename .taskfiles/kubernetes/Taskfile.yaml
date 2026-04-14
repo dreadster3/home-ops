@@ -2,6 +2,15 @@
 version: "3"
 
 tasks:
+  get:secret:
+    desc: Get a secret from the cluster
+    requires:
+      vars:
+        - NAME
+        - NS
+    cmds:
+      - 'kubectl get secret -n {{.NS}} {{.NAME}} -o json | jq -r ".data | to_entries[] | \"\(.key): \(.value | @base64d)\""'
+
   reconcile:
     desc: Reconcile the kubernetes cluster source
     cmds:
@@ -21,6 +30,43 @@ tasks:
       - kubectl get deployments --all-namespaces -l nfsMount=true --no-headers | awk '{print $2, $1}' | xargs -L1 bash -c 'flux {{.STATE}} kustomization $0 -n $1'
       - kubectl get deployments --all-namespaces -l nfsMount=true --no-headers | awk '{print $2, $1}' | xargs -L1 bash -c 'flux {{.STATE}} helmrelease $0 -n $1'
       - kubectl get deployments --all-namespaces -l nfsMount=true --no-headers | awk '{print $2, $1}' | xargs -L1 bash -c 'kubectl scale --replicas {{if eq .STATE "suspend"}}0{{else}}1{{end}} deployment $0 -n $1'
+
+  build:
+    desc: Build configurations for given path
+    env:
+      INTERNAL_DOMAIN: internal.localhost
+      EXTERNAL_DOMAIN: localhost
+    requires:
+      vars:
+        - name: PATH
+    cmds:
+      - kustomize build {{.PATH}} | flux envsubst
+
+  dev:cluster:start:
+    desc: Start a development cluster
+    vars:
+      NODES: 3
+    cmds:
+      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes 3 --cpus 8 --memory 12G --addons metrics-server --addons storage-provisioner-rancher --addons metallb --kvm-network minikube
+      - minikube addons configure metallb
+    preconditions:
+      - sh: which minikube
+        msg: minikube is not installed
+
+  dev:cluster:stop:
+    desc: Stop a development cluster
+    cmds:
+      - minikube delete
+    preconditions:
+      - sh: which minikube
+        msg: minikube is not installed
+
+  dev:cluster:tunnel:
+    desc: Open a tunnel to the development cluster
+    vars:
+      BIND_ADDRESS: '{{.BIND_ADDRESS | default "127.0.0.1"}}'
+    cmds:
+      - minikube tunnel --bind-address={{.BIND_ADDRESS}}
 
 includes:
   eso: ./eso

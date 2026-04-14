@@ -38,13 +38,13 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: redis-replication
+  name: dragonfly
   namespace: openwebui
 spec:
-  description: "Allow Redis pods access"
+  description: "Allow Dragonfly pods access"
   endpointSelector:
     matchLabels:
-      app: openwebui-redis
+      app: openwebui-dragonfly
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -54,27 +54,6 @@ spec:
       toPorts:
         - ports:
             - port: "6379"
-              protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: redis-sentinel
-  namespace: openwebui
-spec:
-  description: "Allow Redis Sentinel pods access"
-  endpointSelector:
-    matchLabels:
-      app: openwebui-redis-sentinel
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: openwebui
-            app.kubernetes.io/instance: openwebui
-            app.kubernetes.io/name: openwebui
-      toPorts:
-        - ports:
-            - port: "26379"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
@@ -91,8 +70,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": traefik-system
-            app.kubernetes.io/name: traefik
+            "k8s:io.kubernetes.pod.namespace": envoy
+            app.kubernetes.io/name: envoy
       toPorts:
         - ports:
             - port: http

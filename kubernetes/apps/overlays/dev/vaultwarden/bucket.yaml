@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: vaultwarden-cluster-bucket
+  namespace: vaultwarden
+spec:
+  bucketName: vaultwarden-cluster
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 1G

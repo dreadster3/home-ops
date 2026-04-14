@@ -67,18 +67,15 @@ spec:
       enabled: false
 
     ingress:
+      enabled: false
+
+    httpRoute:
       enabled: true
-      className: traefik
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt
-      hosts:
-        - host: *host
-          paths:
-            - /
-      tls:
-        - secretName: netbox-ingress-tls
-          hosts:
-            - *host
+      parentRefs:
+        - name: envoy-internal
+          namespace: envoy
+      hostnames:
+        - netbox.${INTERNAL_DOMAIN}
 
     metrics:
       enabled: true
@@ -100,13 +97,10 @@ spec:
       enabled: false
 
     tasksDatabase: &redis
-      sentinels:
-        - netbox-redis-sentinel-0.netbox-redis-sentinel-headless:26379
-        - netbox-redis-sentinel-1.netbox-redis-sentinel-headless:26379
-        - netbox-redis-sentinel-2.netbox-redis-sentinel-headless:26379
-      sentinelService: mymaster
-      existingSecretName: netbox-redis-credentials
-      existingSecretKey: password
+      host: netbox-dragonfly
+      port: 6379
+      existingSecretName: netbox-dragonfly-credentials
+      existingSecretKey: DRAGONFLY_PASSWORD
 
     cachingDatabase: *redis
 
