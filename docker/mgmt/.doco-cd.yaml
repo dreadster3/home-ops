@@ -52,3 +52,8 @@ name: infisical
 working_dir: docker/mgmt/infisical
 compose_files:
   - compose.yaml
+---
+name: databasus
+working_dir: docker/mgmt/databasus
+compose_files:
+  - compose.yaml
