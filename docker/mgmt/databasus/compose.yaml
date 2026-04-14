@@ -13,7 +13,6 @@ services:
       - "traefik.http.services.databasus.loadbalancer.server.port=4005"
     networks:
       - proxy
-    user: "nobody:nogroup"
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -23,9 +22,6 @@ services:
       - SETGID
       - CHOWN
       - DAC_OVERRIDE
-    read_only: true
-    tmpfs:
-      - /tmp
 
 networks:
   proxy:
