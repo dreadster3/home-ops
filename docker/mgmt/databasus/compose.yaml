@@ -27,6 +27,7 @@ services:
 
 networks:
   database:
-    internal: true
+    name: database
+    driver: bridge
   proxy:
     external: true
