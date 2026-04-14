@@ -1,0 +1,32 @@
+services:
+  databasus:
+    container_name: databasus
+    image: databasus/databasus:latest
+    volumes:
+      - /opt/docker/databasus/data:/databasus-data
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.databasus.rule=Host(`databasus.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.databasus.entrypoints=websecure"
+      - "traefik.http.routers.databasus.tls.certresolver=letsencrypt"
+      - "traefik.http.services.databasus.loadbalancer.server.port=4005"
+    networks:
+      - proxy
+    user: "nobody:nobody"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETUID
+      - SETGID
+      - CHOWN
+      - DAC_OVERRIDE
+    read_only: true
+    tmpfs:
+      - /tmp
+
+networks:
+  proxy:
+    external: true
