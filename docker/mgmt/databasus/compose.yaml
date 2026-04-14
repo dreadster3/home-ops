@@ -22,6 +22,7 @@ services:
       - SETGID
       - CHOWN
       - DAC_OVERRIDE
+      - FOWNER
 
 networks:
   proxy:
