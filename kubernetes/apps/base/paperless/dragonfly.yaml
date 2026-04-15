@@ -26,3 +26,19 @@ spec:
       memory: 50Mi
     limits:
       memory: 512Mi
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: &app paperless-dragonfly
+  labels:
+    group: dragonfly
+    app: *app
+spec:
+  selector:
+    matchLabels:
+      app: *app
+  podTargetLabels:
+    - app
+  podMetricsEndpoints:
+    - port: admin
