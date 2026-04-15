@@ -89,6 +89,14 @@ spec:
               protocol: TCP
             - port: admin
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: admin
+              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy
