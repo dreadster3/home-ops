@@ -80,10 +80,6 @@ spec:
           - backendRefs:
               - identifier: main
                 port: http
-            filters:
-              - type: URLRewrite
-                urlRewrite:
-                  hostname: joplin.${EXTERNAL_DOMAIN}
 
     persistence:
       metadata:
