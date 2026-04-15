@@ -20,11 +20,16 @@ spec:
   #   passwordFromSecret:
   #     name: harbor-dragonfly-credentials
   #     key: REDIS_PASSWORD
+  snapshot:
+    persistentVolumeClaimSpec:
+      storageClassName: local-path
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
   resources:
-    # Real resources required
     requests:
       cpu: 15m
       memory: 50Mi
-    # Minimum required to initialize due to dragonfly-operator
     limits:
       memory: 512Mi

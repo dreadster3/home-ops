@@ -20,6 +20,13 @@ spec:
     passwordFromSecret:
       name: paperless-dragonfly-credentials
       key: DRAGONFLY_PASSWORD
+  snapshot:
+    persistentVolumeClaimSpec:
+      storageClassName: local-path
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
   resources:
     requests:
       cpu: 15m
