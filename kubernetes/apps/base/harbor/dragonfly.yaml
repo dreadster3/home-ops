@@ -28,3 +28,19 @@ spec:
     # Minimum required to initialize due to dragonfly-operator
     limits:
       memory: 512Mi
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: &app harbor-dragonfly
+  labels:
+    group: dragonfly
+    app: *app
+spec:
+  selector:
+    matchLabels:
+      app: *app
+  podTargetLabels:
+    - app
+  podMetricsEndpoints:
+    - port: admin
