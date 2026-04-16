@@ -79,6 +79,8 @@ spec:
     # -- Configures service settings for the chart.
     service:
       main:
+        annotations:
+          netbird.io/expose: "true"
         controller: main
         sessionAffinity: ClientIP
         sessionAffinityConfig:

@@ -173,6 +173,8 @@ spec:
 
     service:
       api:
+        annotations:
+          netbird.io/expose: "true"
         controller: api
         primary: true
         ports:

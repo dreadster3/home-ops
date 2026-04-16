@@ -58,6 +58,8 @@ spec:
 
     service:
       main:
+        annotations:
+          netbird.io/expose: "true"
         controller: main
         ports:
           http:
