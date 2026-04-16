@@ -63,6 +63,14 @@ spec:
         - ports:
             - port: http
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: netbird
+            app.kubernetes.io/name: netbird-router
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
   egress:
     - toFQDNs:
         - matchName: "pool.ntp.org"
