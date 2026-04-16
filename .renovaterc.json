@@ -14,7 +14,8 @@
     "local>dreadster3/home-ops//.renovate/labels.json",
     "local>dreadster3/home-ops//.renovate/automerge.json",
     "local>dreadster3/home-ops//.renovate/groups.json",
-    "local>dreadster3/home-ops//.renovate/customManagers.json"
+    "local>dreadster3/home-ops//.renovate/customManagers.json",
+    "local>dreadster3/home-ops//.renovate/releasenotes.json"
   ],
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "ignorePaths": ["**/*.enc.*", "**/.archive/**", "**/talos/**", "**/*.env"],
