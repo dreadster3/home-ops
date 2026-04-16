@@ -8,8 +8,8 @@ This repository contains the declarative configuration for my entire home infras
 
 ## Sections
 
-| | |
-|--|--|
+| Section | Description |
+|---------|-------------|
 | [📦 Kubernetes](./kubernetes/README.md) | GitOps-managed Kubernetes cluster — infrastructure, applications, and networking |
 | [🐳 Docker](./docker/README.md) | Docker Compose services running on the management node |
 
