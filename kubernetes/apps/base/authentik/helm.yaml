@@ -76,6 +76,10 @@ spec:
         serviceMonitor:
           enabled: true
 
+      service:
+        annotations:
+          netbird.io/expose: "true"
+
       route:
         main:
           enabled: true
