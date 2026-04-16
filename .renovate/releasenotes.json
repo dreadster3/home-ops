@@ -1,0 +1,113 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": ["Link Envoy release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["envoyproxy/envoy"],
+      "sourceUrl": "https://github.com/envoyproxy/envoy"
+    },
+    {
+      "description": ["Link Traefik release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["traefik", "docker.io/traefik"],
+      "sourceUrl": "https://github.com/traefik/traefik"
+    },
+    {
+      "description": ["Link Infisical release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["infisical/infisical"],
+      "sourceUrl": "https://github.com/Infisical/infisical"
+    },
+    {
+      "description": ["Link Duplicati release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["duplicati/duplicati"],
+      "sourceUrl": "https://github.com/duplicati/duplicati"
+    },
+    {
+      "description": ["Link Apprise release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["caronc/apprise"],
+      "sourceUrl": "https://github.com/caronc/apprise"
+    },
+    {
+      "description": ["Link Stirling PDF release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["stirlingtools/stirling-pdf"],
+      "sourceUrl": "https://github.com/Stirling-Tools/Stirling-PDF"
+    },
+    {
+      "description": ["Link PeaNUT release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["brandawg93/peanut"],
+      "sourceUrl": "https://github.com/brandawg93/PeaNUT"
+    },
+    {
+      "description": ["Link KRR release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["robustadev/krr"],
+      "sourceUrl": "https://github.com/robusta-dev/krr"
+    },
+    {
+      "description": ["Link Omada Controller release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["docker.io/mbentley/omada-controller"],
+      "sourceUrl": "https://github.com/mbentley/docker-omada-controller"
+    },
+    {
+      "description": ["Link Dockhand release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["docker.io/fnsys/dockhand"],
+      "sourceUrl": "https://github.com/FnSys/dockhand"
+    },
+    {
+      "description": ["Link Thanos release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["quay.io/thanos/thanos"],
+      "sourceUrl": "https://github.com/thanos-io/thanos"
+    },
+    {
+      "description": ["Link Ceph release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["quay.io/ceph/ceph"],
+      "sourceUrl": "https://github.com/ceph/ceph"
+    },
+    {
+      "description": ["Link LinuxServer socket-proxy release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["lscr.io/linuxserver/socket-proxy"],
+      "sourceUrl": "https://github.com/linuxserver/docker-socket-proxy"
+    },
+    {
+      "description": ["Link PostgreSQL release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["postgres", "docker.io/postgres"],
+      "sourceUrl": "https://github.com/docker-library/postgres"
+    },
+    {
+      "description": ["Link Redis release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["redis"],
+      "sourceUrl": "https://github.com/docker-library/redis"
+    },
+    {
+      "description": ["Link MongoDB release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mongo", "docker.io/mongo"],
+      "sourceUrl": "https://github.com/mongodb/mongo"
+    },
+    {
+      "description": ["Link Ollama release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ollama/ollama"],
+      "sourceUrl": "https://github.com/ollama/ollama"
+    },
+    {
+      "description": ["Link Termix release notes from GitHub"],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/lukegus/termix"],
+      "sourceUrl": "https://github.com/Termix-SSH/Termix"
+    }
+  ]
+}
