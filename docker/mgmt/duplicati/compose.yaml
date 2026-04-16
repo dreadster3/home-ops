@@ -1,7 +1,7 @@
 services:
   duplicati:
     container_name: duplicati
-    image: duplicati/duplicati:2.2.1.0
+    image: duplicati/duplicati:2.3.0.0
     restart: unless-stopped
     environment:
       DUPLICATI__WEBSERVICE_ALLOWED_HOSTNAMES: duplicati.${INTERNAL_DOMAIN}
