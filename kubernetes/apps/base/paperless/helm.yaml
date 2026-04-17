@@ -7,6 +7,7 @@ metadata:
     nfsMount: "true"
 spec:
   interval: 1h
+  timeout: 10m
   install:
     remediation:
       retries: 3
@@ -81,21 +82,20 @@ spec:
                 enabled: true
                 spec:
                   periodSeconds: 30
-                  timeoutSeconds: 5
+                  timeoutSeconds: 10
                   failureThreshold: 5
               readiness:
                 enabled: true
                 spec:
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 5
+                  failureThreshold: 3
               startup:
                 enabled: true
                 spec:
-                  initialDelaySeconds: 120
-                  timeoutSeconds: 3
-                  failureThreshold: 15
                   periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
