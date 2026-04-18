@@ -85,9 +85,11 @@ spec:
           memory: 512Mi
       retentionResolutionRaw: 15d
       retentionResolution5m: 30d
-      retentionResolution1h: 90d
+      retentionResolution1h: 60d
       extraFlags:
-        - --delete-delay=24h
+        - --delete-delay=12h
+      persistence:
+        size: 20Gi
       networkPolicy:
         enabled: false
 
