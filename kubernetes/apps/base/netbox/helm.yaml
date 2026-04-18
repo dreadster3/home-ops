@@ -105,12 +105,10 @@ spec:
     cachingDatabase: *redis
 
     email:
-      server: smtp.gmail.com
-      port: 587
-      useTLS: true
+      server: maddy.maddy.svc.cluster.local
+      port: 25
+      useTLS: false
       from: no-reply@${EXTERNAL_DOMAIN}
-      existingSecretName: netbox-smtp
-      existingSecretKey: password
 
     remoteAuth:
       enabled: true
@@ -194,8 +192,3 @@ spec:
       - name: LOGOUT_REDIRECT_URL
         value: https://authentik.${INTERNAL_DOMAIN}/application/o/netbox/end-session/
 
-  valuesFrom:
-    - targetPath: email.username
-      kind: Secret
-      name: netbox-smtp
-      valuesKey: username
