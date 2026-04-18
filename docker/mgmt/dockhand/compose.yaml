@@ -36,7 +36,7 @@ services:
       - /run
   dockhand:
     container_name: dockhand
-    image: docker.io/fnsys/dockhand:v1.0.24@sha256:b4eeaf763a8aca8be2d9ffbd019ca2cd835bfbe15334022c92ce15f3ec75482e
+    image: docker.io/fnsys/dockhand:v1.0.25@sha256:96fdc5235760f5f345772d3727024b7803233d98fd37bbd51fee73e93a5e4bca
     restart: unless-stopped
     depends_on:
       - socket-proxy
