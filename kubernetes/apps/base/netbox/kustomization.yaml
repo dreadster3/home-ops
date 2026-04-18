@@ -17,6 +17,15 @@ configMapGenerator:
       - scripts/group_pipeline.py
       - scripts/storages.py
 
+# INFO: needed because helm chart does not support no secrets for SMTP setup
+secretGenerator:
+  - name: netbox-smtp
+    namespace: *app
+    options:
+      disableNameSuffixHash: true
+    literals:
+      - email-password=PLACEHOLDER
+
 resources:
   - bucket.yaml
   - helm.yaml

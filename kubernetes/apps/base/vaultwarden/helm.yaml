@@ -42,12 +42,11 @@ spec:
               WEB_VAULT_ENABLED: true
               ORG_GROUPS_ENABLED: true
               ORG_EVENTS_ENABLED: true
-              SMTP_HOST: smtp.gmail.com
-              SMTP_SECURITY: starttls
-              SMTP_PORT: 587
+              SMTP_HOST: maddy.maddy.svc.cluster.local
+              SMTP_SECURITY: off
+              SMTP_PORT: 25
               SMTP_FROM: no-reply@${EXTERNAL_DOMAIN}
               SMTP_FROM_NAME: Vaultwarden
-              SMTP_AUTH_MECHANISM: Login
               SIGNUPS_ALLOWED: false
               SSO_ENABLED: true
               SSO_ONLY: false

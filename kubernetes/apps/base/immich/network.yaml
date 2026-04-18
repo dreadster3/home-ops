@@ -136,6 +136,15 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: maddy
+            app.kubernetes.io/name: maddy
+            app.kubernetes.io/instance: maddy
+      toPorts:
+        - ports:
+            - port: "25"
+              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy

@@ -46,11 +46,9 @@ spec:
     authentik:
       secret_key: file:///var/run/secrets/authentik-secret-env/SECRET_KEY
       email:
-        host: smtp.gmail.com
-        port: 587
-        username: file:///var/run/secrets/authentik-secret-env/SMTP_USERNAME
-        password: file:///var/run/secrets/authentik-secret-env/SMTP_PASSWORD
-        use_tls: true
+        host: maddy.maddy.svc.cluster.local
+        port: 25
+        use_tls: false
         from: no-reply@${EXTERNAL_DOMAIN}
       postgresql:
         host: authentik-cluster-rw

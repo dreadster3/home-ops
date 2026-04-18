@@ -66,3 +66,12 @@ spec:
   egress:
     - toEntities:
         - world
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: maddy
+            app.kubernetes.io/name: maddy
+            app.kubernetes.io/instance: maddy
+      toPorts:
+        - ports:
+            - port: "25"
+              protocol: TCP
