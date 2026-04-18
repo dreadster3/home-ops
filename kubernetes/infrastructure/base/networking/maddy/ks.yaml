@@ -22,5 +22,7 @@ spec:
   dependsOn:
     - name: external-secrets-store
       namespace: external-secrets
+    - name: prometheus-operator
+      namespace: monitoring
   interval: 1h
   timeout: 5m
