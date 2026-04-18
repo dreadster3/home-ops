@@ -88,6 +88,8 @@ spec:
       retentionResolution1h: 90d
       extraFlags:
         - --delete-delay=24h
+      persistence:
+        size: 40Gi
       networkPolicy:
         enabled: false
 
