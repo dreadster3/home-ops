@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: maddy
+
+configMapGenerator:
+  - name: maddy-config
+    namespace: maddy
+    options:
+      disableNameSuffixHash: true
+    files:
+      - ./config/maddy.conf
+
+resources:
+  - helm.yaml
+  - secrets.yaml
