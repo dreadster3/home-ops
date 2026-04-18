@@ -131,6 +131,7 @@ spec:
   egress:
     - toFQDNs:
         - matchName: api.github.com
+        - matchName: authentik.${EXTERNAL_DOMAIN}
       toPorts:
         - ports:
             - port: "443"
