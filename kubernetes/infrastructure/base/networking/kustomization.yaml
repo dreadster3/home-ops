@@ -10,3 +10,4 @@ resources:
   - cilium
   - external-dns
   - netbird
+  - maddy
