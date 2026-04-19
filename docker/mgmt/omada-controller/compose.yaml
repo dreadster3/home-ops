@@ -43,10 +43,11 @@ services:
       resources:
         reservations:
           cpus: "0.5"
-          memory: 1.5G
+          memory: &memory 1.5G
         limits:
+          # NOTE: usually don't set CPU limits but Omada controller is CPU-intensive
           cpus: "1.0"
-          memory: 1.5G
+          memory: *memory
 
   mongo:
     container_name: omada-controller-db
