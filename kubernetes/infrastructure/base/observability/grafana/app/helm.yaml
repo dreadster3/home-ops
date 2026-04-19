@@ -112,6 +112,11 @@ spec:
           revision: 1
           datasource: Prometheus
 
+    plugins:
+      - grafana-clock-panel
+      - grafana-piechart-panel
+      - grafana-worldmap-panel
+
     route:
       main:
         enabled: true
