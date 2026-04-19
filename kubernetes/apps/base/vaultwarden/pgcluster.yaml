@@ -24,6 +24,13 @@ spec:
       parameters:
         barmanObjectName: backup-store
 
+  resources:
+    requests:
+      cpu: 50m
+      memory: &memory 256Mi
+    limits:
+      memory: *memory
+
   monitoring:
     enablePodMonitor: true
 ---

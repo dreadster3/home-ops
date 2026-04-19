@@ -40,6 +40,13 @@ spec:
         barmanObjectName: backup-store
         serverName: authentik-cluster
 
+  resources:
+    requests:
+      cpu: 150m
+      memory: &memory 512Mi
+    limits:
+      memory: *memory
+
   monitoring:
     enablePodMonitor: true
 ---
