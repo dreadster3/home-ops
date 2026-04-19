@@ -107,6 +107,10 @@ spec:
           gnetId: 23969
           revision: 1
           datasource: Prometheus
+        proxmox:
+          gnetId: 23855
+          revision: 1
+          datasource: Prometheus
 
     route:
       main:
