@@ -43,6 +43,7 @@ GitOps-managed Kubernetes cluster using [Flux](https://fluxcd.io/).
 | [Envoy Gateway](https://gateway.envoyproxy.io/) | Kubernetes Gateway API implementation — terminates TLS and routes HTTPS traffic to all internal services |
 | [External DNS](https://github.com/kubernetes-sigs/external-dns) | Syncs DNS records to internal RFC2136 DNS server for all HTTPRoute hostnames |
 | [Netbird](https://netbird.io/) | WireGuard-based overlay VPN for remote access |
+| [Maddy](https://maddy.email/) | Self-hosted SMTP relay — forwards outgoing mail from all apps to Gmail |
 
 ### Security
 
