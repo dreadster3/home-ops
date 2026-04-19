@@ -42,9 +42,11 @@ services:
     deploy:
       resources:
         reservations:
-          memory: 1G
+          cpus: "0.5"
+          memory: 1.5G
         limits:
-          memory: 1G
+          cpus: "1.0"
+          memory: 1.5G
 
   mongo:
     container_name: omada-controller-db
