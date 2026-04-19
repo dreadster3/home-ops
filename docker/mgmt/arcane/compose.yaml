@@ -44,6 +44,7 @@ services:
     container_name: arcane
     volumes:
       - data:/app/data
+      - doco_data:/projects:ro
     environment:
       TZ: ${TIMEZONE}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
@@ -59,6 +60,7 @@ services:
       OIDC_MERGE_ACCOUNTS: true
       OIDC_ADMIN_CLAIM: groups
       OIDC_ADMIN_VALUE: AuthentikAdmins
+      PROJECTS_DIRECTORY: /projects/github.com/dreadster3/home-ops/docker/mgmt
     networks:
       - default
       - proxy
@@ -131,3 +133,5 @@ volumes:
     driver: local
   db_data:
     driver: local
+  doco_data:
+    external: true
