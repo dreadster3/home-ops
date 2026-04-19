@@ -112,7 +112,7 @@ spec:
             app.kubernetes.io/instance: maddy
       toPorts:
         - ports:
-            - port: "25"
+            - port: smtp
               protocol: TCP
     - toEntities:
         - world
