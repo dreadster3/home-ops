@@ -13,7 +13,7 @@ resources:
   - ../../base/joplin
   - ../../base/n8n
   - ../../base/netbox
-  - ../../base/openwebui
+  # - ../../base/openwebui
   - ../../base/pangolin
   - ../../base/paperless
   # - portainer
