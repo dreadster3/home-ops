@@ -34,6 +34,13 @@ services:
       - traefik.http.routers.infisical.entrypoints=websecure
       - traefik.http.routers.infisical.tls.certresolver=letsencrypt
       - traefik.http.services.infisical.loadbalancer.server.port=8080
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.25"
+          memory: &memory 768M
+        limits:
+          memory: *memory
     user: "non-root-user"
     security_opt:
       - no-new-privileges:true
