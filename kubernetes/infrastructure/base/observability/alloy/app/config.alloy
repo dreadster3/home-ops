@@ -469,6 +469,19 @@ prometheus.operator.podmonitors "podmonitors" {
 	forward_to = [prometheus.remote_write.prometheus.receiver]
 }
 
+prometheus.operator.scrapeconfig "scrapeconfig" {
+	clustering {
+		enabled = true
+	}
+
+	scrape {
+		default_scrape_interval = "15s"
+		default_scrape_timeout  = "5s"
+	}
+
+	forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
 prometheus.remote_write "prometheus" {
 	endpoint {
 		url = "http://prometheus-prometheus:9090/api/v1/write"
