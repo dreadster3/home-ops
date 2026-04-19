@@ -107,6 +107,16 @@ spec:
           gnetId: 23969
           revision: 1
           datasource: Prometheus
+        proxmox:
+          gnetId: 23855
+          revision: 1
+          datasource:
+            - { name: DS_PROMETHEUS, value: Prometheus }
+
+    plugins:
+      - grafana-clock-panel
+      - grafana-piechart-panel
+      - grafana-worldmap-panel
 
     route:
       main:
