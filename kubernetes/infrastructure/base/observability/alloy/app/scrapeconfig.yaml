@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: external-node-exporter
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets:
+        - mgmt.${INTERNAL_DOMAIN}:9100
+  metricsPath: /metrics
+  relabelings:
+    - action: replace
+      targetLabel: job
+      replacement: node-exporter

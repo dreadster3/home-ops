@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - helm.yaml
+  - scrapeconfig.yaml
 
 configMapGenerator:
   - name: alloy
