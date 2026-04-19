@@ -23,11 +23,6 @@ working_dir: docker/mgmt/omada-controller
 compose_files:
   - compose.yaml
 ---
-name: dockhand
-working_dir: docker/mgmt/dockhand
-compose_files:
-  - compose.yaml
----
 name: peanut
 working_dir: docker/mgmt/peanut
 compose_files:
@@ -55,5 +50,10 @@ compose_files:
 ---
 name: databasus
 working_dir: docker/mgmt/databasus
+compose_files:
+  - compose.yaml
+---
+name: arcane
+working_dir: docker/mgmt/arcane
 compose_files:
   - compose.yaml
