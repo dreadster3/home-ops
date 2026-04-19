@@ -57,3 +57,8 @@ name: databasus
 working_dir: docker/mgmt/databasus
 compose_files:
   - compose.yaml
+---
+name: arcane
+working_dir: docker/mgmt/arcane
+compose_files:
+  - compose.yaml
