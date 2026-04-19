@@ -492,3 +492,18 @@ prometheus.remote_write "prometheus" {
 		cluster = "prd",
 	}
 }
+
+// OTEL
+otelcol.receiver.otlp "proxmox" {
+	http {
+		endpoint = "0.0.0.0:4318"
+	}
+
+	output {
+		metrics = [otelcol.exporter.prometheus.to_prom.input]
+	}
+}
+
+otelcol.exporter.prometheus "to_prom" {
+	forward_to = [prometheus.remote_write.prometheus.receiver]
+}

@@ -7,6 +7,9 @@ spec:
   staticConfigs:
     - targets:
         - mgmt.${INTERNAL_DOMAIN}:9100
+        - pbs.${INTERNAL_DOMAIN}:9100
+        - ns01.${INTERNAL_DOMAIN}:9100
+        - ns02.${INTERNAL_DOMAIN}:9100
   metricsPath: /metrics
   relabelings:
     - action: replace

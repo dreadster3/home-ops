@@ -21,12 +21,17 @@ spec:
         name: alloy
       clustering:
         enabled: true
+        name: prd
       resources:
         requests:
           cpu: 120m
           memory: &memory 1700Mi
         limits:
           memory: *memory
+      extraPorts:
+        - name: otlp
+          port: 4318
+          targetPort: 4318
       extraEnv:
         - name: NODE_NAME
           valueFrom:
