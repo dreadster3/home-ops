@@ -245,11 +245,6 @@ loki.write "loki" {
 			password = env("LOKI_PASS")
 		}
 	}
-
-	external_labels = {
-		alloy   = env("NODE_NAME"),
-		cluster = "prd",
-	}
 }
 
 discovery.relabel "prometheus_pods" {
@@ -486,9 +481,19 @@ prometheus.remote_write "prometheus" {
 	endpoint {
 		url = "http://prometheus-prometheus:9090/api/v1/write"
 	}
+}
 
-	external_labels = {
-		alloy   = env("NODE_NAME"),
-		cluster = "prd",
+// OTEL
+otelcol.receiver.otlp "proxmox" {
+	http {
+		endpoint = "0.0.0.0:4318"
 	}
+
+	output {
+		metrics = [otelcol.exporter.prometheus.to_prom.input]
+	}
+}
+
+otelcol.exporter.prometheus "to_prom" {
+	forward_to = [prometheus.remote_write.prometheus.receiver]
 }

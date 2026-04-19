@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - helm.yaml
   - scrapeconfig.yaml
+  - httproute.yaml
 
 configMapGenerator:
   - name: alloy
