@@ -60,7 +60,6 @@ services:
       OIDC_MERGE_ACCOUNTS: true
       OIDC_ADMIN_CLAIM: groups
       OIDC_ADMIN_VALUE: AuthentikAdmins
-      PROJECTS_DIRECTORY: /projects/github.com/dreadster3/home-ops/docker/mgmt
     networks:
       - default
       - proxy
