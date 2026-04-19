@@ -1,0 +1,124 @@
+services:
+  socket-proxy:
+    image: lscr.io/linuxserver/socket-proxy:3.2.15@sha256:a5a143133df569b6103bd555c18b3355d0def538272ab3c65936cc93ebe44368
+    container_name: arcane-socket-proxy
+    environment:
+      - EVENTS=1
+      - PING=1
+      - VERSION=1
+      # Security critical
+      - AUTH=0
+      - SECRETS=0
+      - POST=1
+      # Not always needed
+      - BUILD=0
+      - COMMIT=0
+      - CONFIGS=0
+      - CONTAINERS=1
+      - DISTRIBUTION=0
+      - EXEC=1
+      - IMAGES=1
+      - INFO=1
+      - NETWORKS=1
+      - NODES=0
+      - PLUGINS=0
+      - SERVICES=0
+      - SESSION=0
+      - SWARM=0
+      - SYSTEM=0
+      - TASKS=0
+      - VOLUMES=1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - default
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /run
+
+  arcane:
+    image: ghcr.io/getarcaneapp/arcane:v1.17.4@sha256:97492274e59c9f822a9c49d67981912b81919c0edad6094e496fa3507348082e
+    container_name: arcane
+    volumes:
+      - data:/app/data
+    environment:
+      TZ: ${TIMEZONE}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      DOCKER_HOST: tcp://socket-proxy:2375
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/arcane
+      OIDC_ENABLED: true
+      OIDC_AUTO_REDIRECT_TO_PROVIDER: true
+      OIDC_PROVIDER_NAME: authentik
+      OIDC_ISSUER_URL: https://authentik.${INTERNAL_DOMAIN}/application/o/arcane/
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      OIDC_MERGE_ACCOUNTS: true
+      OIDC_ADMIN_CLAIM: groups
+      OIDC_ADMIN_VALUE: AuthentikAdmins
+    networks:
+      - default
+      - proxy
+    depends_on:
+      - socket-proxy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fsS http://localhost:3552/api/health >/dev/null || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.arcane.rule=Host(`arcane.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.arcane.entrypoints=websecure"
+      - "traefik.http.routers.arcane.tls.certresolver=letsencrypt"
+      - "traefik.http.services.arcane.loadbalancer.server.port=3552"
+      - "traefik.http.services.arcane.loadbalancer.server.scheme=http"
+    restart: unless-stopped
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  db:
+    container_name: arcane-db
+    image: postgres:18.3-alpine@sha256:c5739fc99d1a3278c0a2113758a2433ce29ef964b30df705094fd77dfa5da2fa
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: arcane
+    volumes:
+      - db_data:/var/lib/postgresql
+    networks:
+      - default
+      - database
+    healthcheck:
+      test: "pg_isready --username=${DB_USER} && psql --username=${DB_USER} --list"
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_READ_SEARCH
+
+networks:
+  default:
+  proxy:
+    external: true
+
+volumes:
+  data:
+    driver: local
+  db_data:
+    driver: local
