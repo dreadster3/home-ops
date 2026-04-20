@@ -19,6 +19,8 @@ Docker Compose services running on the management node, managed through GitOps p
 | [Stirling PDF](https://stirlingtools.com/)                | Self-hosted PDF manipulation tools                                                          |
 | [Peanut](https://github.com/brandawg93/peanut)            | UPS monitoring and management                                                               |
 | [Speedtest Tracker](https://docs.speedtest-tracker.dev/)  | Continuous internet speed monitoring (backed by PostgreSQL)                                 |
+| [Arcane](https://getarcane.app/)                          | Docker management UI with OIDC SSO (backed by PostgreSQL)                                   |
+| [cAdvisor](https://github.com/google/cadvisor)            | Container resource usage and performance metrics exporter                                   |
 
 ## Directory Structure
 
@@ -37,5 +39,7 @@ docker/
     ├── it-tools/
     ├── stirling-pdf/
     ├── peanut/
-    └── speedtracker/
+    ├── speedtracker/
+    ├── arcane/
+    └── cadvisor/
 ```

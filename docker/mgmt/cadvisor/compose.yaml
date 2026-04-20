@@ -1,0 +1,39 @@
+services:
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.55.1@sha256:3de2bd5203120b866d74a9b283b2ffb8ec382fbf9dc321814700c6ea6f44ec57
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true  # required for cgroup and device access — cap_drop has no effect when privileged
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/containers:/var/lib/containers:ro
+      - /dev/disk:/dev/disk:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cadvisor.rule=Host(`mgmt.cadvisor.${INTERNAL_DOMAIN}`)"
+      - "traefik.http.routers.cadvisor.entrypoints=websecure"
+      - "traefik.http.routers.cadvisor.tls.certresolver=letsencrypt"
+      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
+      - "traefik.http.services.cadvisor.loadbalancer.server.scheme=http"
+    networks:
+      - proxy
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.15"
+          memory: &memory 128M
+        limits:
+          memory: *memory
+
+networks:
+  proxy:
+    external: true
