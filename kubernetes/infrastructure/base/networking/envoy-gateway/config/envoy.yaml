@@ -13,6 +13,8 @@ spec:
         replicas: 2
         container:
           image: mirror.gcr.io/envoyproxy/envoy:v1.37.2
+      envoyService:
+        externalTrafficPolicy: Cluster
   shutdown:
     drainTimeout: 180s
   telemetry:
