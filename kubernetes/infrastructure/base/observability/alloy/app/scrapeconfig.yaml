@@ -25,6 +25,7 @@ spec:
   staticConfigs:
     - targets:
         - mgmt.${INTERNAL_DOMAIN}:8080
+        - truenas.${INTERNAL_DOMAIN}:8080
   metricsPath: /metrics
   relabelings:
     - action: replace
