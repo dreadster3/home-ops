@@ -20,5 +20,5 @@ resources:
   - ../../base/searxng
   - ../../base/termix
   - ../../base/uptime
-  - ../../base/vault
+  # - ../../base/vault
   - ../../base/vaultwarden
