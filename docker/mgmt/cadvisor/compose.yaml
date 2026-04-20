@@ -15,15 +15,8 @@ services:
       - /sys:/sys:ro
       - /var/lib/containers:/var/lib/containers:ro
       - /dev/disk:/dev/disk:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.cadvisor.rule=Host(`mgmt.cadvisor.${INTERNAL_DOMAIN}`)"
-      - "traefik.http.routers.cadvisor.entrypoints=websecure"
-      - "traefik.http.routers.cadvisor.tls.certresolver=letsencrypt"
-      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
-      - "traefik.http.services.cadvisor.loadbalancer.server.scheme=http"
-    networks:
-      - proxy
+    ports:
+      - "8080:8080"
     deploy:
       resources:
         reservations:
@@ -31,7 +24,3 @@ services:
           memory: &memory 128M
         limits:
           memory: *memory
-
-networks:
-  proxy:
-    external: true
