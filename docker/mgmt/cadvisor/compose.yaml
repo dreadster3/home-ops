@@ -9,8 +9,6 @@ services:
       - /tmp
     security_opt:
       - no-new-privileges:true
-    devices:
-      - /dev/kmsg
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
