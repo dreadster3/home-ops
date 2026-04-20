@@ -15,3 +15,28 @@ spec:
     - action: replace
       targetLabel: job
       replacement: node-exporter
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: external-cadvisor
+  namespace: monitoring
+spec:
+  staticConfigs:
+    - targets:
+        - mgmt.${INTERNAL_DOMAIN}:8080
+        - truenas.${INTERNAL_DOMAIN}:8080
+  metricsPath: /metrics
+  relabelings:
+    - action: replace
+      targetLabel: job
+      replacement: cadvisor
+  metricRelabelings:
+    - action: replace
+      sourceLabels: [name]
+      targetLabel: container
+    - action: replace
+      sourceLabels: [container_label_com_docker_compose_project]
+      targetLabel: service
+    - action: labeldrop
+      regex: id

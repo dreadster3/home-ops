@@ -14,3 +14,11 @@ configMapGenerator:
         app.kubernetes.io/component: config
     files:
       - config.alloy
+
+  - name: dashboards
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana/dashboard: "true"
+    files:
+      - dashboards/cadvisor.json
