@@ -1,0 +1,29 @@
+services:
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.55.1@sha256:3de2bd5203120b866d74a9b283b2ffb8ec382fbf9dc321814700c6ea6f44ec57
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true  # required for cgroup and device access — cap_drop has no effect when privileged
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /:/rootfs:ro
+      - /sys:/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /dev/disk:/dev/disk:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
+      - /var/lib/containers:/var/lib/containers:ro
+      - /var/run:/var/run:ro
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        reservations:
+          cpus: "0.15"
+          memory: &memory 256M
+        limits:
+          memory: *memory
