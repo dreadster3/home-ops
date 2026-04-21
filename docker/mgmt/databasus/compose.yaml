@@ -1,7 +1,7 @@
 services:
   databasus:
     container_name: databasus
-    image: databasus/databasus:latest
+    image: databasus/databasus:v3.32.2@sha256:baf5f0fa09ac0af836654d51853e4b32ea7b12e390b2f17cee1400c33ab4de5e
     volumes:
       - /opt/docker/databasus/data:/databasus-data
     restart: unless-stopped
