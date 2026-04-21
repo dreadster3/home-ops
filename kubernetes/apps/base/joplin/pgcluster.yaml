@@ -32,7 +32,7 @@ spec:
         name: barman-cloud.cloudnative-pg.io
         parameters:
           barmanObjectName: backup-store
-          serverName: authentik-cluster
+          serverName: joplin-cluster
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
