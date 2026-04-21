@@ -3,20 +3,36 @@ kind: Cluster
 metadata:
   name: netbox-cluster
   namespace: netbox
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.9-standard-trixie
-  instances: 3
+  instances: 2
   primaryUpdateStrategy: unsupervised
   storage:
-    storageClass: local-path
+    storageClass: ceph-block
     size: 5Gi
 
   bootstrap:
-    initdb:
+    recovery:
+      source: backup
       database: netbox
       owner: netbox
       secret:
         name: netbox-cluster-credentials
+    # initdb:
+    #   database: netbox
+    #   owner: netbox
+    #   secret:
+    #     name: netbox-cluster-credentials
+
+  externalClusters:
+    - name: backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: backup-store
+          serverName: netbox-cluster
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
