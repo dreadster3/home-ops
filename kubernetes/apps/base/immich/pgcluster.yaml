@@ -7,10 +7,10 @@ metadata:
     cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17-0.4.3
-  instances: 3
+  instances: 2
   primaryUpdateStrategy: unsupervised
   storage:
-    storageClass: local-path
+    storageClass: ceph-block
     size: 10Gi
 
   resources:
