@@ -1,7 +1,7 @@
 services:
   appraise:
     container_name: appraise
-    image: caronc/apprise:v1.3.3@sha256:14e4e4a4314b199160aaaef91d31e523f29f3c6a5f7c90b598ffa412d2a3063e
+    image: caronc/apprise:v1.3.3@sha256:4bfeac268ba87b8e08e308c9aa0182fe99e9501ec464027afc333d1634e65977
     restart: unless-stopped
     environment:
       APPRISE_STATEFUL_MODE: simple
