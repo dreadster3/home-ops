@@ -53,7 +53,12 @@ spec:
     - name: envoy-internal
       namespace: envoy
   rules:
-    - backendRefs:
+    - sessionPersistence:
+        sessionName: proxmox-session
+        type: Cookie
+        cookieConfig:
+          lifetimeType: Session
+      backendRefs:
         - name: proxmox
           port: 8006
           weight: 1

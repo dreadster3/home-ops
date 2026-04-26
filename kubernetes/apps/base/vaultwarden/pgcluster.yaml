@@ -3,20 +3,36 @@ kind: Cluster
 metadata:
   name: vaultwarden-cluster
   namespace: vaultwarden
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.9-standard-trixie
-  instances: 3
+  instances: 2
   primaryUpdateStrategy: unsupervised
   storage:
-    storageClass: local-path
+    storageClass: ceph-block
     size: 2Gi
 
   bootstrap:
-    initdb:
+    recovery:
+      source: backup
       database: vaultwarden
       owner: vaultwarden
       secret:
         name: vaultwarden-cluster-credentials
+    # initdb:
+    #   database: vaultwarden
+    #   owner: vaultwarden
+    #   secret:
+    #     name: vaultwarden-cluster-credentials
+
+  externalClusters:
+    - name: backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: backup-store
+          serverName: vaultwarden-cluster
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
