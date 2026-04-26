@@ -17,7 +17,7 @@ spec:
   chart:
     spec:
       chart: loki
-      version: v6.*
+      version: 7.*
       interval: 24h
       sourceRef:
         kind: HelmRepository
