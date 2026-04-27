@@ -158,13 +158,6 @@ Decisions made throughout the life of this project, with rationale and context.
 - **Decision:** Migrate all CNPG clusters from `local-path` to Ceph-backed `ceph-block` StorageClass via ObjectStore (barman-cloud) for backups.
 - **Rationale:** Reduces the number of replicas per cluster, thereby reducing the amount of resources used per cluster. Eliminates the need for per-app local storage and provides consistent, high-performance block storage.
 
-## 18. Acknowledge onedr0p/home-ops for project structure
-
-- **Date:** 2026-04-27
-- **Status:** Accepted
-- **Context:** The project structure (kubernetes layout, Flux GitOps pattern, base/overlays convention) was inspired by [onedr0p/home-ops](https://github.com/onedr0p/home-ops).
-- **Rationale:** Provides a well-established, community-validated pattern for home Kubernetes infrastructure management.
-
 ---
 
-*This log is maintained to provide context for future architectural decisions and onboarding.*
+*This log is maintained to provide context for architectural decisions and onboarding.*
