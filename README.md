@@ -29,4 +29,4 @@ This repository contains the declarative configuration for my entire home infras
 
 ## Acknowledgements
 
-- [Flux](https://fluxcd.io/), [Cilium](https://cilium.io/), [Envoy Gateway](https://gateway.envoyproxy.io/) communities
+- [onedr0p/home-ops](https://github.com/onedr0p/home-ops) — for the project structure and layout inspiration
