@@ -8,7 +8,7 @@ labels:
 
 resources:
   - ../../base/security
-  - ../../base/databases
+  # - ../../base/databases
   # - ../../base/observability
   - ../../base/observability/prometheus
   - ../../base/observability/namespace.yaml
