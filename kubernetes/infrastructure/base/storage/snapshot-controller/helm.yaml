@@ -1,0 +1,55 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: snapshot-controller
+  namespace: snapshot-controller
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: snapshot-controller
+      version: 5.0.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: piraeus
+        namespace: flux-system
+  values:
+    installCRDs: true
+    controller:
+      replicaCount: 1
+      image:
+        repository: registry.k8s.io/sig-storage/snapshot-controller
+        tag: v8.5.0
+      securityContext:
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+    webhook:
+      enabled: true
+      replicaCount: 1
+      image:
+        repository: ghcr.io/piraeusdatastore/snapshot-conversion-webhook
+        tag: v8.5.0
+      securityContext:
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi

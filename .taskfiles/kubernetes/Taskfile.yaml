@@ -45,9 +45,11 @@ tasks:
   dev:cluster:start:
     desc: Start a development cluster
     vars:
-      NODES: 3
+      NODES: "{{.NODES | default 3}}"
+      MEMORY: "{{.MEMORY | default 8G}}"
+      CPUS: "{{.CPUS | default 4}}"
     cmds:
-      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes 3 --cpus 8 --memory 12G --addons metrics-server --addons storage-provisioner-rancher --addons metallb --kvm-network minikube
+      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes {{.NODES}} --cpus {{.CPUS}} --memory {{.MEMORY}} --addons metrics-server --addons storage-provisioner-rancher --addons metallb --kvm-network minikube
       - minikube addons configure metallb
     preconditions:
       - sh: which minikube

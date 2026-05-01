@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: volsync
+  namespace: volsync-system
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: volsync
+      version: 0.15.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: backube
+        namespace: flux-system
+  values:
+    manageCRDs: true
+    logLevel: info
+    metrics:
+      enabled: false

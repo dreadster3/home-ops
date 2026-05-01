@@ -1,0 +1,14 @@
+# Cache PVC for VolSync operations.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ${APP}-volsync-cache
+  namespace: ${NAMESPACE}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ${CACHE_STORAGE_CLASS}
+  resources:
+    requests:
+      storage: ${CACHE_CAPACITY}

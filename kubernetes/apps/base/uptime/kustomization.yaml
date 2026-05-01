@@ -17,6 +17,31 @@ configMapGenerator:
     files:
       - scripts/backup.sh
 
+components:
+  - ../../components/volsync
+
+vars:
+  - name: APP
+    value: uptime
+  - name: NAMESPACE
+    value: uptime
+  - name: SOURCE_PVC
+    value: data-uptime-main-0
+  - name: CAPACITY
+    value: 3Gi
+  - name: SCHEDULE_SRC
+    value: "0 */6 * * *"
+  - name: SCHEDULE_DST
+    value: ""
+  - name: S3_ACCESS_KEY_PATH
+    value: /uptime/S3_ACCESS_KEY
+  - name: S3_SECRET_KEY_PATH
+    value: /uptime/S3_SECRET_KEY
+  - name: RESTIC_PASSWORD_PATH
+    value: /uptime/RESTIC_PASSWORD
+  - name: RESTIC_REPOSITORY
+    value: "s3:https://truenas.${INTERNAL_DOMAIN}:30292/volsync/uptime"
+
 resources:
   - namespace.yaml
   - helm.yaml

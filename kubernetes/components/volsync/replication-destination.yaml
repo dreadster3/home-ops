@@ -1,0 +1,24 @@
+# VolSync ReplicationDestination for restoring app backups from RustFS (S3).
+# Trigger is manual by default — set SCHEDULE_DST to enable scheduled restores.
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: ${APP}-dst
+  namespace: ${NAMESPACE}
+spec:
+  restic:
+    copyMethod: Snapshot
+    storageClassName: ceph-block
+    volumeSnapshotClassName: csi-rbdplugin-snapclass
+    cacheStorageClassName: ${CACHE_STORAGE_CLASS}
+    cacheCapacity: ${CACHE_CAPACITY}
+    cacheAccessModes:
+      - ReadWriteOnce
+    repository: ${APP}-volsync-rustfs
+    capacity: ${CAPACITY}
+    destinationPVC: ${APP}-volsync-truenas
+    cleanupCachePVC: true
+    enableFileDeletion: true
+  trigger:
+    schedule: "${SCHEDULE_DST}"

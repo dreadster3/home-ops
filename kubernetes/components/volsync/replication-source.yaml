@@ -1,0 +1,26 @@
+# VolSync ReplicationSource for app backups to RustFS (S3).
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: ${APP}-src
+  namespace: ${NAMESPACE}
+spec:
+  sourcePVC: ${SOURCE_PVC}
+  restic:
+    copyMethod: Snapshot
+    storageClassName: ${STORAGE_CLASS}
+    volumeSnapshotClassName: csi-rbdplugin-snapclass
+    cacheStorageClassName: ${CACHE_STORAGE_CLASS}
+    cacheCapacity: ${CACHE_CAPACITY}
+    cacheAccessModes:
+      - ReadWriteOnce
+    repository: ${APP}-volsync-rustfs
+    pruneIntervalDays: ${PRUNE_INTERVAL}
+    retain:
+      daily: ${RETAIN_DAILY}
+      weekly: ${RETAIN_WEEKLY}
+      monthly: ${RETAIN_MONTHLY}
+    trigger:
+      schedule: "${SCHEDULE_SRC}"
+  backupSyncDeleteEnabled: true

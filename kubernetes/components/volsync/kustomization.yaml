@@ -1,0 +1,35 @@
+# VolSync component for per-app backup/replication resources.
+#
+# Usage in an app's kustomization.yaml:
+#
+#   kustomize:
+#     components:
+#       - ../../components/volsync
+#
+# Then provide app-specific values via Flux postBuild:
+#
+#   postBuild:
+#     substituteFrom:
+#       - kind: ConfigMap
+#         name: volsync-vars
+#     substitute:
+#       APP: uptime
+#       NAMESPACE: uptime
+#       SOURCE_PVC: data-uptime-main-0
+#       CAPACITY: 3Gi
+#       S3_ACCESS_KEY_PATH: /uptime/S3_ACCESS_KEY
+#       S3_SECRET_KEY_PATH: /uptime/S3_SECRET_KEY
+#       RESTIC_PASSWORD_PATH: /uptime/RESTIC_PASSWORD
+#       SCHEDULE_SRC: "0 */6 * * *"
+#       SCHEDULE_DST: ""
+#       RESTIC_REPOSITORY: "s3:https://truenas.${INTERNAL_DOMAIN}:30292/volsync/uptime"
+
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - configmap.yaml
+  - external-secret.yaml
+  - pvc.yaml
+  - replication-source.yaml
+  - replication-destination.yaml

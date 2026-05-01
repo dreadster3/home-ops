@@ -1,0 +1,49 @@
+# VolSync component variables for Flux postBuild substitution.
+#
+# Apps reference this ConfigMap via postBuild.substituteFrom,
+# then override values via postBuild.substitute.
+#
+# Required variables:
+#   APP                - App name (used for resource naming)
+#   NAMESPACE          - Target namespace
+#   SOURCE_PVC         - Source PVC name to replicate
+#   CAPACITY           - Destination PVC capacity (e.g. 3Gi)
+#   S3_ACCESS_KEY_PATH - Infisical path for access key (e.g. /uptime/S3_ACCESS_KEY)
+#   S3_SECRET_KEY_PATH - Infisical path for secret key (e.g. /uptime/S3_SECRET_KEY)
+#   RESTIC_PASSWORD_PATH - Infisical path for restic password (e.g. /uptime/RESTIC_PASSWORD)
+#
+# Optional overrides (defaults shown):
+#   SCHEDULE_SRC       - Source replication schedule (default: "0 */6 * * *")
+#   SCHEDULE_DST       - Destination schedule (default: empty = manual trigger)
+#   PRUNE_INTERVAL     - Days between restic prune (default: 7)
+#   RETAIN_DAILY       - Daily snapshots to retain (default: 7)
+#   RETAIN_WEEKLY      - Weekly snapshots to retain (default: 4)
+#   RETAIN_MONTHLY     - Monthly snapshots to retain (default: 12)
+#   STORAGE_CLASS      - Source PVC storage class (default: ceph-filesystem)
+#   CACHE_STORAGE_CLASS - Cache PVC storage class (default: ceph-block)
+#   CACHE_CAPACITY     - Cache PVC capacity (default: 2Gi)
+#   RESTIC_REPOSITORY  - Full restic repository URI (default: s3:https://truenas.${INTERNAL_DOMAIN}:30292/volsync/${APP})
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: volsync-vars
+  namespace: volsync-system
+data:
+  APP: "app"
+  NAMESPACE: "app-namespace"
+  SOURCE_PVC: "data-main-0"
+  CAPACITY: "3Gi"
+  SCHEDULE_SRC: "0 */6 * * *"
+  SCHEDULE_DST: ""
+  PRUNE_INTERVAL: "7"
+  RETAIN_DAILY: "7"
+  RETAIN_WEEKLY: "4"
+  RETAIN_MONTHLY: "12"
+  STORAGE_CLASS: "ceph-filesystem"
+  CACHE_STORAGE_CLASS: "ceph-block"
+  CACHE_CAPACITY: "2Gi"
+  RESTIC_REPOSITORY: "s3:https://truenas.INNER_DOMAIN:30292/volsync/app"
+  S3_ACCESS_KEY_PATH: "/app/S3_ACCESS_KEY"
+  S3_SECRET_KEY_PATH: "/app/S3_SECRET_KEY"
+  RESTIC_PASSWORD_PATH: "/app/RESTIC_PASSWORD"

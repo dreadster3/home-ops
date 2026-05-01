@@ -9,3 +9,4 @@ resources:
   - local-storage
   - nfs-subdir
   - rook
+  - volsync
