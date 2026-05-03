@@ -9,6 +9,8 @@ spec:
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17-0.4.3
   instances: 2
   primaryUpdateStrategy: unsupervised
+  affinity:
+    podAntiAffinityType: required
   storage:
     storageClass: ceph-block
     size: 10Gi

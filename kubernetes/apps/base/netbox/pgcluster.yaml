@@ -9,6 +9,8 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.9-standard-trixie
   instances: 2
   primaryUpdateStrategy: unsupervised
+  affinity:
+    podAntiAffinityType: required
   storage:
     storageClass: ceph-block
     size: 5Gi
