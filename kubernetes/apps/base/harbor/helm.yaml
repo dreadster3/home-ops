@@ -30,6 +30,10 @@ spec:
 
     core:
       replicas: 2
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
       existingSecret: harbor-core-secret
       existingXsrfSecret: harbor-core-csrf
       secretName: harbor-token-encryption
@@ -42,6 +46,10 @@ spec:
 
     jobservice:
       replicas: 2
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
       existingSecret: harbor-jobservice-secret
       existingSecretKey: secret
       jobLoggers:
@@ -55,6 +63,10 @@ spec:
 
     registry:
       replicas: 2
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
       existingSecret: harbor-registry-secret
       existingSecretKey: secret
       credentials:
