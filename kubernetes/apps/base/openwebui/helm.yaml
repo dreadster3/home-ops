@@ -26,6 +26,7 @@ spec:
   values:
     controllers:
       main:
+        replicas: 1
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -43,40 +44,75 @@ spec:
             #     # Run the original entrypoint
             #     exec /app/backend/start.sh
             env:
-              OLLAMA_BASE_URL: https://ollama.${INTERNAL_DOMAIN}
+              - name: OLLAMA_BASE_URL
+                value: https://ollama.${INTERNAL_DOMAIN}
 
-              ENABLE_WEBSOCKET_SUPPORT: "true"
-              WEBSOCKET_MANAGER: "redis"
+              - name: ENABLE_WEBSOCKET_SUPPORT
+                value: "true"
+              - name: WEBSOCKET_MANAGER
+                value: redis
 
-              WEBUI_URL: https://openwebui.${EXTERNAL_DOMAIN}
+              - name: WEBUI_URL
+                value: https://openwebui.${EXTERNAL_DOMAIN}
 
               # OAuth
-              OPENID_PROVIDER_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/open-web-ui/.well-known/openid-configuration
-              OPENID_REDIRECT_URI: https://openwebui.${EXTERNAL_DOMAIN}/oauth/oidc/callback
-              OAUTH_SCOPES: openid email profile
-              OAUTH_PROVIDER_NAME: Authentik
-              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
-              ENABLE_OAUTH_SIGNUP: true
-              ENABLE_LOGIN_FORM: false
-
-              # STT
-              WHISPER_MODEL: base
-              WHISPER_MULTILINGUAL: true
+              - name: OPENID_PROVIDER_URL
+                value: https://authentik.${EXTERNAL_DOMAIN}/application/o/open-web-ui/.well-known/openid-configuration
+              - name: OPENID_REDIRECT_URI
+                value: https://openwebui.${EXTERNAL_DOMAIN}/oauth/oidc/callback
+              - name: OAUTH_SCOPES
+                value: openid email profile
+              - name: OAUTH_PROVIDER_NAME
+                value: Authentik
+              - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+                value: "true"
+              - name: ENABLE_OAUTH_SIGNUP
+                value: "true"
+              - name: ENABLE_LOGIN_FORM
+                value: "false"
 
               # TTS
-              AUDIO_TTS_ENGINE: transformers
-              AUDIO_TTS_MODEL: slt
-              AUDIO_TTS_SPLIT_ON: punctuation
+              - name: AUDIO_TTS_OPENAI_API_BASE_URL
+                value: https://api.openai.com/v1
+
+              # Image
+              - name: ENABLE_IMAGE_GENERATION
+                value: "true"
+              - name: IMAGE_GENERATION_ENGINE
+                value: gemini
+              - name: IMAGE_GENERATION_MODEL
+                value: gemini-3.1-flash-image-preview
+              - name: IMAGE_SIZE
+                value: auto
+              - name: IMAGE_AUTO_SIZE_MODELS_REGEX_PATTERN
+                value: ^gemini
+              - name: IMAGES_GEMINI_API_BASE_URL
+                value: https://generativelanguage.googleapis.com/v1beta
+              - name: IMAGES_GEMINI_ENDPOINT_METHOD
+                value: generateContent
+              - name: ENABLE_IMAGE_EDIT
+                value: "true"
+              - name: IMAGE_EDIT_ENGINE
+                value: gemini
+              - name: IMAGE_EDIT_MODEL
+                value: gemini-3.1-flash-image-preview
+              - name: IMAGES_EDIT_GEMINI_API_BASE_URL
+                value: https://generativelanguage.googleapis.com/v1beta
+              - name: IMAGES_EDIT_GEMINI_ENDPOINT_METHOD
+                value: generateContent
 
               # Search Engine
-              ENABLE_WEB_SEARCH: true
-              ENABLE_SEARCH_QUERY_GENERATION: true
-              WEB_SEARCH_ENGINE: searxng
-              SEARXNG_QUERY_URL: http://searxng.searxng.svc.cluster.local/search?q=<query>
+              - name: ENABLE_WEB_SEARCH
+                value: "true"
+              - name: ENABLE_SEARCH_QUERY_GENERATION
+                value: "true"
+              - name: WEB_SEARCH_ENGINE
+                value: searxng
+              - name: SEARXNG_QUERY_URL
+                value: http://searxng.searxng.svc.cluster.local/search?q=<query>
 
-              EXTRA_PIP_PACKAGES: datasets==3.6.0
-
-              REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+              - name: REQUESTS_CA_BUNDLE
+                value: /etc/ssl/certs/ca-certificates.crt
             envFrom:
               - secretRef:
                   name: openwebui-secret-env
