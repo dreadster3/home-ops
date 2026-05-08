@@ -6,15 +6,16 @@ labels:
       app.kubernetes.io/environment: dev
 
 resources:
-  - authentik
-  - harbor
-  - immich
-  - joplin
-  - n8n
-  - netbox
-  - paperless
-  - searxng
-  - termix
-  - uptime
-  - vault
-  - vaultwarden
+  # - authentik
+  # - harbor
+  # - immich
+  # - joplin
+  # - n8n
+  # - netbox
+  - openwebui
+  # - paperless
+  # - searxng
+  # - termix
+  # - uptime
+  # - vault
+  # - vaultwarden
