@@ -1,0 +1,25 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: openwebui
+  namespace: openwebui
+spec:
+  values:
+    controllers:
+      containers:
+        main:
+          env:
+            - name: ENABLE_LOGIN_FORM
+              value: "true"
+            - name: OPENID_PROVIDER_URL
+              $patch: delete
+            - name: OPENID_REDIRECT_URI
+              $patch: delete
+            - name: OAUTH_PROVIDER_NAME
+              $patch: delete
+            - name: OAUTH_SCOPES
+              $patch: delete
+            - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+              $patch: delete
+            - name: ENABLE_OAUTH_SIGNUP
+              $patch: delete
