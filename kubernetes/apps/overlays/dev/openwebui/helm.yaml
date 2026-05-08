@@ -13,14 +13,14 @@ spec:
               - name: ENABLE_LOGIN_FORM
                 value: "true"
               - name: OPENID_PROVIDER_URL
-                $patch: delete
+                value: null
               - name: OPENID_REDIRECT_URI
-                $patch: delete
+                value: null
               - name: OAUTH_PROVIDER_NAME
-                $patch: delete
+                value: null
               - name: OAUTH_SCOPES
-                $patch: delete
+                value: null
               - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
-                $patch: delete
+                value: null
               - name: ENABLE_OAUTH_SIGNUP
-                $patch: delete
+                value: null
