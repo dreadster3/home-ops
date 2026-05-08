@@ -105,6 +105,13 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: rook-ceph
+            app: rook-ceph-rgw
+      toPorts:
+        - ports:
+            - port: "8080"
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
