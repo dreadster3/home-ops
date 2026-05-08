@@ -114,7 +114,7 @@ spec:
               # Storage
               - name: STORAGE_PROVIDER
                 value: s3
-              - name: S3_ACCESS_KEY
+              - name: S3_ACCESS_KEY_ID
                 valueFrom:
                   secretKeyRef:
                     name: openwebui-bucket
@@ -124,16 +124,23 @@ spec:
                   secretKeyRef:
                     name: openwebui-bucket
                     key: AWS_SECRET_ACCESS_KEY
-              - name: S3_BUCKET
+              - name: S3_BUCKET_NAME
                 valueFrom:
                   configMapKeyRef:
                     name: openwebui-bucket
                     key: BUCKET_NAME
-              - name: S3_ENDPOINT_URL
+              - name: S3_ENDPOINT_HOST
                 valueFrom:
                   configMapKeyRef:
                     name: openwebui-bucket
                     key: BUCKET_HOST
+              - name: S3_ENDPOINT_PORT
+                valueFrom:
+                  configMapKeyRef:
+                    name: openwebui-bucket
+                    key: BUCKET_PORT
+              - name: S3_ENDPOINT_URL
+                value: http://$(S3_ENDPOINT_HOST):$(S3_ENDPOINT_PORT)
 
               - name: REQUESTS_CA_BUNDLE
                 value: /etc/ssl/certs/ca-certificates.crt

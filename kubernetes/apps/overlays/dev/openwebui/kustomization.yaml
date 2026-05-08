@@ -18,6 +18,20 @@ patches:
   - path: pgcluster.yaml
     target:
       kind: Cluster
-  - path: helm.yaml
+  - patch: |-
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/4
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/5
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/6
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/7
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/8
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/9
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/10
     target:
       kind: HelmRelease
