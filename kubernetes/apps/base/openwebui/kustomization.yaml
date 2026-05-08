@@ -9,6 +9,7 @@ labels:
 
 resources:
   - namespace.yaml
+  - bucket.yaml
   - store.yaml
   - pgcluster.yaml
   - secrets.yaml

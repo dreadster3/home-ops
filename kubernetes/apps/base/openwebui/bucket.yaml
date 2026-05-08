@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: openwebui-bucket
+  namespace: openwebui
+spec:
+  generateBucketName: openwebui
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 5G
