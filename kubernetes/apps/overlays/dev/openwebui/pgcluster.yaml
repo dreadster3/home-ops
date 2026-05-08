@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: openwebui-cluster
+  namespace: openwebui
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  bootstrap:
+    recovery: null
+    initdb:
+      database: openwebui
+      owner: openwebui
+      secret:
+        name: openwebui-cluster-credentials
