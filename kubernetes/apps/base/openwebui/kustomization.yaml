@@ -12,6 +12,7 @@ resources:
   - bucket.yaml
   - store.yaml
   - pgcluster.yaml
+  - database.yaml
   - secrets.yaml
   - dragonfly.yaml
   # - ollama.yaml

@@ -6,7 +6,7 @@ metadata:
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.9-standard-trixie
+  imageName: ghcr.io/cloudnative-pg/postgresql:18-standard-trixie
   instances: 2
   primaryUpdateStrategy: unsupervised
   affinity:
@@ -35,6 +35,12 @@ spec:
         parameters:
           barmanObjectName: backup-store
           serverName: openwebui-cluster
+
+  postgresql:
+    extensions:
+      - name: pgvector
+        image:
+          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io

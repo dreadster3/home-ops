@@ -6,6 +6,12 @@ metadata:
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18-0.8.2
+
+  postgresql:
+    shared_preload_libraries:
+      - "vchord.so"
+
   bootstrap:
     recovery: null
     initdb:
@@ -13,3 +19,5 @@ spec:
       owner: openwebui
       secret:
         name: openwebui-cluster-credentials
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS "vchord" CASCADE;
