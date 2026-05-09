@@ -4,7 +4,7 @@ metadata:
   name: openwebui-cluster
   namespace: openwebui
   annotations:
-    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:18.3-standard-trixie
   instances: 2
@@ -47,6 +47,7 @@ spec:
       isWALArchiver: true
       parameters:
         barmanObjectName: backup-store
+        serverName: openwebui-cluster-vector
 
   resources:
     requests:
