@@ -6,12 +6,8 @@ metadata:
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18.3-1.1.1
-
   postgresql:
     extensions: null
-    shared_preload_libraries:
-      - "vchord.so"
 
   # bootstrap:
   #   recovery: null
