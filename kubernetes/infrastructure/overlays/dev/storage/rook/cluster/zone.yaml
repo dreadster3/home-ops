@@ -1,0 +1,7 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectZone
+metadata:
+  name: rustfs-cloud-sync
+  namespace: rook-ceph
+spec:
+  zoneGroup: ceph-objectstore
