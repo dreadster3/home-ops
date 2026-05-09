@@ -142,6 +142,10 @@ spec:
               - name: S3_ENDPOINT_URL
                 value: http://$(S3_ENDPOINT_HOST):$(S3_ENDPOINT_PORT)
 
+              # Vector Database
+              - name: VECTOR_DB
+                value: pgvector
+
               - name: REQUESTS_CA_BUNDLE
                 value: /etc/ssl/certs/ca-certificates.crt
             envFrom:
