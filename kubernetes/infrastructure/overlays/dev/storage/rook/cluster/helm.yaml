@@ -126,6 +126,15 @@ spec:
                 memory: "1Gi"
             instances: 1
             priorityClassName: system-cluster-critical
+        route:
+          enabled: true
+          host:
+            name: rgw.${INTERNAL_DOMAIN}
+            path: /
+            pathType: PathPrefix
+          parentRefs:
+            - name: envoy-internal
+              namespace: envoy
         storageClass:
           enabled: true
           name: ceph-bucket
