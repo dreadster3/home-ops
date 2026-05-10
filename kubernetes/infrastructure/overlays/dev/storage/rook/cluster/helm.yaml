@@ -135,23 +135,6 @@ spec:
           labels: {}
           parameters:
             region: us-east-1
-      # Custom created zone
-      - name: rustfs-objectstore
-        spec:
-          zone:
-            name: rustfs-cloud-sync
-          gateway:
-            port: 80
-            resources:
-              limits:
-                memory: "2Gi"
-              requests:
-                cpu: "1000m"
-                memory: "1Gi"
-            instances: 1
-            priorityClassName: system-cluster-critical
-        storageClass:
-          enabled: false
 
     toolbox:
       enabled: true
