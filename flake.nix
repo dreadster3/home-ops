@@ -62,7 +62,8 @@
             ];
 
             shellHook = ''
-              export AWS_PROFILE=rook
+              export AWS_PROFILE=rook-dev
+              export AWS_CA_BUNDLE=/etc/ssl/certs/ca-bundle.crt
             '';
           };
         };
