@@ -9,15 +9,15 @@ spec:
   postgresql:
     extensions: null
 
-  # bootstrap:
-  #   recovery: null
-  #   initdb:
-  #     database: openwebui
-  #     owner: openwebui
-  #     secret:
-  #       name: openwebui-cluster-credentials
-  #     postInitSQL:
-  #       - CREATE EXTENSION IF NOT EXISTS "vchord" CASCADE;
+  bootstrap:
+    recovery: null
+    initdb:
+      database: openwebui
+      owner: openwebui
+      secret:
+        name: openwebui-cluster-credentials
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS "vector" CASCADE;
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
