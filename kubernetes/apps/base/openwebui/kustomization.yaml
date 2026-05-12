@@ -7,6 +7,13 @@ labels:
   - pairs:
       app.kubernetes.io/module: *app
 
+configMapGenerator:
+  - name: openwebui-sync-script
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/sync.sh
+
 resources:
   - namespace.yaml
   - bucket.yaml
@@ -16,5 +23,7 @@ resources:
   - secrets.yaml
   - dragonfly.yaml
   # - ollama.yaml
+  - sync.yaml
+  - cronjob.yaml
   - helm.yaml
   - network.yaml
