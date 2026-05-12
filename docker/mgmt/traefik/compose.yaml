@@ -51,7 +51,7 @@ configs:
 services:
   traefik:
     container_name: traefik
-    image: docker.io/traefik:v3.6.15@sha256:8cb20d16e01a53d8d7f7696ac2f1af7d200d5c9984d226ce2299731d9eab6d6c
+    image: docker.io/traefik:v3.7.1@sha256:09d3ef496d61fd830905fce5035c8a9505c2d3849632cffe13e5a43b34526f90
     cap_drop:
       - ALL
     env_file:
