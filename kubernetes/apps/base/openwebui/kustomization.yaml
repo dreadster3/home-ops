@@ -23,7 +23,6 @@ resources:
   - secrets.yaml
   - dragonfly.yaml
   # - ollama.yaml
-  - sync.yaml
   - cronjob.yaml
   - helm.yaml
   - network.yaml
