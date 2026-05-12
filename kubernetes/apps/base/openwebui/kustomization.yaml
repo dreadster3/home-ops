@@ -11,6 +11,8 @@ configMapGenerator:
   - name: openwebui-sync-script
     options:
       disableNameSuffixHash: true
+      labels:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
     files:
       - scripts/sync.sh
 
