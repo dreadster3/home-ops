@@ -67,7 +67,7 @@ spec:
                 - name: RCLONE_CONFIG_DST_PROVIDER
                   value: Other
                 - name: RCLONE_CONFIG_DST_ENDPOINT
-                  value: https://truenas.${INTERNAL_DOMAIN}
+                  value: https://truenas.${INTERNAL_DOMAIN}:30292
                 - name: RCLONE_CONFIG_DST_FORCE_PATH_STYLE
                   value: "true"
                 - name: RCLONE_CONFIG_DST_NO_CHECK_BUCKET

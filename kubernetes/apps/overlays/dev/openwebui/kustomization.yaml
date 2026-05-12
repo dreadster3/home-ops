@@ -35,3 +35,9 @@ patches:
         path: /spec/values/controllers/main/containers/main/env/10
     target:
       kind: HelmRelease
+  - patch: |-
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/16
+        value: https://truenas.${HOME_DOMAIN}:30292
+    target:
+      kind: Cronjob
