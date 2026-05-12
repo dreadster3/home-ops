@@ -43,7 +43,7 @@ metadata:
   name: rustfs
 spec:
   hostnames:
-    - rustfs.intra.dreadster3.com
+    - rustfs.${INTERNAL_DOMAIN}
   parentRefs:
     - name: envoy-internal
       namespace: envoy

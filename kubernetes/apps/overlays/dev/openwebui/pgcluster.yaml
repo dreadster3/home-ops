@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: openwebui-cluster
+  namespace: openwebui
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  postgresql:
+    extensions: null
+
+  bootstrap:
+    recovery: null
+    initdb:
+      database: openwebui
+      owner: openwebui
+      secret:
+        name: openwebui-cluster-credentials
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS "vector" CASCADE;
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backup-store
+        serverName: openwebui-cluster-vector

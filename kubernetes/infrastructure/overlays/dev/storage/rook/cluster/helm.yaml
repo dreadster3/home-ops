@@ -101,6 +101,49 @@ spec:
             csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
             csi.storage.k8s.io/node-stage-secret-namespace: "{{ .Release.Namespace }}"
             csi.storage.k8s.io/fstype: ext4
+    cephObjectStores:
+      - name: ceph-objectstore
+        spec:
+          metadataPool:
+            failureDomain: host
+            replicated:
+              size: 3
+          dataPool:
+            failureDomain: host
+            erasureCoded:
+              dataChunks: 2
+              codingChunks: 1
+            parameters:
+              bulk: "true"
+          preservePoolsOnDelete: true
+          gateway:
+            port: 80
+            resources:
+              limits:
+                memory: "2Gi"
+              requests:
+                cpu: "1000m"
+                memory: "1Gi"
+            instances: 1
+            priorityClassName: system-cluster-critical
+        route:
+          enabled: true
+          host:
+            name: rgw.${INTERNAL_DOMAIN}
+            path: /
+            pathType: PathPrefix
+          parentRefs:
+            - name: envoy-internal
+              namespace: envoy
+        storageClass:
+          enabled: true
+          name: ceph-bucket
+          reclaimPolicy: Delete
+          volumeBindingMode: "Immediate"
+          annotations: {}
+          labels: {}
+          parameters:
+            region: us-east-1
 
     toolbox:
       enabled: true

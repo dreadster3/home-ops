@@ -105,6 +105,13 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: rook-ceph
+            app: rook-ceph-rgw
+      toPorts:
+        - ports:
+            - port: "8080"
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -120,3 +127,24 @@ spec:
   egress:
     - toEntities:
         - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: openwebui-sync
+  namespace: openwebui
+spec:
+  description: "Allow traffic from/to openwebui sync"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: openwebui-sync
+  egress:
+    - toFQDNs:
+        - matchName: truenas.${INTERNAL_DOMAIN}
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: rook-ceph
+            app: rook-ceph-rgw
+      toPorts:
+        - ports:
+            - port: "8080"

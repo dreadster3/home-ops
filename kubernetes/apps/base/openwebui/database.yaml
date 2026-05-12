@@ -1,0 +1,12 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: openwebui-cluster-pgvector
+spec:
+  name: openwebui
+  owner: openwebui
+  cluster:
+    name: openwebui-cluster
+  extensions:
+    - name: vector
+      version: "0.8.2"

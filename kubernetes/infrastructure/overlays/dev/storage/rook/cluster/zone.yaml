@@ -1,0 +1,23 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectRealm
+metadata:
+  name: ceph-objectstore
+  namespace: rook-ceph
+spec:
+  defaultRealm: true
+---
+apiVersion: ceph.rook.io/v1
+kind: CephObjectZoneGroup
+metadata:
+  name: ceph-objectstore
+  namespace: rook-ceph
+spec:
+  realm: ceph-objectstore
+---
+apiVersion: ceph.rook.io/v1
+kind: CephObjectZone
+metadata:
+  name: rustfs-cloud-sync
+  namespace: rook-ceph
+spec:
+  zoneGroup: ceph-objectstore

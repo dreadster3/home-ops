@@ -48,7 +48,7 @@ metadata:
   name: proxmox
 spec:
   hostnames:
-    - proxmox.intra.dreadster3.com
+    - proxmox.${INTERNAL_DOMAIN}
   parentRefs:
     - name: envoy-internal
       namespace: envoy

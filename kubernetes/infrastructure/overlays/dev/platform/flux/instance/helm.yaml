@@ -7,4 +7,4 @@ spec:
     instance:
       sync:
         path: kubernetes/clusters/dev
-        ref: refs/heads/feature/gateway_api
+        ref: refs/heads/feat/rook-ceph-sync

@@ -4,9 +4,9 @@ metadata:
   name: openwebui-cluster
   namespace: openwebui
   annotations:
-    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
 spec:
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.9-standard-trixie
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.3-standard-trixie
   instances: 2
   primaryUpdateStrategy: unsupervised
   affinity:
@@ -36,11 +36,18 @@ spec:
           barmanObjectName: backup-store
           serverName: openwebui-cluster
 
+  postgresql:
+    extensions:
+      - name: pgvector
+        image:
+          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
+
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
         barmanObjectName: backup-store
+        serverName: openwebui-cluster-vector
 
   resources:
     requests:

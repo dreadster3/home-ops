@@ -1,0 +1,89 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: openwebui-sync
+  namespace: openwebui
+spec:
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: openwebui-sync
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: sync
+              image: rclone/rclone:latest
+              env:
+                - name: SRC_REMOTE
+                  value: "src"
+                - name: DST_REMOTE
+                  value: "dst"
+                - name: SRC_BUCKET
+                  valueFrom:
+                    configMapKeyRef:
+                      name: openwebui-bucket
+                      key: BUCKET_NAME
+                - name: DST_BUCKET
+                  value: "openwebui"
+                - name: DST_PATH
+                  value: uploads
+                - name: SYNC_MODE
+                  value: sync
+                # RCLONE configurations
+                - name: RCLONE_CONFIG_SRC_TYPE
+                  value: s3
+                - name: RCLONE_CONFIG_SRC_PROVIDER
+                  value: Other
+                - name: RCLONE_CONFIG_SRC_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: openwebui-bucket
+                      key: AWS_ACCESS_KEY_ID
+                - name: RCLONE_CONFIG_SRC_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: openwebui-bucket
+                      key: AWS_SECRET_ACCESS_KEY
+                - name: RCLONE_CONFIG_SRC_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: openwebui-bucket
+                      key: BUCKET_HOST
+                - name: RCLONE_CONFIG_SRC_ENDPOINT
+                  value: http://$(RCLONE_CONFIG_SRC_HOST):80
+                - name: RCLONE_CONFIG_SRC_FORCE_PATH_STYLE
+                  value: "true"
+                - name: RCLONE_CONFIG_DST_TYPE
+                  value: s3
+                - name: RCLONE_CONFIG_DST_PROVIDER
+                  value: Other
+                - name: RCLONE_CONFIG_DST_ENDPOINT
+                  value: https://truenas.${INTERNAL_DOMAIN}:30292
+                - name: RCLONE_CONFIG_DST_FORCE_PATH_STYLE
+                  value: "true"
+                - name: RCLONE_CONFIG_DST_NO_CHECK_BUCKET
+                  value: "true"
+                - name: RCLONE_CONFIG_DST_INSECURE_SKIP_VERIFY
+                  value: "true"
+              envFrom:
+                - secretRef:
+                    name: openwebui-sync-s3-credentials
+              command:
+                - /bin/sh
+                - /scripts/sync.sh
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+          volumes:
+            - name: scripts
+              configMap:
+                name: openwebui-sync-script
+                defaultMode: 0755

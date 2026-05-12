@@ -15,3 +15,39 @@ patches:
   - path: store.yaml
     target:
       kind: ObjectStore
+  - path: pgcluster.yaml
+    target:
+      kind: Cluster
+  - patch: |-
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/4
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/5
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/6
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/7
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/8
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/9
+      - op: remove
+        path: /spec/values/controllers/main/containers/main/env/10
+    target:
+      kind: HelmRelease
+  - patch: |-
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/3/value
+        value: test
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/16/value
+        value: https://truenas.${HOME_DOMAIN}:30292
+    target:
+      kind: CronJob
+  - patch: |-
+      - op: replace
+        path: /spec/egress/0/toFQDNs/0/matchName
+        value: truenas.${HOME_DOMAIN}
+    target:
+      kind: CiliumNetworkPolicy
+      name: openwebui-sync
