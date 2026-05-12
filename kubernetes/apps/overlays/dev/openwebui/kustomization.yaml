@@ -48,3 +48,6 @@ patches:
       - op: replace
         path: /spec/egress/0/toFQDNs/0/matchName
         value: truenas.${HOME_DOMAIN}
+    target:
+      kind: CiliumNetworkPolicy
+      name: openwebui-sync
