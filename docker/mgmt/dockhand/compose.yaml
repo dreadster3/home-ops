@@ -1,6 +1,6 @@
 services:
   socket-proxy:
-    image: lscr.io/linuxserver/socket-proxy:3.2.17@sha256:a8f16b7a30a6863fe5caf4750ae86f53e59de6600069f21b6d7592fdec031683
+    image: lscr.io/linuxserver/socket-proxy:3.2.18@sha256:8d4ba67fd377b6ce9252bdb47ff1de7f28f17c52b0fb801e797bbafcc1bfe5bc
     container_name: dockhand-socket-proxy
     environment:
       # Default
