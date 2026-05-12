@@ -44,3 +44,4 @@ patches:
         value: https://truenas.${HOME_DOMAIN}:30292
     target:
       kind: Cronjob
+      name: openwebui-sync
