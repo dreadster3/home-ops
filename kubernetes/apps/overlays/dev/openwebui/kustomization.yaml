@@ -44,3 +44,7 @@ patches:
         value: https://truenas.${HOME_DOMAIN}:30292
     target:
       kind: CronJob
+  - patch: |-
+      - op: replace
+        path: /spec/egress/0/toFQDNs/0/matchName
+        value: truenas.${HOME_DOMAIN}

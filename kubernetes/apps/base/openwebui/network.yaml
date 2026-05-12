@@ -127,3 +127,17 @@ spec:
   egress:
     - toEntities:
         - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: openwebui-sync
+  namespace: openwebui
+spec:
+  description: "Allow traffic from/to openwebui sync"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: openwebui-sync
+  egress:
+    - toFQDNs:
+        - matchName: truenas.${INTERNAL_DOMAIN}
