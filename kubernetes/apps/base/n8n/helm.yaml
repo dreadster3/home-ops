@@ -30,7 +30,7 @@ spec:
           main:
             image:
               repository: ghcr.io/n8n-io/n8n
-              tag: 2.20.4@sha256:8620db7c2bd1353c3f0a656a3197605b475afd0a0bb171703dc6d4539a92c0cd
+              tag: 2.21.0@sha256:4b8acf6a9e21ee4234850557b3c1c46b940f4025a8ddb0f697f858b788103ebe
             env:
               TIMEZONE: &tz ${TIMEZONE}
               GENERIC_TIMEZONE: *tz
