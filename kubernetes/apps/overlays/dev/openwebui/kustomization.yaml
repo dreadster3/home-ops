@@ -37,10 +37,10 @@ patches:
       kind: HelmRelease
   - patch: |-
       - op: replace
-        path: /spec/jobTemplate/spec/template/spec/containers/0/env/3
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/3/value
         value: test
       - op: replace
-        path: /spec/jobTemplate/spec/template/spec/containers/0/env/16
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/16/value
         value: https://truenas.${HOME_DOMAIN}:30292
     target:
       kind: CronJob
