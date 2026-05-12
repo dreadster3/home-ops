@@ -141,3 +141,10 @@ spec:
   egress:
     - toFQDNs:
         - matchName: truenas.${INTERNAL_DOMAIN}
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: rook-ceph
+            app: rook-ceph-rgw
+      toPorts:
+        - ports:
+            - port: "8080"
