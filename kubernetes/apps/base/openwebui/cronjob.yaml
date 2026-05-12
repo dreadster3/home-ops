@@ -72,6 +72,8 @@ spec:
                   value: "true"
                 - name: RCLONE_CONFIG_DST_NO_CHECK_BUCKET
                   value: "true"
+                - name: RCLONE_CONFIG_DST_INSECURE_SKIP_VERIFY
+                  value: "true"
               envFrom:
                 - secretRef:
                     name: openwebui-sync-s3-credentials
