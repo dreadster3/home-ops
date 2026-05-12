@@ -43,5 +43,4 @@ patches:
         path: /spec/jobTemplate/spec/template/spec/containers/0/env/16
         value: https://truenas.${HOME_DOMAIN}:30292
     target:
-      kind: Cronjob
-      name: openwebui-sync
+      kind: CronJob
