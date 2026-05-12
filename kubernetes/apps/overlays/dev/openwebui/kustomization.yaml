@@ -37,6 +37,9 @@ patches:
       kind: HelmRelease
   - patch: |-
       - op: replace
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/3
+        value: test
+      - op: replace
         path: /spec/jobTemplate/spec/template/spec/containers/0/env/16
         value: https://truenas.${HOME_DOMAIN}:30292
     target:
