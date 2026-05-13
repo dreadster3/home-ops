@@ -30,5 +30,8 @@
   },
   "kubernetes": {
     "managerFilePatterns": ["/\\.yaml(?:\\.j2)?$/"]
+  },
+  "github-actions": {
+    "rangeStrategy": "pin"
   }
 }
