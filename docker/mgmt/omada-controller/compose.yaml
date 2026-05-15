@@ -60,6 +60,7 @@ services:
     environment:
       TZ: Europe/Lisbon
       MONGO_INITDB_DATABASE: omada
+      GLIBC_TUNABLES: glibc.pthread.rseq=1
     networks:
       - default
     volumes:
