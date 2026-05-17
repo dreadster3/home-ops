@@ -39,10 +39,10 @@ spec:
       secretName: harbor-token-encryption
       resources:
         requests:
-          memory: 192Mi
+          memory: &memory 256Mi
           cpu: 5m
         limits:
-          memory: 192Mi
+          memory: *memory
 
     jobservice:
       replicas: 2
@@ -56,10 +56,10 @@ spec:
         - stdout
       resources:
         requests:
-          memory: 150Mi
+          memory: &memory 150Mi
           cpu: 5m
         limits:
-          memory: 150Mi
+          memory: *memory
 
     registry:
       replicas: 2
@@ -74,42 +74,42 @@ spec:
       registry:
         resources:
           requests:
-            memory: &registryMemory 192Mi
+            memory: &memory 192Mi
             cpu: 5m
           limits:
-            memory: *registryMemory
+            memory: *memory
       controller:
         resources:
           requests:
             cpu: 5m
-            memory: &controllerMemory 32Mi
+            memory: &memory 40Mi
           limits:
-            memory: *controllerMemory
+            memory: *memory
 
     portal:
       resources:
         requests:
           cpu: 5m
-          memory: 20Mi
+          memory: &memory 20Mi
         limits:
-          memory: 20Mi
+          memory: *memory
 
     exporter:
       resources:
         requests:
           cpu: 5m
-          memory: 35Mi
+          memory: &memory 44Mi
         limits:
-          memory: 35Mi
+          memory: *memory
 
     trivy:
       replicas: 1
       resources:
         requests:
           cpu: 5m
-          memory: 1280Mi
+          memory: &memory 1280Mi
         limits:
-          memory: 1280Mi
+          memory: *memory
 
     expose:
       type: route
