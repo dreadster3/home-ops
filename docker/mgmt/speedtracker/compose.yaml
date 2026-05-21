@@ -34,7 +34,7 @@ services:
       - proxy
   db:
     container_name: speedtracker-db
-    image: docker.io/postgres:18.3-trixie@sha256:a9abf4275f9e99bff8e6aed712b3b7dfec9cac1341bba01c1ffdfce9ff9fc34a
+    image: docker.io/postgres:18.4-trixie@sha256:8ff36f3c66371cba71d20ceedccfc3de9669a68737607888c4ef0af93abe8e39
     restart: always
     environment:
       - POSTGRES_DB=speedtest_tracker
