@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@54e4ba378e155ada619caafdc599e5c4d759ce5c # v2.8.7
+        uses: fluxcd/flux2/action@1fd61a06264d71cf445ed55c4f14d401d26a1c64 # v2.8.8
 
       - name: Flux Local Test
         uses: allenporter/flux-local/action/test@4d666add25002f550dc0dbe8b2b2f25859169b34 # 8.2.0
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@54e4ba378e155ada619caafdc599e5c4d759ce5c # v2.8.7
+        uses: fluxcd/flux2/action@1fd61a06264d71cf445ed55c4f14d401d26a1c64 # v2.8.8
 
       - name: Flux Local Diff
         uses: allenporter/flux-local/action/diff@4d666add25002f550dc0dbe8b2b2f25859169b34 # 8.2.0
