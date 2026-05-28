@@ -18,7 +18,7 @@ spec:
   sourceRef:
     kind: HelmRepository
     name: prometheus
-  version: 85.*
+  version: 86.*
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
