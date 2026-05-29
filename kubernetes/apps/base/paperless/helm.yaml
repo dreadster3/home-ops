@@ -41,9 +41,9 @@ spec:
               USERMAP_GID: 4100
               PAPERLESS_TIME_ZONE: Europe/Lisbon
               PAPERLESS_DBENGINE: postgresql
-              PAPERLESS_ALLOWED_HOSTS: paperless.${INTERNAL_DOMAIN},paperless.${EXTERNAL_DOMAIN}
-              PAPERLESS_CORS_ALLOWED_HOSTS: https://paperless.${INTERNAL_DOMAIN},https://paperless.${EXTERNAL_DOMAIN}
-              PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.${INTERNAL_DOMAIN},https://paperless.${EXTERNAL_DOMAIN}
+              PAPERLESS_ALLOWED_HOSTS: paperless.${INTERNAL_DOMAIN},paperless.${EXTERNAL_DOMAIN},docs.${ALTERNATE_EXTERNAL_DOMAIN}
+              PAPERLESS_CORS_ALLOWED_HOSTS: &domains https://paperless.${INTERNAL_DOMAIN},https://paperless.${EXTERNAL_DOMAIN},https://docs.${ALTERNATE_EXTERNAL_DOMAIN}
+              PAPERLESS_CSRF_TRUSTED_ORIGINS: *domains
               PAPERLESS_OCR_LANGUAGE: eng+por
               PAPERLESS_OCR_LANGUAGES: eng por
               PAPERLESS_WEBSERVER_WORKERS: 2
