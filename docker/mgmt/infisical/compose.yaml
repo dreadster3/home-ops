@@ -2,7 +2,7 @@ version: "3"
 
 services:
   backend:
-    image: infisical/infisical:v0.160.4@sha256:43b4a0f9c6e5288c54ef0a109cf3a8304b0cab962da50549cc46f2c38f866278
+    image: infisical/infisical:v0.160.7@sha256:48d9449db915dc0fec703bceab9c36a7fc48cc8839f52b9efa26258e8c6cc917
     container_name: infisical
     restart: unless-stopped
     depends_on:
