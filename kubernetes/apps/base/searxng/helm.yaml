@@ -31,7 +31,7 @@ spec:
           main:
             image:
               repository: docker.io/searxng/searxng
-              tag: 2026.6.4-e6559c9ad@sha256:e9f02371d94e8cdcc2231c8987d88794654416774e12e47e82ae43943a1baa5a
+              tag: 2026.6.8-f3fab143b@sha256:02d441bbb647b7be422d21041420115cddadac4644368f67c7c7f407bbe72e22
             env:
               SEARXNG_BASE_URL: https://searxng.${INTERNAL_DOMAIN}
               SEARXNG_PORT: &port 8080
