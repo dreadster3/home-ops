@@ -77,6 +77,16 @@
         "commitMessageTopic": "{{{groupName}}} group"
       },
       "minimumGroupSize": 2
+    },
+    {
+      "description": "Ceph Group",
+      "groupName": "Ceph",
+      "matchDatasources": ["helm"],
+      "matchPackageNames": ["/rook-ceph/", "/rook-ceph-cluster/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
     }
   ]
 }
