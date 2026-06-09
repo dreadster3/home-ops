@@ -74,7 +74,7 @@ spec:
             resources:
               requests:
                 cpu: 900m
-                memory: &memory 2Gi
+                memory: &memory 2.5Gi
               limits:
                 memory: *memory
             probes:
