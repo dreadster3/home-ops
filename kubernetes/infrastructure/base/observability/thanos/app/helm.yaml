@@ -80,7 +80,7 @@ spec:
       resources:
         requests:
           cpu: 290m
-          memory: &memory 650Mi
+          memory: &memory 850Mi
         limits:
           memory: *memory
       retentionResolutionRaw: 15d
@@ -101,7 +101,7 @@ spec:
       resources:
         requests:
           cpu: 10m
-          memory: &memory 875Mi
+          memory: &memory 1.1Gi
         limits:
           memory: *memory
       networkPolicy:

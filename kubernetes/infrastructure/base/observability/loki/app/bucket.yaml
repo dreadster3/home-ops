@@ -7,4 +7,4 @@ spec:
   generateBucketName: loki
   storageClassName: ceph-bucket
   additionalConfig:
-    maxSize: 50G
+    maxSize: 100G
