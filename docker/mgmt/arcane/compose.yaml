@@ -40,14 +40,20 @@ services:
       - /run
 
   arcane:
-    image: ghcr.io/getarcaneapp/arcane:v1.20.0@sha256:b6bb5ef71f8c775e7d465ac03f2ae295d349e3b6ac2c742d7a21ab27f3247a08
+    image: ghcr.io/getarcaneapp/manager:v2.0.2@sha256:4923ed580990dd48c5f8875065dc04765e032c0fde72b8d85e3b1c38cdcc0526
     container_name: arcane
     volumes:
       - data:/app/data
+      - ./role-mappings.json:/app/role-mappings.json
     environment:
       TZ: ${TIMEZONE}
+      LOG_LEVEL: INFO
+      LOG_JSON: true
+      PUID: 1000
+      PGID: 1000
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       JWT_SECRET: ${JWT_SECRET}
+      APP_URL: https://arcane.${INTERNAL_DOMAIN}
       UPDATE_CHECK_DISABLED: true
       DOCKER_HOST: tcp://socket-proxy:2375
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/arcane
@@ -55,11 +61,13 @@ services:
       OIDC_AUTO_REDIRECT_TO_PROVIDER: true
       OIDC_PROVIDER_NAME: authentik
       OIDC_ISSUER_URL: https://authentik.${INTERNAL_DOMAIN}/application/o/arcane/
+      OIDC_SCOPES: openid email profile
+      OIDC_SKIP_TLS_VERIFY: false
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
       OIDC_MERGE_ACCOUNTS: true
-      OIDC_ADMIN_CLAIM: groups
-      OIDC_ADMIN_VALUE: AuthentikAdmins
+      OIDC_GROUPS_CLAIM: groups
+      OIDC_ROLE_MAPPINGS_FILE: /app/role-mappings.json
     networks:
       - default
       - proxy
@@ -69,12 +77,16 @@ services:
       db:
         condition: service_healthy
         restart: true
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -fsS http://localhost:3552/api/health >/dev/null || exit 1']
-      interval: 10s
-      timeout: 3s
-      retries: 5
-      start_period: 15s
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD-SHELL",
+    #       "curl -fsS http://localhost:3552/api/health >/dev/null || exit 1",
+    #     ]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 5
+    #   start_period: 15s
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.arcane.rule=Host(`arcane.${INTERNAL_DOMAIN}`)"
