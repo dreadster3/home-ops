@@ -47,6 +47,10 @@ services:
       - ./role-mappings.json:/app/role-mappings.json
     environment:
       TZ: ${TIMEZONE}
+      LOG_LEVEL: INFO
+      LOG_FORMAT: json
+      PUID: 1000
+      PGID: 1000
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       JWT_SECRET: ${JWT_SECRET}
       APP_URL: https://arcane.${INTERNAL_DOMAIN}
@@ -57,6 +61,8 @@ services:
       OIDC_AUTO_REDIRECT_TO_PROVIDER: true
       OIDC_PROVIDER_NAME: authentik
       OIDC_ISSUER_URL: https://authentik.${INTERNAL_DOMAIN}/application/o/arcane/
+      OIDC_SCOPES: openid email profile
+      OIDC_SKIP_TLS_VERIFY: false
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
       OIDC_MERGE_ACCOUNTS: true
@@ -89,9 +95,9 @@ services:
       - "traefik.http.services.arcane.loadbalancer.server.port=3552"
       - "traefik.http.services.arcane.loadbalancer.server.scheme=http"
     restart: unless-stopped
-    # user: "1000:1000"
-    # security_opt:
-    #   - no-new-privileges:true
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
     # cap_drop:
     #   - ALL
     # read_only: true
