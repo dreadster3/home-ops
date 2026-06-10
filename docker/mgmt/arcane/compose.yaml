@@ -47,8 +47,6 @@ services:
       - ./role-mappings.json:/app/role-mappings.json
     environment:
       TZ: ${TIMEZONE}
-      PUID: "1000"
-      PGID: "1000"
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       JWT_SECRET: ${JWT_SECRET}
       APP_URL: https://arcane.${INTERNAL_DOMAIN}
@@ -91,14 +89,14 @@ services:
       - "traefik.http.services.arcane.loadbalancer.server.port=3552"
       - "traefik.http.services.arcane.loadbalancer.server.scheme=http"
     restart: unless-stopped
-    user: "1000:1000"
-    security_opt:
-      - no-new-privileges:true
+    # user: "1000:1000"
+    # security_opt:
+    #   - no-new-privileges:true
     # cap_drop:
     #   - ALL
-    read_only: true
-    tmpfs:
-      - /tmp
+    # read_only: true
+    # tmpfs:
+    #   - /tmp
 
   db:
     container_name: arcane-db
