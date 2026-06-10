@@ -44,6 +44,7 @@ services:
     container_name: arcane
     volumes:
       - data:/app/data
+      - ./role-mappings.json:/app/role-mappings.json
     environment:
       TZ: ${TIMEZONE}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
@@ -58,8 +59,8 @@ services:
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
       OIDC_MERGE_ACCOUNTS: true
-      OIDC_ADMIN_CLAIM: groups
-      OIDC_ADMIN_VALUE: AuthentikAdmins
+      OIDC_GROUPS_CLAIM: groups
+      OIDC_ROLE_MAPPINGS_FILE: /app/role-mappings.json
     networks:
       - default
       - proxy
@@ -70,7 +71,11 @@ services:
         condition: service_healthy
         restart: true
     healthcheck:
-      test: ['CMD-SHELL', 'curl -fsS http://localhost:3552/api/health >/dev/null || exit 1']
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://localhost:3552/api/health >/dev/null || exit 1",
+        ]
       interval: 10s
       timeout: 3s
       retries: 5
