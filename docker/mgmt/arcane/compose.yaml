@@ -71,16 +71,16 @@ services:
       db:
         condition: service_healthy
         restart: true
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -fsS http://localhost:3552/api/health >/dev/null || exit 1",
-        ]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-      start_period: 15s
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD-SHELL",
+    #       "curl -fsS http://localhost:3552/api/health >/dev/null || exit 1",
+    #     ]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 5
+    #   start_period: 15s
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.arcane.rule=Host(`arcane.${INTERNAL_DOMAIN}`)"
