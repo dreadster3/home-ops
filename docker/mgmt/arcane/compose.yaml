@@ -48,7 +48,7 @@ services:
     environment:
       TZ: ${TIMEZONE}
       LOG_LEVEL: INFO
-      LOG_FORMAT: json
+      LOG_JSON: true
       PUID: 1000
       PGID: 1000
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
@@ -98,11 +98,11 @@ services:
     user: "1000:1000"
     security_opt:
       - no-new-privileges:true
-    # cap_drop:
-    #   - ALL
-    # read_only: true
-    # tmpfs:
-    #   - /tmp
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
 
   db:
     container_name: arcane-db
