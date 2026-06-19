@@ -106,7 +106,7 @@ services:
 
   db:
     container_name: arcane-db
-    image: postgres:18.4-alpine@sha256:ccfb3a1332f1ade601b73005eda74192167c5ca09c3bd7589c46f61f0490f470
+    image: postgres:18.4-alpine@sha256:72f702819bc91cac2265cbe78e4c3ef4c45694f83d63a6829657581accd038e1
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
