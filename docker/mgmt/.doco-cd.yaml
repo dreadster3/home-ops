@@ -37,11 +37,11 @@ name: stirling-pdf
 working_dir: docker/mgmt/stirling-pdf
 compose_files:
   - compose.yaml
----
-name: appraise
-working_dir: docker/mgmt/appraise
-compose_files:
-  - compose.yaml
+# ---
+# name: appraise
+# working_dir: docker/mgmt/appraise
+# compose_files:
+#   - compose.yaml
 ---
 name: infisical
 working_dir: docker/mgmt/infisical
@@ -57,8 +57,8 @@ name: arcane
 working_dir: docker/mgmt/arcane
 compose_files:
   - compose.yaml
----
-name: cadvisor
-working_dir: docker/mgmt/cadvisor
-compose_files:
-  - compose.yaml
+# ---
+# name: cadvisor
+# working_dir: docker/mgmt/cadvisor
+# compose_files:
+#   - compose.yaml
