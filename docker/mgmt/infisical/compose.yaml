@@ -41,14 +41,7 @@ services:
           memory: &memory 768M
         limits:
           memory: *memory
-    user: "non-root-user"
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    read_only: true
-    tmpfs:
-      - /tmp
+    user: "1001:1001"
 
   redis:
     image: redis:8.6.2-alpine@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
