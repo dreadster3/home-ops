@@ -72,6 +72,10 @@ spec:
               - name: ENABLE_LOGIN_FORM
                 value: "false"
 
+              # Forward user info to LiteLLM for per-user usage tracking
+              - name: ENABLE_FORWARD_USER_INFO_HEADERS
+                value: "true"
+
               # TTS
               - name: AUDIO_TTS_OPENAI_API_BASE_URL
                 value: https://api.openai.com/v1
