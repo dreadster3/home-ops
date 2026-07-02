@@ -1,0 +1,265 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: litellm-helm
+  namespace: litellm
+spec:
+  interval: 24h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 1.90.0
+  url: oci://ghcr.io/berriai/litellm-helm
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: litellm
+  namespace: litellm
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chartRef:
+    kind: OCIRepository
+    name: litellm-helm
+    namespace: litellm
+  values:
+    replicaCount: 2
+    strategy:
+      type: RollingUpdate
+    podAnnotations:
+      reloader.stakater.com/auto: "true"
+
+    image:
+      tag: v1.90.0@sha256:b4b2eb22cfe218d2c46c0cfe442db0dd4262fdf4025f96b0c74abda3d379ef65
+
+    # Use external CloudNativePG — disable the bundled Bitnami postgres subchart
+    db:
+      useExisting: true
+      deployStandalone: false
+      endpoint: litellm-cluster-rw
+      database: litellm
+      secret:
+        name: litellm-cluster-credentials
+        usernameKey: username
+        passwordKey: password
+
+    # Use external Dragonfly — disable the bundled Redis subchart
+    redis:
+      enabled: false
+
+    # We use Envoy Gateway HTTPRoute (see httproute.yaml) instead of Ingress
+    ingress:
+      enabled: false
+
+    service:
+      annotations:
+        netbird.io/expose: "true"
+
+    # One Uvicorn worker per pod — scale horizontally via replicas (Kubernetes recommendation)
+    numWorkers: 1
+
+    # Turn off FastAPI's default info logs (production best practice)
+    logLevel: "ERROR"
+
+    # Enable Prometheus ServiceMonitor for metrics scraping
+    serviceMonitor:
+      enabled: true
+
+    # Inject master key, API keys, and Redis connection info as env vars
+    environmentSecrets:
+      - litellm-secret-env
+
+    proxy_config:
+      model_list:
+        # OpenAI image generation
+        - model_name: gpt-image-2
+          model_info:
+            mode: image_generation
+          litellm_params:
+            model: openai/gpt-image-2
+            api_key: os.environ/OPENAI_API_KEY
+        - model_name: tts
+          litellm_params:
+            model: openai/tts-1
+            api_key: os.environ/OPENAI_API_KEY
+        - model_name: whisper
+          litellm_params:
+            model: whisper-1
+            api_key: os.environ/OPENAI_API_KEY
+          model_info:
+            mode: audio_transcription
+        # Anthropic models
+        - model_name: claude-fable-5
+          litellm_params:
+            model: anthropic/claude-fable-5
+            api_key: os.environ/ANTHROPIC_API_KEY
+        - model_name: claude-sonnet-5
+          litellm_params:
+            model: anthropic/claude-sonnet-5
+            api_key: os.environ/ANTHROPIC_API_KEY
+        - model_name: claude-opus-4.8
+          litellm_params:
+            model: anthropic/claude-opus-4-8
+            api_key: os.environ/ANTHROPIC_API_KEY
+        # Gemini image generation models
+        - model_name: gemini-3.1-flash-image
+          model_info:
+            mode: image_generation
+          litellm_params:
+            model: gemini/gemini-3.1-flash-image
+            api_key: os.environ/GEMINI_API_KEY
+        - model_name: gemini-3.1-flash-lite-image
+          model_info:
+            mode: image_generation
+          litellm_params:
+            model: gemini/gemini-3.1-flash-lite-image
+            api_key: os.environ/GEMINI_API_KEY
+        # Ollama Cloud models (https://ollama.com)
+        - model_name: ollama-glm-5.1
+          litellm_params:
+            model: ollama_chat/glm-5.1
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        - model_name: ollama-deepseek-v4-pro
+          litellm_params:
+            model: ollama_chat/deepseek-v4-pro
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        - model_name: ollama-kimi-k2.6
+          litellm_params:
+            model: ollama_chat/kimi-k2.6
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        - model_name: ollama-gemma4-31b
+          litellm_params:
+            model: ollama_chat/gemma4:31b
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        - model_name: ollama-qwen3.5
+          litellm_params:
+            model: ollama_chat/qwen3.5
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        - model_name: ollama-minimax-m3
+          litellm_params:
+            model: ollama_chat/minimax-m3
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        - model_name: ollama-deepseek-v4-flash
+          litellm_params:
+            model: ollama_chat/deepseek-v4-flash
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        - model_name: ollama-glm-5.2
+          litellm_params:
+            model: ollama_chat/glm-5.2
+            api_base: https://ollama.com
+            api_key: os.environ/OLLAMA_API_KEY
+        # OpenCode Go models (https://opencode.ai/docs/go/) — OpenAI-compatible endpoint
+        - model_name: opencode-go-glm-5.1
+          litellm_params:
+            model: openai/glm-5.1
+            api_base: https://opencode.ai/zen/go/v1
+            api_key: os.environ/OPENCODE_API_KEY
+        - model_name: opencode-go-deepseek-v4-pro
+          litellm_params:
+            model: openai/deepseek-v4-pro
+            api_base: https://opencode.ai/zen/go/v1
+            api_key: os.environ/OPENCODE_API_KEY
+        - model_name: opencode-go-kimi-k2.6
+          litellm_params:
+            model: openai/kimi-k2.6
+            api_base: https://opencode.ai/zen/go/v1
+            api_key: os.environ/OPENCODE_API_KEY
+        - model_name: opencode-go-deepseek-v4-flash
+          litellm_params:
+            model: openai/deepseek-v4-flash
+            api_base: https://opencode.ai/zen/go/v1
+            api_key: os.environ/OPENCODE_API_KEY
+        - model_name: opencode-go-glm-5.2
+          litellm_params:
+            model: openai/glm-5.2
+            api_base: https://opencode.ai/zen/go/v1
+            api_key: os.environ/OPENCODE_API_KEY
+        # OpenCode Go models — Anthropic-native endpoint
+        - model_name: opencode-go-minimax-m3
+          litellm_params:
+            model: anthropic/minimax-m3
+            api_base: https://opencode.ai/zen/go
+            api_key: os.environ/OPENCODE_API_KEY
+        - model_name: opencode-go-qwen3.7-max
+          litellm_params:
+            model: anthropic/qwen3.7-max
+            api_base: https://opencode.ai/zen/go
+            api_key: os.environ/OPENCODE_API_KEY
+        - model_name: opencode-go-qwen3.7-plus
+          litellm_params:
+            model: anthropic/qwen3.7-plus
+            api_base: https://opencode.ai/zen/go
+            api_key: os.environ/OPENCODE_API_KEY
+        # GitHub Copilot models (OAuth device flow — tokens persisted in PVC)
+        - model_name: github-copilot-sonnet-5
+          litellm_params:
+            model: github_copilot/sonnet-5
+        - model_name: github-copilot-gemini-3.5-flash
+          litellm_params:
+            model: github_copilot/gemini-3.5-flash
+        - model_name: github-copilot-gpt-5.4
+          litellm_params:
+            model: github_copilot/gpt-5.4
+        - model_name: github-copilot-gpt-5.4-mini
+          litellm_params:
+            model: github_copilot/gpt-5.4-mini
+        # Deepgram
+        - model_name: nova-2
+          litellm_params:
+            model: deepgram/nova-2
+            api_key: os.environ/DEEPGRAM_API_KEY
+          model_info:
+            mode: audio_transcription
+
+      litellm_settings:
+        drop_params: true
+        request_timeout: 600
+        num_retries: 2
+        set_verbose: false
+        json_logs: true
+        cache: true
+        cache_params:
+          type: redis
+          host: os.environ/REDIS_HOST
+          port: os.environ/REDIS_PORT
+          password: os.environ/REDIS_PASSWORD
+
+      general_settings:
+        master_key: os.environ/PROXY_MASTER_KEY
+        database_url: os.environ/DATABASE_URL
+        store_model_in_db: true
+        # Production best practices (https://docs.litellm.ai/docs/proxy/prod)
+        proxy_batch_write_at: 60
+        database_connection_pool_limit: 10
+        disable_error_logs: true
+
+    # Persistent storage for GitHub Copilot OAuth tokens
+    volumes:
+      - name: github-copilot-tokens
+        persistentVolumeClaim:
+          claimName: litellm-github-copilot-tokens
+    volumeMounts:
+      - name: github-copilot-tokens
+        mountPath: /data/github_copilot
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: &memory 2Gi
+      limits:
+        memory: *memory
