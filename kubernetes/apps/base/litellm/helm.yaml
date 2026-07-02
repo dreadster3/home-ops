@@ -49,6 +49,8 @@ spec:
         name: litellm-cluster-credentials
         usernameKey: username
         passwordKey: password
+        # Route read-only queries to the CNPG read-only service
+        readReplicaUrlKey: readReplicaUrl
 
     # Use external Dragonfly — disable the bundled Redis subchart
     redis:
