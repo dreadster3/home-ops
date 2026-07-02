@@ -99,6 +99,14 @@ spec:
         - ports:
             - port: "4000"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+            app.kubernetes.io/name: openwebui
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
   egress:
     - toEntities:
         - world

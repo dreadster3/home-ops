@@ -107,6 +107,14 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+            app.kubernetes.io/name: litellm
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: rook-ceph
             app: rook-ceph-rgw
       toPorts:
