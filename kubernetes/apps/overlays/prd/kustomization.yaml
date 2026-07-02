@@ -11,6 +11,7 @@ resources:
   - ../../base/harbor
   - ../../base/immich
   - ../../base/joplin
+  - ../../base/litellm
   - ../../base/n8n
   - ../../base/netbox
   - ../../base/openwebui
