@@ -10,6 +10,7 @@ resources:
   # - harbor
   # - immich
   # - joplin
+  - litellm
   # - n8n
   # - netbox
   - openwebui

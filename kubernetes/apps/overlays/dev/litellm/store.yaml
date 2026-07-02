@@ -1,0 +1,16 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup-store
+  namespace: litellm
+spec:
+  configuration:
+    destinationPath: s3://litellm-cluster
+    endpointURL: http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+    s3Credentials:
+      accessKeyId:
+        name: litellm-cluster-bucket
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: litellm-cluster-bucket
+        key: AWS_SECRET_ACCESS_KEY

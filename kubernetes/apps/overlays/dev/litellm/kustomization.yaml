@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: litellm
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: litellm
+
+resources:
+  - ../../../base/litellm
+  - bucket.yaml
+
+patches:
+  - path: store.yaml
+    target:
+      kind: ObjectStore
+  - path: pgcluster.yaml
+    target:
+      kind: Cluster
+  - patch: |-
+      - op: replace
+        path: /spec/values/replicaCount
+        value: 1
+    target:
+      kind: HelmRelease
+      name: litellm
