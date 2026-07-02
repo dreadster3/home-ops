@@ -50,8 +50,8 @@ spec:
                 protocol: TCP
             resources:
               requests:
-                cpu: 5m
-                memory: &memory 480Mi
+                cpu: 800m
+                memory: &memory 1Gi
               limits:
                 memory: *memory
             securityContext:
