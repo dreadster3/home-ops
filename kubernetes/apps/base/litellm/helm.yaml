@@ -85,6 +85,16 @@ spec:
           litellm_params:
             model: openai/gpt-image-2
             api_key: os.environ/OPENAI_API_KEY
+        - model_name: tts
+          litellm_params:
+            model: openai/tts-1
+            api_key: os.environ/OPENAI_API_KEY
+        - model_name: whisper
+          litellm_params:
+            model: whisper-1
+            api_key: os.environ/OPENAI_API_KEY
+          model_info:
+            mode: audio_transcription
         # Anthropic models
         - model_name: claude-fable-5
           litellm_params:
@@ -207,6 +217,13 @@ spec:
         - model_name: github-copilot-gpt-5.4-mini
           litellm_params:
             model: github_copilot/gpt-5.4-mini
+        # Deepgram
+        - model_name: nova-2
+          litellm_params:
+            model: deepgram/nova-2
+            api_key: os.environ/DEEPGRAM_API_KEY
+          model_info:
+            mode: audio_transcription
 
       litellm_settings:
         drop_params: true
