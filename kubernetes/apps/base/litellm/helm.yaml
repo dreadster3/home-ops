@@ -58,6 +58,10 @@ spec:
     ingress:
       enabled: false
 
+    service:
+      annotations:
+        netbird.io/expose: "true"
+
     # One Uvicorn worker per pod — scale horizontally via replicas (Kubernetes recommendation)
     numWorkers: 1
 
@@ -74,10 +78,6 @@ spec:
 
     proxy_config:
       model_list:
-        - model_name: gpt-4o
-          litellm_params:
-            model: openai/gpt-4o
-            api_key: os.environ/OPENAI_API_KEY
         # OpenAI image generation
         - model_name: gpt-image-2
           model_info:
@@ -98,10 +98,6 @@ spec:
           litellm_params:
             model: anthropic/claude-opus-4-8
             api_key: os.environ/ANTHROPIC_API_KEY
-        - model_name: gemini-2.5-flash
-          litellm_params:
-            model: gemini/gemini-2.5-flash
-            api_key: os.environ/GEMINI_API_KEY
         # Gemini image generation models
         - model_name: gemini-3.1-flash-image
           model_info:
