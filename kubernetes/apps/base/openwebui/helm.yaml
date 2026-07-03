@@ -77,37 +77,49 @@ spec:
                 value: "true"
 
               # TTS
+              - name: AUDIO_TTS_ENGINE
+                value: openai
               - name: AUDIO_TTS_OPENAI_API_BASE_URL
-                value: https://api.openai.com/v1
+                value: &litellm http://litellm.litellm.svc.cluster.local:4000/v1
+              - name: AUDIO_TTS_MODEL
+                value: tts
+              - name: AUDIO_TTS_VOICE
+                value: nova
+
+              # STT
+              - name: AUDIO_STT_ENGINE
+                value: openai
+              - name: AUDIO_STT_OPENAI_API_BASE_URL
+                value: *litellm
+              - name: AUDIO_STT_MODEL
+                value: nova-2
 
               # Image
-              - name: ENABLE_IMAGE_GENERATION
-                value: "true"
               - name: ENABLE_CHAT_RESPONSE_BASE64_IMAGE_URL_CONVERSION
                 value: "true"
 
+              - name: ENABLE_IMAGE_GENERATION
+                value: "true"
               - name: IMAGE_GENERATION_ENGINE
-                value: gemini
+                value: &image-engine openai
               - name: IMAGE_GENERATION_MODEL
-                value: gemini-3.1-flash-image-preview
+                value: &image-model gemini-3.1-flash-lite-image
               - name: IMAGE_SIZE
-                value: auto
+                value: &image-size auto
               - name: IMAGE_AUTO_SIZE_MODELS_REGEX_PATTERN
                 value: ^gemini
-              - name: IMAGES_GEMINI_API_BASE_URL
-                value: https://generativelanguage.googleapis.com/v1beta
-              - name: IMAGES_GEMINI_ENDPOINT_METHOD
-                value: generateContent
+              - name: IMAGES_OPENAI_API_BASE_URL
+                value: *litellm
               - name: ENABLE_IMAGE_EDIT
                 value: "true"
               - name: IMAGE_EDIT_ENGINE
-                value: gemini
+                value: *image-engine
               - name: IMAGE_EDIT_MODEL
-                value: gemini-3.1-flash-image-preview
-              - name: IMAGES_EDIT_GEMINI_API_BASE_URL
-                value: https://generativelanguage.googleapis.com/v1beta
-              - name: IMAGES_EDIT_GEMINI_ENDPOINT_METHOD
-                value: generateContent
+                value: *image-model
+              - name: IMAGES_EDIT_OPENAI_API_BASE_URL
+                value: *litellm
+              - name: IMAGE_EDIT_SIZE
+                value: *image-size
 
               # Search Engine
               - name: ENABLE_WEB_SEARCH
