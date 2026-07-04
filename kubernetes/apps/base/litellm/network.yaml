@@ -110,4 +110,12 @@ spec:
   egress:
     - toEntities:
         - world
-
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: searxng
+            app.kubernetes.io/instance: searxng
+            app.kubernetes.io/name: searxng
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
