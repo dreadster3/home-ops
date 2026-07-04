@@ -17,3 +17,5 @@ resources:
   - pvc.yaml
   - httproute.yaml
   - helm.yaml
+  - servicemonitor.yaml
+

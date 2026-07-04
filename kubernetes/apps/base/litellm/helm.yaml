@@ -71,7 +71,7 @@ spec:
 
     # Enable Prometheus ServiceMonitor for metrics scraping
     serviceMonitor:
-      enabled: true
+      enabled: false
 
     # Inject master key, API keys, and Redis connection info as env vars
     environmentSecrets:
@@ -525,6 +525,12 @@ spec:
             api_key: os.environ/OPENCODE_API_KEY
 
       litellm_settings:
+        callbacks: ["prometheus"]
+        prometheus_initialize_budget_metrics: true
+        enable_end_user_cost_tracking_prometheus_only: true
+        service_callback: ["prometheus_system"]
+        require_auth_for_metrics_endpoint: true
+
         drop_params: true
         request_timeout: 600
         num_retries: 2

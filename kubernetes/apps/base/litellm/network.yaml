@@ -116,6 +116,14 @@ spec:
         - ports:
             - port: "4000"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
   egress:
     - toEntities:
         - world

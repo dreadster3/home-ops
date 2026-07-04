@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/instance: litellm
+  name: litellm
+  namespace: litellm
+spec:
+  endpoints:
+    - interval: 15s
+      path: /metrics/
+      port: http
+      scheme: http
+      scrapeTimeout: 10s
+      bearerTokenSecret:
+        name: litellm-metrics-token
+        key: METRICS_KEY
+  namespaceSelector:
+    matchNames:
+      - litellm
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: litellm
+      app.kubernetes.io/name: litellm
