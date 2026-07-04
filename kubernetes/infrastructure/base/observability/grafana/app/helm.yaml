@@ -112,6 +112,10 @@ spec:
           revision: 1
           datasource:
             - { name: DS_PROMETHEUS, value: Prometheus }
+        litellm:
+          gnetId: 24965
+          revision: 2
+          datasource: Prometheus
 
     plugins:
       - grafana-clock-panel
