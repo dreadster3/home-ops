@@ -75,3 +75,12 @@ spec:
         - ports:
             - port: smtp
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+            app.kubernetes.io/name: litellm
+            app.kubernetes.io/instance: litellm
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
