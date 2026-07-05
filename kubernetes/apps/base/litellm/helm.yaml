@@ -97,6 +97,11 @@ spec:
       GENERIC_USER_DISPLAY_NAME_ATTRIBUTE: preferred_username
       AUTO_REDIRECT_UI_LOGIN_TO_SSO: true
       GITHUB_COPILOT_TOKEN_DIR: /data/github_copilot
+      LITELLM_MODE: PRODUCTION
+      SMTP_HOST: maddy.maddy.svc.cluster.local
+      SMTP_PORT: 25
+      SMTP_TLS: "False"
+      SMTP_SENDER_EMAIL: no-reply@${EXTERNAL_DOMAIN}
 
     proxy_config:
       model_list:
@@ -529,7 +534,9 @@ spec:
             api_key: os.environ/OPENCODE_API_KEY
 
       litellm_settings:
-        callbacks: ["prometheus"]
+        callbacks:
+          - prometheus
+          - smtp_email
         prometheus_initialize_budget_metrics: true
         enable_end_user_cost_tracking_prometheus_only: true
         service_callback: ["prometheus_system"]
@@ -588,6 +595,8 @@ spec:
               - "openai/gpt-image-2"
 
       general_settings:
+        alerting:
+          - email
         master_key: os.environ/PROXY_MASTER_KEY
         database_url: os.environ/DATABASE_URL
         store_model_in_db: true

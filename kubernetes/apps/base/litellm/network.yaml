@@ -136,3 +136,12 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: maddy
+            app.kubernetes.io/name: maddy
+            app.kubernetes.io/instance: maddy
+      toPorts:
+        - ports:
+            - port: smtp
+              protocol: TCP
