@@ -98,6 +98,16 @@ spec:
         - world
     - toEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: "10443"
+              protocol: TCP
+            - port: "10080"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: searxng
             app.kubernetes.io/instance: searxng
             app.kubernetes.io/name: searxng
