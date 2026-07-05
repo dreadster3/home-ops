@@ -607,6 +607,19 @@ spec:
             search_provider: searxng
             api_base: http://searxng.searxng.svc.cluster.local
 
+      mcp_servers:
+        github:
+          url: https://api.githubcopilot.com/mcp/
+          auth_type: oauth2
+          client_id: os.environ/GITHUB_OAUTH_CLIENT_ID
+          client_secret: os.environ/GITHUB_OAUTH_CLIENT_SECRET
+          transport: http
+          scopes:
+            - repo
+            - read:packages
+            - read:org
+          allow_all_keys: true
+
     # Persistent storage for GitHub Copilot OAuth tokens
     volumes:
       - name: github-copilot-tokens
