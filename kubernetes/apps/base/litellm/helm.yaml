@@ -77,6 +77,9 @@ spec:
     environmentSecrets:
       - litellm-secret-env
 
+    masterkeySecretName: litellm-secret-env
+    masterkeySecretKey: PROXY_MASTER_KEY
+
     envVars:
       GENERIC_AUTHORIZATION_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/authorize/
       GENERIC_TOKEN_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/token/
