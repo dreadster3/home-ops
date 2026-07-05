@@ -299,8 +299,8 @@ spec:
             output_cost_per_token: 0.0000044
             cache_read_input_token_cost: 0.00000026
           litellm_params:
-            model: ollama_chat/glm-5.1
-            api_base: https://ollama.com
+            model: openai/glm-5.1
+            api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
         - model_name: ollama/deepseek-v4-pro
@@ -315,8 +315,8 @@ spec:
             output_cost_per_token: 0.00000087
             cache_read_input_token_cost: 0.000000003625
           litellm_params:
-            model: ollama_chat/deepseek-v4-pro
-            api_base: https://ollama.com
+            model: openai/deepseek-v4-pro
+            api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
         - model_name: ollama/kimi-k2.6
@@ -331,8 +331,8 @@ spec:
             output_cost_per_token: 0.000004
             cache_read_input_token_cost: 0.00000016
           litellm_params:
-            model: ollama_chat/kimi-k2.6
-            api_base: https://ollama.com
+            model: openai/kimi-k2.6
+            api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
         - model_name: ollama/minimax-m3
@@ -347,8 +347,8 @@ spec:
             output_cost_per_token: 0.0000012
             cache_read_input_token_cost: 0.00000006
           litellm_params:
-            model: ollama_chat/minimax-m3
-            api_base: https://ollama.com
+            model: openai/minimax-m3
+            api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
         - model_name: ollama/deepseek-v4-flash
@@ -363,8 +363,8 @@ spec:
             output_cost_per_token: 0.00000028
             cache_read_input_token_cost: 0.0000000028
           litellm_params:
-            model: ollama_chat/deepseek-v4-flash
-            api_base: https://ollama.com
+            model: openai/deepseek-v4-flash
+            api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
         - model_name: ollama/glm-5.2
@@ -379,8 +379,8 @@ spec:
             output_cost_per_token: 0.0000044
             cache_read_input_token_cost: 0.00000026
           litellm_params:
-            model: ollama_chat/glm-5.2
-            api_base: https://ollama.com
+            model: openai/glm-5.2
+            api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
         # Ollama-only models (no fallback)
@@ -395,8 +395,8 @@ spec:
             input_cost_per_token: 0.0000004
             output_cost_per_token: 0.000001
           litellm_params:
-            model: ollama_chat/gemma4:31b
-            api_base: https://ollama.com
+            model: openai/gemma4:31b
+            api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
         # ===== OpenCode Go (https://opencode.ai/docs/go/) — fallback providers =====
