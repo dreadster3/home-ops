@@ -599,7 +599,7 @@ spec:
           qwen3.7-plus: opencode/qwen3.7-plus
           tts: openai/tts-1
           stt: deepgram/nova-2
-          image: gemini/gemini-3.1-flash-lite-image
+          image: gemini/gemini-3.1-flash-image
         # Fallback chains: ollama > opencode, github_copilot > direct API key
         fallbacks:
           - "glm-5.1":
@@ -619,8 +619,8 @@ spec:
           - "stt":
               - "openai/whisper-1"
           - "image":
-              - "gemini/gemini-3.1-flash-image"
               - "openai/gpt-image-2"
+              - "gemini/gemini-3.1-flash-lite-image"
 
       general_settings:
         alerting:
