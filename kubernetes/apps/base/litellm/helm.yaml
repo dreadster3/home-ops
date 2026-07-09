@@ -203,6 +203,45 @@ spec:
             model: deepgram/nova-2
             api_key: os.environ/DEEPGRAM_API_KEY
 
+        # ===== Embeddings =====
+        - model_name: openai/text-embedding-3-large
+          # from OpenAI docs + LiteLLM community map (text-embedding-3-large): 8191 max input tokens, 3072-dim vectors, $0.13/M input tokens (batch $0.065/M); embeddings have no output/cache cost
+          model_info:
+            mode: embedding
+            max_input_tokens: 8191
+            max_tokens: 8191
+            output_vector_size: 3072
+            supports_vision: false
+            supports_reasoning: false
+            input_cost_per_token: 0.00000013
+            input_cost_per_token_batches: 0.000000065
+            output_cost_per_token: 0.0
+            output_cost_per_token_batches: 0.0
+            cache_read_input_token_cost: 0.0
+            cache_creation_input_token_cost: 0.0
+          litellm_params:
+            model: openai/text-embedding-3-large
+            api_key: os.environ/OPENAI_API_KEY
+
+        - model_name: openai/text-embedding-3-small
+          # from OpenAI docs + LiteLLM community map (text-embedding-3-small): 8191 max input tokens, 1536-dim vectors, $0.02/M input tokens (batch $0.01/M); embeddings have no output/cache cost
+          model_info:
+            mode: embedding
+            max_input_tokens: 8191
+            max_tokens: 8191
+            output_vector_size: 1536
+            supports_vision: false
+            supports_reasoning: false
+            input_cost_per_token: 0.00000002
+            input_cost_per_token_batches: 0.00000001
+            output_cost_per_token: 0.0
+            output_cost_per_token_batches: 0.0
+            cache_read_input_token_cost: 0.0
+            cache_creation_input_token_cost: 0.0
+          litellm_params:
+            model: openai/text-embedding-3-small
+            api_key: os.environ/OPENAI_API_KEY
+
         # ===== Anthropic (direct API) =====
         - model_name: anthropic/claude-fable-5
           # from models.dev (anthropic): 1M ctx / 128k out, $10/$50 per M
@@ -600,6 +639,7 @@ spec:
           tts: openai/tts-1
           stt: deepgram/nova-2
           image: gemini/gemini-3.1-flash-image
+          text-embedding-3: openai/text-embedding-3-large
         # Fallback chains: ollama > opencode, github_copilot > direct API key
         fallbacks:
           - "glm-5.1":
@@ -621,6 +661,8 @@ spec:
           - "image":
               - "openai/gpt-image-2"
               - "gemini/gemini-3.1-flash-lite-image"
+          - "text-embedding-3":
+              - "openai/text-embedding-3-small"
 
       general_settings:
         alerting:
