@@ -1,0 +1,86 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tika
+  namespace: tika
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 5.0.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      main:
+        type: deployment
+        strategy: RollingUpdate
+        replicas: 2
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: docker.io/apache/tika
+              tag: 3.3.1.0-full@sha256:d8e6ed96260ad89307a93195a1b856102987a818ac648502f8efbaf313d32470
+            env:
+              - name: TIKA_MODE
+                value: server
+            ports:
+              - containerPort: &port 9998
+                name: http
+                protocol: TCP
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /tika
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /tika
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+            resources:
+              requests:
+                cpu: 50m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            # Service on port 80 (maps to the container's native 9998) so consumers
+            # can use the bare URL http://tika.tika.svc.cluster.local without a port.
+            port: 80
+            targetPort: http
+
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

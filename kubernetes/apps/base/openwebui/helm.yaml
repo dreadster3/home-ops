@@ -35,19 +35,7 @@ spec:
             image:
               repository: ghcr.io/open-webui/open-webui
               tag: v0.10.2@sha256:9fcea9c6e32ab60b0498f3986c6cdf651ddbe61db48d2213a3d28048ddd673d4
-            # command: ["/bin/sh"]
-            # args:
-            #   - -c
-            #   - |
-            #     # Install the correct dependency
-            #     pip install --no-cache-dir datasets==3.6.0
-            #
-            #     # Run the original entrypoint
-            #     exec /app/backend/start.sh
             env:
-              - name: OLLAMA_BASE_URL
-                value: https://ollama.${INTERNAL_DOMAIN}
-
               - name: ENABLE_WEBSOCKET_SUPPORT
                 value: "true"
               - name: WEBSOCKET_MANAGER
@@ -92,7 +80,7 @@ spec:
               - name: AUDIO_STT_OPENAI_API_BASE_URL
                 value: *litellm
               - name: AUDIO_STT_MODEL
-                value: nova-2
+                value: stt
 
               # Image
               - name: ENABLE_CHAT_RESPONSE_BASE64_IMAGE_URL_CONVERSION
@@ -103,11 +91,11 @@ spec:
               - name: IMAGE_GENERATION_ENGINE
                 value: &image-engine openai
               - name: IMAGE_GENERATION_MODEL
-                value: &image-model gemini-3.1-flash-lite-image
+                value: &image-model image
               - name: IMAGE_SIZE
                 value: &image-size auto
               - name: IMAGE_AUTO_SIZE_MODELS_REGEX_PATTERN
-                value: ^gemini
+                value: ^image
               - name: IMAGES_OPENAI_API_BASE_URL
                 value: *litellm
               - name: ENABLE_IMAGE_EDIT
@@ -130,6 +118,20 @@ spec:
                 value: searxng
               - name: SEARXNG_QUERY_URL
                 value: http://searxng.searxng.svc.cluster.local/search?q=<query>
+
+              # Content Extraction
+              - name: CONTENT_EXTRACTION_ENGINE
+                value: tika
+              - name: TIKA_SERVER_URL
+                value: http://tika.tika.svc.cluster.local
+
+              # RAG
+              - name: RAG_EMBEDDING_ENGINE
+                value: openai
+              - name: RAG_EMBEDDING_MODEL
+                value: text-embedding-3
+              - name: RAG_OPENAI_API_BASE_URL
+                value: *litellm
 
               # Storage
               - name: STORAGE_PROVIDER

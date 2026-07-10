@@ -18,6 +18,7 @@ resources:
   - ../../base/pangolin
   - ../../base/paperless
   - ../../base/searxng
+  - ../../base/tika
   - ../../base/termix
   - ../../base/uptime
   - ../../base/vaultwarden
