@@ -143,13 +143,13 @@ spec:
     # Only the Paperless main pod may call Gotenberg
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": paperless
+            io.kubernetes.pod.namespace: paperless
             app.kubernetes.io/name: paperless
             app.kubernetes.io/instance: paperless
             app.kubernetes.io/controller: main
       toPorts:
         - ports:
-            - port: "3000"
+            - port: http
               protocol: TCP
   egress:
     # Gotenberg is stateless; only DNS lookups (none needed in practice, but allow kube-dns).

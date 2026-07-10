@@ -67,7 +67,7 @@ spec:
               # Content extraction: global Tika (shared utility) + in-namespace Gotenberg for Office→PDF conversion.
               PAPERLESS_TIKA_ENABLED: 1
               PAPERLESS_TIKA_ENDPOINT: http://tika.tika.svc.cluster.local
-              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.paperless.svc.cluster.local:3000
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.paperless.svc.cluster.local
             envFrom:
               - secretRef:
                   name: paperless-secret-env
@@ -211,7 +211,9 @@ spec:
         controller: gotenberg
         ports:
           http:
-            port: 3000
+            # Service on port 80 (maps to the container's native 3000) so Paperless
+            # can use the bare URL http://paperless-gotenberg.paperless.svc.cluster.local
+            port: 80
             targetPort: http
 
     route:
