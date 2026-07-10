@@ -268,23 +268,9 @@ spec:
             subPath: tmp
           - path: /run
             subPath: run
-
-      # ===== Gotenberg writable paths (readOnlyRootFilesystem) =====
-      gotenberg-tmp:
-        type: emptyDir
-        advancedMounts:
-          gotenberg:
-            gotenberg:
-              - path: /tmp
-      gotenberg-var-tmp:
-        type: emptyDir
         advancedMounts:
           gotenberg:
             gotenberg:
               - path: /var/tmp
-      gotenberg-home:
-        type: emptyDir
-        advancedMounts:
-          gotenberg:
-            gotenberg:
               - path: /home/gotenberg
+
