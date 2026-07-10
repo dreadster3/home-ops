@@ -138,7 +138,7 @@ spec:
             app.kubernetes.io/name: tika
       toPorts:
         - ports:
-            - port: "80"
+            - port: "9998"
               protocol: TCP
     - toEndpoints:
         - matchLabels:

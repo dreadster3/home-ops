@@ -10,31 +10,19 @@ spec:
     # Open WebUI content extraction
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": openwebui
+            io.kubernetes.pod.namespace: openwebui
             app.kubernetes.io/name: openwebui
       toPorts:
         - ports:
-            - port: "80"
+            - port: http
               protocol: TCP
     # Paperless (when PAPERLESS_TIKA_ENABLED is set in future)
     - fromEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": paperless
+            io.kubernetes.pod.namespace: paperless
             app.kubernetes.io/name: paperless
       toPorts:
         - ports:
-            - port: "80"
+            - port: http
               protocol: TCP
-  egress:
-    # Tika is stateless; no outbound dependencies needed for text extraction.
-    # DNS resolution for none (in-cluster only). Allow kube-dns for any lookups.
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: UDP
-            - port: "53"
-              protocol: TCP
+  egress: []

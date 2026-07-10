@@ -103,4 +103,3 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /var/tmp
-
