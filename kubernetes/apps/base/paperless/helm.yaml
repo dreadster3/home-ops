@@ -27,6 +27,9 @@ spec:
   values:
     controllers:
       main:
+        # With >1 controller the chart appends the controller identifier to resource names
+        # (paperless-main). Force the original name to preserve deploy/paperless + svc/paperless.
+        forceRename: paperless
         labels:
           nfsMount: "true"
         annotations:
@@ -200,6 +203,8 @@ spec:
 
     service:
       main:
+        # Keep the service name as `paperless` (not `paperless-main`) for compatibility.
+        forceRename: paperless
         annotations:
           netbird.io/expose: "true"
         controller: main
