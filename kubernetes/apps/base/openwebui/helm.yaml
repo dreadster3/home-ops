@@ -133,6 +133,9 @@ spec:
               - name: RAG_OPENAI_API_BASE_URL
                 value: *litellm
 
+              - name: USER_AGENT
+                value: OpenWebUI/1.0
+
               # Storage
               - name: STORAGE_PROVIDER
                 value: s3
@@ -175,9 +178,9 @@ spec:
             resources:
               requests:
                 cpu: 50m
-                memory: 2Gi
+                memory: &memory 1.5Gi
               limits:
-                memory: 2Gi
+                memory: *memory
 
     service:
       main:
