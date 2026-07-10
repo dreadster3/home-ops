@@ -67,6 +67,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: paperless
       app.kubernetes.io/instance: paperless
+      app.kubernetes.io/controller: main
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -114,5 +115,40 @@ spec:
         - ports:
             - port: smtp
               protocol: TCP
+    # Global Tika content-extraction service (cross-namespace shared utility)
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tika
+            app.kubernetes.io/name: tika
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
     - toEntities:
         - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gotenberg
+  namespace: paperless
+spec:
+  description: "Allow Paperless consume to reach Gotenberg (in-namespace); Gotenberg has no outbound needs"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: paperless
+      app.kubernetes.io/instance: paperless
+      app.kubernetes.io/controller: gotenberg
+  ingress:
+    # Only the Paperless main pod may call Gotenberg
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: paperless
+            app.kubernetes.io/name: paperless
+            app.kubernetes.io/instance: paperless
+            app.kubernetes.io/controller: main
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress: []
