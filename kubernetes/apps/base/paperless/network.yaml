@@ -151,15 +151,4 @@ spec:
         - ports:
             - port: http
               protocol: TCP
-  egress:
-    # Gotenberg is stateless; only DNS lookups (none needed in practice, but allow kube-dns).
-    - toEndpoints:
-        - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": kube-system
-            "k8s:k8s-app": kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: UDP
-            - port: "53"
-              protocol: TCP
+  egress: []
