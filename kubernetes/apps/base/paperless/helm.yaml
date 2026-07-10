@@ -64,6 +64,10 @@ spec:
               PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
               S6_READ_ONLY_ROOT: 1
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
+              # Content extraction: global Tika (shared utility) + in-namespace Gotenberg for Office→PDF conversion.
+              PAPERLESS_TIKA_ENABLED: 1
+              PAPERLESS_TIKA_ENDPOINT: http://tika.tika.svc.cluster.local
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.paperless.svc.cluster.local:3000
             envFrom:
               - secretRef:
                   name: paperless-secret-env
@@ -119,6 +123,81 @@ spec:
             seccompProfile:
               type: RuntimeDefault
 
+      # Gotenberg — document conversion (Office/HTML → PDF) for Paperless consume.
+      # Deployed alongside Paperless only (not shared); Tika is the global shared instance.
+      gotenberg:
+        type: deployment
+        strategy: RollingUpdate
+        replicas: 1
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          gotenberg:
+            image:
+              repository: docker.io/gotenberg/gotenberg
+              tag: 8.33@sha256:bddd8ea9d076e2d08b6ddaa6efae6403185202c6dab65a6488ed0a6923d6d8e8
+            # Hardened chromium per upstream paperless compose: disable JS and restrict to local
+            # file:// URLs so .eml conversion can't fetch tracking pixels or run external scripts.
+            args:
+              - gotenberg
+              - --chromium-disable-javascript=true
+              - --chromium-allow-list=file:///tmp/.*
+            ports:
+              - containerPort: 3000
+                name: http
+                protocol: TCP
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: http
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: http
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: http
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+        pod:
+          # gotenberg image runs as non-root user `gotenberg` (UID 1001) by default.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
     service:
       main:
         annotations:
@@ -127,6 +206,12 @@ spec:
         ports:
           http:
             port: 80
+            targetPort: http
+      gotenberg:
+        controller: gotenberg
+        ports:
+          http:
+            port: 3000
             targetPort: http
 
     route:
@@ -176,3 +261,23 @@ spec:
             subPath: tmp
           - path: /run
             subPath: run
+
+      # ===== Gotenberg writable paths (readOnlyRootFilesystem) =====
+      gotenberg-tmp:
+        type: emptyDir
+        advancedMounts:
+          gotenberg:
+            gotenberg:
+              - path: /tmp
+      gotenberg-var-tmp:
+        type: emptyDir
+        advancedMounts:
+          gotenberg:
+            gotenberg:
+              - path: /var/tmp
+      gotenberg-home:
+        type: emptyDir
+        advancedMounts:
+          gotenberg:
+            gotenberg:
+              - path: /home/gotenberg
