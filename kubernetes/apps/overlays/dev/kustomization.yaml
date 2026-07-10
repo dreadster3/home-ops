@@ -16,6 +16,7 @@ resources:
   - openwebui
   # - paperless
   # - searxng
+  - tika
   # - termix
   # - uptime
   # - vault

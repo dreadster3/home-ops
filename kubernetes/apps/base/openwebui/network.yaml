@@ -134,6 +134,14 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: tika
+            app.kubernetes.io/name: tika
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: rook-ceph
             app: rook-ceph-rgw
       toPorts:

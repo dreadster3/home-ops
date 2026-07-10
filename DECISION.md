@@ -158,6 +158,14 @@ Decisions made throughout the life of this project, with rationale and context.
 - **Decision:** Migrate all CNPG clusters from `local-path` to Ceph-backed `ceph-block` StorageClass via ObjectStore (barman-cloud) for backups.
 - **Rationale:** Reduces the number of replicas per cluster, thereby reducing the amount of resources used per cluster. Eliminates the need for per-app local storage and provides consistent, high-performance block storage.
 
+## 18. Deploy Apache Tika as a central shared-utility service
+
+- **Date:** 2026-07-10
+- **Status:** Accepted
+- **Context:** Open WebUI needs a content-extraction engine for its RAG pipeline (parsing PDFs, Office docs, etc. into text). Open WebUI supports Apache Tika via `CONTENT_EXTRACTION_ENGINE=tika` + `TIKA_SERVER_URL`. Paperless also *optionally* supports Tika but currently uses its own native Tesseract OCR (`PAPERLESS_OCR_*`) and is not yet a Tika consumer. Tika is completely stateless (HTTP request → extracted text, no persistence) and fairly heavy (JVM + ~1000 parsers + bundled Tesseract OCR, ~512MB–1GB resident).
+- **Decision:** Deploy Tika as a standalone app in its own namespace (`kubernetes/apps/base/tika/`), 2 replicas, ~1Gi memory. The container listens on its native port 9998, but the Kubernetes Service exposes port 80 (mapping to the container's 9998) so consumers use the bare URL `http://tika.tika.svc.cluster.local` without a port suffix. Open WebUI points to this central endpoint. Paperless can opt in later by setting `PAPERLESS_TIKA_ENABLED=true` + `PAPERLESS_TIKA_ENDPOINT` without any Tika-side change.
+- **Rationale:** Tika is stateless, so a single instance can serve multiple consumers — consistent with the existing shared-utility pattern used for SearXNG (cross-namespace `searxng.searxng.svc.cluster.local`). Centralizing avoids duplicating the heavy JVM/Tesseract footprint per app (a per-app sidecar would ~2x memory for zero functional gain). 2 replicas mitigate the risk that a future Paperless bulk-OCR run starves Open WebUI's interactive parsing. The per-app sidecar pattern (suggested by Open WebUI's Tika PR author) optimizes for security isolation, but in this trusted internal cluster behind Cilium policies that benefit is marginal and not worth the duplicate footprint. Chose central-now over per-app-now-extract-later because the shared-utility pattern is already established here and Paperless opting in later is a two-env-var change.
+
 ---
 
 *This log is maintained to provide context for architectural decisions and onboarding.*
