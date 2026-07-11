@@ -324,20 +324,105 @@ spec:
           litellm_params:
             model: github_copilot/gemini-3.5-flash
 
-        - model_name: github_copilot/gpt-5.4
-          # from models.dev (github-copilot): 272k input cap / 128k out, vision, reasoning, $2.5/$15 per M, cache_read $0.25/M; cache_write not published → 0; mode kept as completion per existing config
+        - model_name: github_copilot/gpt-5.6-luna
+          # from GitHub Copilot billing (openai list price): 922k input cap / 128k out, vision, reasoning. Default <=200K: $1/$6 per M, cache_read $0.1/M, cache_write $1.25/M. Long context >200K: $2/$9 per M, cache_read $0.2/M. Primary; fallback to openai direct.
           model_info:
-            mode: completion
-            max_input_tokens: 272000
+            mode: responses
+            max_input_tokens: 922000
+            max_output_tokens: 128000
+            supports_vision: true
+            supports_reasoning: true
+            input_cost_per_token: 0.000001
+            output_cost_per_token: 0.000006
+            cache_read_input_token_cost: 0.0000001
+            cache_creation_input_token_cost: 0.00000125
+            input_cost_per_token_above_200k_tokens: 0.000002
+            output_cost_per_token_above_200k_tokens: 0.000009
+            cache_read_input_token_cost_above_200k_tokens: 0.0000002
+          litellm_params:
+            model: github_copilot/gpt-5.6-luna
+
+        - model_name: github_copilot/gpt-5.6-terra
+          # from GitHub Copilot billing (openai list price): 922k input cap / 128k out, vision, reasoning. Default <=272K: $2.5/$15 per M, cache_read $0.25/M, cache_write $3.125/M. Long context >272K: $5/$22.5 per M, cache_read $0.5/M. Primary; fallback to openai direct.
+          model_info:
+            mode: responses
+            max_input_tokens: 922000
             max_output_tokens: 128000
             supports_vision: true
             supports_reasoning: true
             input_cost_per_token: 0.0000025
             output_cost_per_token: 0.000015
             cache_read_input_token_cost: 0.00000025
-            cache_creation_input_token_cost: 0.0
+            cache_creation_input_token_cost: 0.000003125
+            input_cost_per_token_above_272k_tokens: 0.000005
+            output_cost_per_token_above_272k_tokens: 0.0000225
+            cache_read_input_token_cost_above_272k_tokens: 0.0000005
           litellm_params:
-            model: github_copilot/gpt-5.4
+            model: github_copilot/gpt-5.6-terra
+
+        # ===== OpenAI direct API (fallback targets for copilot, + sol API-only) =====
+        # gpt-5.6-luna: fallback for github_copilot/gpt-5.6-luna
+        - model_name: openai/gpt-5.6-luna
+          # from models.dev (openai): 922k input cap / 128k out, vision, reasoning. Default <=272K: $1/$6 per M, cache_read $0.1/M, cache_write $1.25/M. Long context >272K: $2/$9 per M, cache_read $0.2/M, cache_write $2.5/M
+          model_info:
+            mode: responses
+            max_input_tokens: 922000
+            max_output_tokens: 128000
+            supports_vision: true
+            supports_reasoning: true
+            input_cost_per_token: 0.000001
+            output_cost_per_token: 0.000006
+            cache_read_input_token_cost: 0.0000001
+            cache_creation_input_token_cost: 0.00000125
+            input_cost_per_token_above_272k_tokens: 0.000002
+            output_cost_per_token_above_272k_tokens: 0.000009
+            cache_read_input_token_cost_above_272k_tokens: 0.0000002
+            cache_creation_input_token_cost_above_272k_tokens: 0.0000025
+          litellm_params:
+            model: openai/gpt-5.6-luna
+            api_key: os.environ/OPENAI_API_KEY
+
+        # gpt-5.6-terra: fallback for github_copilot/gpt-5.6-terra
+        - model_name: openai/gpt-5.6-terra
+          # from models.dev (openai): 922k input cap / 128k out, vision, reasoning. Default <=272K: $2.5/$15 per M, cache_read $0.25/M, cache_write $3.125/M. Long context >272K: $5/$22.5 per M, cache_read $0.5/M, cache_write $6.25/M
+          model_info:
+            mode: responses
+            max_input_tokens: 922000
+            max_output_tokens: 128000
+            supports_vision: true
+            supports_reasoning: true
+            input_cost_per_token: 0.0000025
+            output_cost_per_token: 0.000015
+            cache_read_input_token_cost: 0.00000025
+            cache_creation_input_token_cost: 0.000003125
+            input_cost_per_token_above_272k_tokens: 0.000005
+            output_cost_per_token_above_272k_tokens: 0.0000225
+            cache_read_input_token_cost_above_272k_tokens: 0.0000005
+            cache_creation_input_token_cost_above_272k_tokens: 0.00000625
+          litellm_params:
+            model: openai/gpt-5.6-terra
+            api_key: os.environ/OPENAI_API_KEY
+
+        # gpt-5.6-sol: API-only (not available on this Copilot subscription tier)
+        - model_name: openai/gpt-5.6-sol
+          # from models.dev (openai): 922k input cap / 128k out, vision, reasoning. Default <=272K: $5/$30 per M, cache_read $0.5/M, cache_write $6.25/M. Long context >272K: $10/$45 per M, cache_read $1/M, cache_write $12.5/M
+          model_info:
+            mode: responses
+            max_input_tokens: 922000
+            max_output_tokens: 128000
+            supports_vision: true
+            supports_reasoning: true
+            input_cost_per_token: 0.000005
+            output_cost_per_token: 0.00003
+            cache_read_input_token_cost: 0.0000005
+            cache_creation_input_token_cost: 0.00000625
+            input_cost_per_token_above_272k_tokens: 0.00001
+            output_cost_per_token_above_272k_tokens: 0.000045
+            cache_read_input_token_cost_above_272k_tokens: 0.000001
+            cache_creation_input_token_cost_above_272k_tokens: 0.0000125
+          litellm_params:
+            model: openai/gpt-5.6-sol
+            api_key: os.environ/OPENAI_API_KEY
 
         # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
         - model_name: ollama/glm-5.1
@@ -633,7 +718,9 @@ spec:
           glm-5.2: ollama/glm-5.2
           glm-5.1: ollama/glm-5.1
           gemini-3.5-flash: github_copilot/gemini-3.5-flash
-          gpt-5.4: github_copilot/gpt-5.4
+          gpt-5.6-luna: github_copilot/gpt-5.6-luna
+          gpt-5.6-terra: github_copilot/gpt-5.6-terra
+          gpt-5.6-sol: openai/gpt-5.6-sol
           qwen3.7-max: opencode/qwen3.7-max
           qwen3.7-plus: opencode/qwen3.7-plus
           tts: openai/tts-1
@@ -656,6 +743,10 @@ spec:
               - "opencode/glm-5.2"
           - "claude-sonnet-5":
               - "anthropic/claude-sonnet-5"
+          - "gpt-5.6-luna":
+              - "openai/gpt-5.6-luna"
+          - "gpt-5.6-terra":
+              - "openai/gpt-5.6-terra"
           - "stt":
               - "openai/whisper-1"
           - "image":
