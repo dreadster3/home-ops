@@ -181,6 +181,11 @@ spec:
                 memory: &memory 1.5Gi
               limits:
                 memory: *memory
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
 
     service:
       main:
