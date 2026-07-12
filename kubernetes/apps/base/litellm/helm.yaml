@@ -39,7 +39,7 @@ spec:
 
     image:
       repository: ghcr.io/berriai/litellm-database
-      tag: v1.91.0@sha256:6151ddc97c5dc4590740bd14646d78d48267d8b7a1bf398eeaffcd6729b8f0b9
+      tag: v1.92.0@sha256:64d3547e0b131bf4638342e52c12bc46d6f1d9b8498e4b731ff31be5ab316ea9
 
     # Use external CloudNativePG — disable the bundled Bitnami postgres subchart
     db:
