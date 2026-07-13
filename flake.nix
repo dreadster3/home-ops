@@ -4,10 +4,11 @@
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
   };
 
   outputs =
-    inputs@{ flake-parts, ... }:
+    inputs@{ flake-parts, nixpkgs-stable, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         # To import a flake module
@@ -24,9 +25,6 @@
       ];
       perSystem =
         {
-          config,
-          self',
-          inputs',
           pkgs,
           system,
           ...
@@ -51,8 +49,17 @@
               yq-go
               gitleaks
               pre-commit
-              (minikube.override { withQemu = true; })
-              vault
+              # Sourced from nixos-26.05 stable, not nixos-unstable.
+              # nixos-unstable's minikube fetches its source by tag, so
+              # `src.rev` resolves to `refs/tags/v1.38.1`. That string
+              # contains forward slashes, which Kubernetes rejects as a node
+              # label value, so multi-node clusters fail at the first worker
+              # join with `GUEST_START: invalid label value:
+              # minikube.k8s.io/commit=refs/tags/v1.38.1`.
+              # nixos-26.05 fetches by rev instead, so `src.rev` is `v1.38.1`
+              # (a valid label). Both channels ship minikube 1.38.1.
+              # See DECISION.md for details.
+              (nixpkgs-stable.legacyPackages.${system}.minikube.override { withQemu = true; })
               awscli2
               infisical
             ];

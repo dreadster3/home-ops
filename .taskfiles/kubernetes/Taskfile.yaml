@@ -49,7 +49,7 @@ tasks:
       CPUS: "{{.CPUS | default 4}}"
       MEMORY: '{{.MEMORY | default "8G"}}'
     cmds:
-      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes {{.NODES}} --cpus {{.CPUS}} --memory {{.MEMORY}} --addons metrics-server --addons storage-provisioner-rancher --addons metallb --kvm-network minikube
+      - minikube start --driver kvm2 --disk-size 40G --extra-disks 1 --cni cilium --nodes {{.NODES}} --cpus {{.CPUS}} --memory {{.MEMORY}} --addons metrics-server --addons storage-provisioner-rancher --addons metallb
       - minikube addons configure metallb
     preconditions:
       - sh: which minikube

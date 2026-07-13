@@ -7,4 +7,4 @@ spec:
     instance:
       sync:
         path: kubernetes/clusters/dev
-        ref: refs/heads/feat/rook-ceph-sync
+        ref: refs/heads/feat/add-toolhive-operator
