@@ -5,3 +5,4 @@ namespace: toolhive
 
 resources:
   - ks.yaml
+  - namespace.yaml

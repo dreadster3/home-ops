@@ -10,14 +10,15 @@ resources:
   # - harbor
   # - immich
   # - joplin
-  - litellm
+  # - litellm
   # - n8n
   # - netbox
-  - openwebui
+  # - openwebui
   # - paperless
   # - searxng
-  - tika
+  # - tika
   # - termix
   # - uptime
   # - vault
   # - vaultwarden
+  - ../../base/toolhive
