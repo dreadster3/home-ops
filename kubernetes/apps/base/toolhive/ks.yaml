@@ -14,7 +14,7 @@ spec:
       kind: HelmRelease
       name: *app
       namespace: *namespace
-  path: ./kubernetes/apps/toolhive/crds
+  path: ./kubernetes/apps/base/toolhive/crds
   prune: true
   sourceRef:
     kind: GitRepository
@@ -40,7 +40,7 @@ spec:
       kind: HelmRelease
       name: *app
       namespace: *namespace
-  path: ./kubernetes/apps/toolhive/operator
+  path: ./kubernetes/apps/base/toolhive/operator
   prune: true
   sourceRef:
     kind: GitRepository
