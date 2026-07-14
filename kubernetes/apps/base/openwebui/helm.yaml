@@ -175,6 +175,34 @@ spec:
               - containerPort: 8080
                 name: http
                 protocol: TCP
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: http
+                  periodSeconds: 5
+                  failureThreshold: 60
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health/db
+                    port: http
+                  periodSeconds: 10
+                  failureThreshold: 1
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: http
+                  periodSeconds: 10
+                  failureThreshold: 3
             resources:
               requests:
                 cpu: 50m
