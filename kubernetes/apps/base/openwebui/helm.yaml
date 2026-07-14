@@ -26,6 +26,7 @@ spec:
   values:
     controllers:
       main:
+        forceRename: openwebui
         strategy: RollingUpdate
         replicas: 2
         annotations:
@@ -136,6 +137,12 @@ spec:
               - name: USER_AGENT
                 value: OpenWebUI/1.0
 
+              # Web Loader
+              - name: WEB_LOADER_ENGINE
+                value: playwright
+              - name: PLAYWRIGHT_WS_URL
+                value: ws://openwebui-playwright:3000
+
               # Storage
               - name: STORAGE_PROVIDER
                 value: s3
@@ -186,9 +193,66 @@ spec:
               readOnlyRootFilesystem: false
               capabilities:
                 drop: ["ALL"]
+      playwright:
+        replicas: 1
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: mcr.microsoft.com/playwright
+              tag: v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948
+            command:
+              [
+                "npx",
+                "-y",
+                "playwright@1.60.0",
+                "run-server",
+                "--port",
+                "3000",
+                "--host",
+                "0.0.0.0",
+              ]
+            ports:
+              - containerPort: 3000
+                name: websocket
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 50m
+                memory: 500Mi
+              limits:
+                # Chromium doing real page loads needs more headroom than the
+                # main app; 500Mi request is kept, limit raised to 1Gi.
+                memory: 1Gi
+            probes:
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: websocket
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
 
     service:
       main:
+        forceRename: openwebui
         controller: main
         annotations:
           netbird.io/expose: "true"
@@ -196,6 +260,12 @@ spec:
           http:
             port: 80
             targetPort: http
+      playwright:
+        controller: playwright
+        ports:
+          http:
+            port: 3000
+            targetPort: websocket
 
     route:
       main:
@@ -215,3 +285,31 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /app/backend/data/cache
+      # # Playwright (mcr.microsoft.com/playwright) ships the browsers baked into
+      # # /ms-playwright (read-only, 0777) but NOT the playwright npm package, so
+      # # `npx -y playwright@... run-server` downloads it at runtime into the npm
+      # # cache under /home/pwuser. Chromium also needs writable /tmp and a larger
+      # # /dev/shm than the default 64MiB. All three are emptyDirs so the root FS
+      # # can stay read-only.
+      # playwright-tmp:
+      #   enabled: true
+      #   type: emptyDir
+      #   advancedMounts:
+      #     playwright:
+      #       main:
+      #         - path: /tmp
+      # playwright-home:
+      #   enabled: true
+      #   type: emptyDir
+      #   advancedMounts:
+      #     playwright:
+      #       main:
+      #         - path: /home/pwuser
+      # playwright-shm:
+      #   enabled: true
+      #   type: emptyDir
+      #   medium: Memory
+      #   advancedMounts:
+      #     playwright:
+      #       main:
+      #         - path: /dev/shm

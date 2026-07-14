@@ -63,10 +63,13 @@ metadata:
   namespace: openwebui
 spec:
   description: "Allow traffic from and to openwebui server"
+  # Scoped to the main controller so this policy does not also match the
+  # playwright sidecar pod (which shares the name/instance labels).
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: openwebui
       app.kubernetes.io/instance: openwebui
+      app.kubernetes.io/controller: main
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -96,6 +99,16 @@ spec:
   egress:
     - toEntities:
         - world
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+            app.kubernetes.io/name: openwebui
+            app.kubernetes.io/instance: openwebui
+            app.kubernetes.io/controller: playwright
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: envoy
@@ -159,6 +172,33 @@ spec:
     matchLabels:
       app.kubernetes.io/name: ollama
       app.kubernetes.io/instance: ollama
+  egress:
+    - toEntities:
+        - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: playwright
+  namespace: openwebui
+spec:
+  description: "Allow OpenWebUI to reach the Playwright web loader; Playwright reaches the world to fetch pages"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: openwebui
+      app.kubernetes.io/instance: openwebui
+      app.kubernetes.io/controller: playwright
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+            app.kubernetes.io/name: openwebui
+            app.kubernetes.io/instance: openwebui
+            app.kubernetes.io/controller: main
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
   egress:
     - toEntities:
         - world
