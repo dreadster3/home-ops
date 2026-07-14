@@ -141,7 +141,7 @@ spec:
               - name: WEB_LOADER_ENGINE
                 value: playwright
               - name: PLAYWRIGHT_WS_URL
-                value: ws://playwright:3000
+                value: ws://openwebui-playwright:3000
 
               # Storage
               - name: STORAGE_PROVIDER
