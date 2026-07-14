@@ -26,6 +26,7 @@ spec:
   values:
     controllers:
       main:
+        forceRename: openwebui
         strategy: RollingUpdate
         replicas: 2
         annotations:
@@ -255,6 +256,7 @@ spec:
 
     service:
       main:
+        forceRename: openwebui
         controller: main
         annotations:
           netbird.io/expose: "true"
