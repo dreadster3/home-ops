@@ -13,9 +13,9 @@ resources:
   # - litellm
   # - n8n
   # - netbox
-  # - openwebui
+  - openwebui
   # - paperless
-  # - searxng
+  - searxng
   # - tika
   # - termix
   # - uptime
