@@ -7,4 +7,4 @@ spec:
   transport: stdio
   env:
     - name: SEARXNG_URL
-      value: http://searxng.searxng.svc.cluster.local:8080
+      value: http://searxng.searxng.svc.cluster.local
