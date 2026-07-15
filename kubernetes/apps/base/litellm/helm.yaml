@@ -790,6 +790,12 @@ spec:
             - read:packages
             - read:org
           allow_all_keys: true
+        playwright:
+          url: http://mcp-playwright-proxy.toolhive.svc.cluster.local:8080/mcp
+          auth_type: none
+        searxng:
+          url: http://mcp-searxng-proxy.toolhive.svc.cluster.local:8080/mcp
+          auth_type: none
 
     # Persistent storage for GitHub Copilot OAuth tokens
     volumes:

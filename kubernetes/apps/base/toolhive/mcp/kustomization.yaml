@@ -5,3 +5,4 @@ namespace: toolhive
 
 resources:
   - searxng.yaml
+  - playwright.yaml
