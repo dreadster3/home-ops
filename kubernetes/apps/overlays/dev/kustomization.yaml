@@ -13,11 +13,12 @@ resources:
   - litellm
   # - n8n
   # - netbox
-  - openwebui
+  # - openwebui
   # - paperless
-  # - searxng
-  - tika
+  - searxng
+  # - tika
   # - termix
   # - uptime
   # - vault
   # - vaultwarden
+  - ../../base/toolhive

@@ -790,6 +790,14 @@ spec:
             - read:packages
             - read:org
           allow_all_keys: true
+        terraform:
+          url: http://mcp-terraform-proxy.toolhive.svc.cluster.local:8080/mcp
+          auth_type: none
+          allow_all_keys: true
+        searxng:
+          url: http://mcp-searxng-proxy.toolhive.svc.cluster.local:8080/mcp
+          auth_type: none
+          allow_all_keys: true
 
     # Persistent storage for GitHub Copilot OAuth tokens
     volumes:

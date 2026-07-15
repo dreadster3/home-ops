@@ -145,3 +145,7 @@ spec:
         - ports:
             - port: smtp
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: toolhive
+            app: mcpserver
