@@ -19,23 +19,6 @@ patches:
     target:
       kind: Cluster
   - patch: |-
-      - op: remove
-        path: /spec/values/controllers/main/containers/main/env/4
-      - op: remove
-        path: /spec/values/controllers/main/containers/main/env/5
-      - op: remove
-        path: /spec/values/controllers/main/containers/main/env/6
-      - op: remove
-        path: /spec/values/controllers/main/containers/main/env/7
-      - op: remove
-        path: /spec/values/controllers/main/containers/main/env/8
-      - op: remove
-        path: /spec/values/controllers/main/containers/main/env/9
-      - op: remove
-        path: /spec/values/controllers/main/containers/main/env/10
-    target:
-      kind: HelmRelease
-  - patch: |-
       - op: replace
         path: /spec/jobTemplate/spec/template/spec/containers/0/env/3/value
         value: test
@@ -51,3 +34,16 @@ patches:
     target:
       kind: CiliumNetworkPolicy
       name: openwebui-sync
+  - patch: |-
+      # Disable OIDC and use built-in username/password auth in dev.
+      # env index 8 = ENABLE_OAUTH_SIGNUP, index 9 = ENABLE_LOGIN_FORM
+      # (see kubernetes/apps/base/openwebui/helm.yaml)
+      - op: replace
+        path: /spec/values/controllers/main/containers/main/env/8/value
+        value: "false"
+      - op: replace
+        path: /spec/values/controllers/main/containers/main/env/9/value
+        value: "true"
+    target:
+      kind: HelmRelease
+      name: openwebui
