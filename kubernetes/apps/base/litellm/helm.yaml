@@ -790,8 +790,8 @@ spec:
             - read:packages
             - read:org
           allow_all_keys: true
-        playwright:
-          url: http://mcp-playwright-proxy.toolhive.svc.cluster.local:8080/mcp
+        terraform:
+          url: http://mcp-terraform-proxy.toolhive.svc.cluster.local:8080/mcp
           auth_type: none
           allow_all_keys: true
         searxng:
