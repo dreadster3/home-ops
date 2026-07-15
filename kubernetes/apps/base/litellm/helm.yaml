@@ -86,7 +86,7 @@ spec:
       GENERIC_TOKEN_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/token/
       GENERIC_USERINFO_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/userinfo/
       GENERIC_SCOPE: openid profile email litellm_role
-      PROXY_BASE_URL: https://litellm.${INTERNAL_DOMAIN}
+      PROXY_BASE_URL: https://litellm.${EXTERNAL_DOMAIN}
       PROXY_LOGOUT_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/litellm/end-session/
       GENERIC_ROLE_MAPPINGS_GROUP_CLAIM: groups
       GENERIC_ROLE_MAPPINGS_DEFAULT_ROLE: internal_user
