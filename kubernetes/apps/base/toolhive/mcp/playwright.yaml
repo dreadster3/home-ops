@@ -10,8 +10,12 @@ spec:
       volumes:
         - name: home
           emptyDir: {}
+        - name: tmp
+          emptyDir: {}
       containers:
         - name: mcp
           volumeMounts:
             - name: home
               mountPath: /home/node
+            - name: tmp
+              mountPath: /tmp
