@@ -6,4 +6,5 @@ namespace: toolhive
 resources:
   - searxng.yaml
   - terraform.yaml
+  - firecrawl.yaml
   # - playwright.yaml

@@ -1,0 +1,29 @@
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPRemoteProxy
+metadata:
+  name: firecrawl
+spec:
+  remoteUrl: https://mcp.firecrawl.dev/v2/mcp
+  transport: streamable-http
+  headerForward:
+    addHeadersFromSecret:
+      - headerName: "Authorization"
+        valueSecretRef:
+          name: firecrawl-mcp-secret
+          key: FIRECRAWL_API_KEY
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: firecrawl
+spec:
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+  target:
+    name: firecrawl-mcp-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: FIRECRAWL_API_KEY
+      remoteRef:
+        key: /toolhive/FIRECRAWL_API_KEY

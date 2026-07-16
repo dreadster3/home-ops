@@ -649,6 +649,10 @@ spec:
           auth_type: oauth2
           transport: http
           allow_all_keys: true
+        firecrawl:
+          url: http://mcp-firecrawl-remote-proxy.toolhive.svc.cluster.local:8080/mcp
+          auth_type: none
+          allow_all_keys: true
 
     # Persistent storage for GitHub Copilot OAuth tokens
     volumes:
