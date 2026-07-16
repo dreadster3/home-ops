@@ -8,6 +8,7 @@ labels:
 
 resources:
   - authentik
+  - ../../base/cognee
   - ../../base/harbor
   - ../../base/immich
   - ../../base/joplin

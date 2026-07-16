@@ -1,0 +1,208 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cognee
+  namespace: cognee
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: app-template
+      version: 5.0.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    defaultPodOptions:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
+    controllers:
+      # Cognee FastAPI backend — the knowledge graph / vector store API.
+      # The MCP server and any direct HTTP clients talk to this service.
+      api:
+        type: deployment
+        # Recreate: single replica on a ReadWriteOnce PVC holding the embedded
+        # graph store. RollingUpdate would deadlock waiting for the PVC to free.
+        strategy: Recreate
+        # Single replica: the embedded Ladybug/Kuzu graph store uses file-based
+        # locking on a ReadWriteOnce PVC and is not multi-process safe. Scale out
+        # by switching GRAPH_DATABASE_PROVIDER to neo4j (decision 19.a rationale).
+        replicas: 1
+        containers:
+          main:
+            image:
+              repository: docker.io/cognee/cognee
+              tag: main
+            env:
+              ENV: prd
+              LOG_LEVEL: INFO
+              # Disable auth — internal-only (Envoy + Netbird WG), never public.
+              ENABLE_BACKEND_ACCESS_CONTROL: "false"
+              REQUIRE_AUTHENTICATION: "false"
+              # Relational + vector store: the per-service CloudNativePG cluster.
+              # pgvector is enabled via the Database resource (vector 0.8.2).
+              DB_PROVIDER: postgres
+              VECTOR_DB_PROVIDER: pgvector
+              VECTOR_DATASET_DATABASE_HANDLER: pgvector
+              # Graph store: embedded Ladybug (file-based) on a PVC.
+              # Kuzu/Ladybug file-locking is not multi-agent safe, but with a
+              # single replica this is fine; scale out -> switch to Neo4j.
+              GRAPH_DATABASE_PROVIDER: ladybug
+              GRAPH_DATASET_DATABASE_HANDLER: kuzu
+              # LLM + embeddings via the internal LiteLLM proxy (OpenAI-compatible).
+              # LiteLLM resolves the model_group aliases to the real providers.
+              LLM_PROVIDER: openai
+              LLM_MODEL: openai/gpt-5.6-luna
+              LLM_ENDPOINT: http://litellm.litellm.svc.cluster.local:4000/v1
+              EMBEDDING_PROVIDER: openai
+              EMBEDDING_MODEL: openai/text-embedding-3
+              EMBEDDING_DIMENSIONS: "1536"
+              EMBEDDING_ENDPOINT: http://litellm.litellm.svc.cluster.local:4000/v1
+              # Skip the 30s LLM preflight so a slow LiteLLM warmup doesn't block startup.
+              COGNEE_SKIP_CONNECTION_TEST: "true"
+              # Where Cognee stores its graph/db files and ingested data.
+              SYSTEM_ROOT_DIRECTORY: /app/cognee/.cognee_system
+              DATA_ROOT_DIRECTORY: /app/cognee/.data_storage
+            envFrom:
+              - secretRef:
+                  name: cognee-secret-env
+            ports:
+              - containerPort: 8000
+                name: http
+                protocol: TCP
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8000
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+                  startupPeriodSeconds: 60
+              readiness: *probes
+              startup:
+                enabled: true
+            resources:
+              requests:
+                cpu: 100m
+                memory: 1Gi
+              limits:
+                memory: 2Gi
+
+      # Cognee MCP server in API mode — thin proxy over the backend that
+      # exposes Cognee's tools over the Model Context Protocol.
+      # Clients (Cursor, Claude Code, Cline) hit /mcp on this service.
+      mcp:
+        type: deployment
+        strategy: RollingUpdate
+        replicas: 2
+        containers:
+          main:
+            image:
+              repository: docker.io/cognee/cognee-mcp
+              tag: main
+            env:
+              # API mode: the MCP server forwards to the cognee backend instead
+              # of running cognee in-process. DB migrations are skipped here.
+              TRANSPORT_MODE: http
+              API_URL: http://cognee.cognee.svc.cluster.local:8000
+              PYTHONUNBUFFERED: "1"
+              # Trust the in-cluster network; the MCP server binds 0.0.0.0.
+              MCP_DISABLE_DNS_REBINDING_PROTECTION: "true"
+            envFrom:
+              - secretRef:
+                  name: cognee-secret-env
+            ports:
+              - containerPort: 8000
+                name: http
+                protocol: TCP
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8000
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+                  startupPeriodSeconds: 60
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8000
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+              startup:
+                enabled: true
+            # The cognee-mcp image bundles torch/CUDA via the docs extra (~8.85 GB).
+            resources:
+              requests:
+                cpu: 100m
+                memory: 1Gi
+              limits:
+                memory: 4Gi
+
+    service:
+      api:
+        controller: api
+        primary: true
+        annotations:
+          netbird.io/expose: "true"
+        ports:
+          http:
+            port: 8000
+            primary: true
+            targetPort: http
+            protocol: HTTP
+      mcp:
+        controller: mcp
+        annotations:
+          netbird.io/expose: "true"
+        ports:
+          http:
+            port: 8000
+            targetPort: http
+            protocol: HTTP
+
+    persistence:
+      # Cognee's embedded graph (Ladybug/Kuzu) + relational/vector cache live here.
+      # With DB_PROVIDER=postgres + VECTOR_DB_PROVIDER=pgvector the heavy data is in
+      # the CNPG cluster; this PVC holds the graph files and ingested source artifacts.
+      cognee-system:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        advancedMounts:
+          api:
+            main:
+              - path: /app/cognee/.cognee_system
+      cognee-data:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        advancedMounts:
+          api:
+            main:
+              - path: /app/cognee/.data_storage

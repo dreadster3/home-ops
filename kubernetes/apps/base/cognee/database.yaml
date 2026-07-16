@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: cognee-cluster-pgvector
+  namespace: cognee
+spec:
+  name: cognee
+  owner: cognee
+  cluster:
+    name: cognee-cluster
+  extensions:
+    - name: vector
+      version: "0.8.2"

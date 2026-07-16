@@ -1,0 +1,23 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cognee-cluster
+  namespace: cognee
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  instances: 1
+  storage:
+    storageClass: local-path
+    size: 1Gi
+  affinity:
+    podAntiAffinityType: null
+  bootstrap:
+    recovery: null
+    initdb:
+      database: cognee
+      owner: cognee
+      secret:
+        name: cognee-cluster-credentials
+  externalClusters: []
+  plugins: []

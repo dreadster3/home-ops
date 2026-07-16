@@ -1,0 +1,164 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: cognee
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cognee
+  ingress: []
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: cognee
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: cognee-cluster
+  ingress:
+    # Allow access from other cluster pods
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cognee
+            cnpg.io/cluster: cognee-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+            - port: status
+              protocol: TCP
+    # Allow access from cognee pods
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cognee
+            app.kubernetes.io/name: cognee
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cognee-api
+  namespace: cognee
+spec:
+  description: "Allow traffic from and to cognee api"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: cognee
+      app.kubernetes.io/controller: api
+  ingress:
+    # Envoy to cognee api
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # cognee-mcp to cognee api
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cognee
+            app.kubernetes.io/name: cognee
+            app.kubernetes.io/controller: mcp
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # Netbird to cognee api
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: netbird
+            app.kubernetes.io/name: netbird-router
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # Alloy (metrics) to cognee api
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+  egress:
+    # LiteLLM gateway
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+            app.kubernetes.io/name: litellm
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    # CloudNativePG
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cognee
+            cnpg.io/cluster: cognee-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+    # LLM providers (fallback when LiteLLM routes out)
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cognee-mcp
+  namespace: cognee
+spec:
+  description: "Allow traffic from and to cognee mcp"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: cognee
+      app.kubernetes.io/controller: mcp
+  ingress:
+    # Envoy to cognee-mcp
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # Netbird to cognee-mcp
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: netbird
+            app.kubernetes.io/name: netbird-router
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # cognee api -> mcp not needed; MCP calls API, not vice-versa
+  egress:
+    # cognee-mcp -> cognee backend (API mode)
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cognee
+            app.kubernetes.io/name: cognee
+            app.kubernetes.io/controller: api
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP

@@ -1,0 +1,32 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cognee
+  namespace: cognee
+spec:
+  values:
+    controllers:
+      api:
+        replicas: 1
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
+      mcp:
+        replicas: 1
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 0m
+                memory: 0Mi
+
+    persistence:
+      cognee-system:
+        storageClass: local-path
+        size: 1Gi
+      cognee-data:
+        storageClass: local-path
+        size: 1Gi

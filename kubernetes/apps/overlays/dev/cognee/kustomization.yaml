@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: cognee
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: cognee
+
+resources:
+  - ../../../base/cognee
+
+patches:
+  - path: helm.yaml
+    target:
+      kind: HelmRelease
+  - path: pgcluster.yaml
+    target:
+      kind: Cluster
+  - path: store.yaml
+    target:
+      kind: ObjectStore

@@ -1,0 +1,71 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cognee-cluster
+  namespace: cognee
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.3-standard-trixie
+  instances: 2
+  primaryUpdateStrategy: unsupervised
+  affinity:
+    podAntiAffinityType: required
+  storage:
+    storageClass: ceph-block
+    size: 10Gi
+
+  bootstrap:
+    recovery:
+      source: backup
+      database: cognee
+      owner: cognee
+      secret:
+        name: cognee-cluster-credentials
+    # initdb:
+    #   database: cognee
+    #   owner: cognee
+    #   secret:
+    #     name: cognee-cluster-credentials
+
+  externalClusters:
+    - name: backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: backup-store
+          serverName: cognee-cluster
+
+  postgresql:
+    extensions:
+      - name: pgvector
+        image:
+          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backup-store
+        serverName: cognee-cluster
+
+  managed:
+    roles:
+      - name: cognee
+        ensure: present
+        login: true
+        superuser: true
+        passwordSecret:
+          name: cognee-cluster-credentials
+        connectionLimit: -1
+        inherit: true
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: &memory 384Mi
+    limits:
+      memory: *memory
+
+  monitoring:
+    enablePodMonitor: true

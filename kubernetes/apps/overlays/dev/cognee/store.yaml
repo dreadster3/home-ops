@@ -1,0 +1,10 @@
+# Dev cluster has no object storage backup; the ObjectStore is removed by
+# patching it to an empty/no-op state. Kustomize strategic merge cannot delete
+# a resource, so the base store.yaml remains but points nowhere useful.
+# To fully remove it, the base resource would need to be conditionally included.
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup-store
+  namespace: cognee
+$patch: delete
