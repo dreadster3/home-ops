@@ -40,7 +40,7 @@ spec:
     extensions:
       - name: pgvector
         image:
-          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
+          reference: ghcr.io/cloudnative-pg/pgvector:0.8.5-18-trixie
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
