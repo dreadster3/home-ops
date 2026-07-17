@@ -6,7 +6,19 @@
       "description": "Process annotated dependencies",
       "managerFilePatterns": ["/\\.yaml(?:\\.j2)?$/"],
       "matchStrings": [
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s|=)(&\\S+\\s)?(?<currentValue>\\S+)"
+        // # renovate: datasource=github-releases depName=foo/bar
+        // foobar_version: v1.0.0
+        // # renovate: datasource=github-releases depName=foo/bar
+        // foobar_version: "v1.0.0"
+        // # renovate: datasource=github-releases depName=foo/bar
+        // foobar_version: &version v1.0.0
+        // # renovate: datasource=github-releases depName=foo/bar
+        // foobar_version: &version "v1.0.0"
+        // # renovate: datasource=docker depName=ghcr.io/foo/bar
+        // FOOBAR_VERSION=v1.0.0
+        // # renovate: datasource=docker depName=ghcr.io/foo/bar
+        // FOOBAR_VERSION="v1.0.0"
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s|=)(&\\S+\\s)?[\"']?(?<currentValue>[^\"'\\s]+)[\"']?"
       ],
       "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}"
     },
@@ -18,6 +30,20 @@
       "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml$"],
       "matchStrings": [
         "imageName: (?<depName>[^\\s:]+):(?<currentValue>[^@\\s]+)(?:@(?<currentDigest>sha256:[^\\s]+))?"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      // Targets CNPG `Cluster.spec.imageName` and `Cluster.spec.postgresql.extensions[].reference`.
+      // Path filter is intentionally broad: the regex requires `name:tag` shape after the key,
+      // which is specific enough that false positives are rare in practice. If your repo has
+      // unrelated YAML with `imageName:` or `reference:` followed by an image-like string,
+      // override `managerFilePatterns` to scope this preset to your CNPG manifests.
+      "description": "Detect CNPG Cluster CRD imageName + extension reference fields",
+      "customType": "regex",
+      "managerFilePatterns": ["/.+\\.ya?ml(?:\\.j2)?$/"],
+      "matchStrings": [
+        "(?:imageName|reference):\\s+(?<depName>[^:\\s]+):(?<currentValue>[^@\\s]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
       ],
       "datasourceTemplate": "docker"
     }
