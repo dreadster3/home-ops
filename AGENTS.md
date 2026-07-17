@@ -56,7 +56,7 @@ Types observed: `feat`, `fix`, `chore`, `docs`. Scope is optional but preferred 
 ├── .pi/                  # Project-level agent skills
 │   └── skills/
 │       └── decision-log/ # Enforces DECISION.md updates for major changes
-├── DECISION.md           # Architecture decision log
+├── DECISION.md           # Architecture decision log (synced to codebase-memory MCP)
 ├── docker/               # Docker Compose services (management node)
 │   └── mgmt/             # Per-service compose stacks
 ├── flake.nix             # Dev shell (flux, kustomize, minikube, etc.)
@@ -138,3 +138,15 @@ Includes: flux, fluxcd-operator, kustomize, minikube, yq, gitleaks, pre-commit, 
 - **Remote access** is via Netbird WireGuard overlay — not public internet exposure
 - **Per-service PGClusters** — each app has its own CloudNativePG cluster, never shared databases
 - **DECISION.md** — document any major architectural or operational decision before implementing it
+- **DECISION.md → codebase-memory MCP sync** — whenever `DECISION.md` is created or modified, the full decisions body must be re-synced to the `codebase-memory` MCP ADR store. The `manage_adr` tool is overwrite-only, so always send the *entire* decisions content (all `## N.` sections, including `### Na/...` sub-sections), not just the changed section.
+
+  ### How to sync DECISION.md to the codebase-memory MCP
+
+  1. Extract the decisions body from `DECISION.md` — from the first `## 1.` heading through the last decision, excluding the `# Architecture Decision Log` preamble and the trailing `*This log is maintained...` footer (and any trailing `---` separators).
+  2. Call the `codebase-memory` MCP tool `manage_adr` with:
+     - `project`: `home-dreadster-Documents-projects-github-home-ops`
+     - `mode`: `update`
+     - `content`: the full decisions body from step 1
+  3. Verify the sync by calling `manage_adr` with `mode: "sections"` and confirming every `## N.` heading (and `### Na.` sub-heading) is present.
+
+  > **Note:** Do *not* call `update` once per decision — each `update` overwrites the entire ADR blob. A successful per-decision call would erase all prior decisions. Always send the complete content in a single `update`.
