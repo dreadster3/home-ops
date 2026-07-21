@@ -1,0 +1,34 @@
+services:
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy:15.3.0@sha256:93bbd593e07bab98d02807a28770ac87ab6c48818e319e68c1f66561feb99876
+    restart: unless-stopped
+    container_name: wg-easy
+    network_mode: "host"
+    volumes:
+      - /opt/docker/wireguard:/etc/wireguard
+      - /lib/modules:/lib/modules:ro
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      WG_HOST: vpn.${EXTERNAL_DOMAIN}
+      PASSWORD: ${WG_EASY_PASSWORD}
+      WG_PORT: 51820
+      DISABLE_IPV6: true
+
+      # ── VPN subnet ───────────────────────────────────────────
+      WG_DEFAULT_DNS: 192.168.100.1 # DNS for clients (e.g. your OPNsense or Pi-hole)
+      WG_DEFAULT_ADDRESS: 10.10.0.x # Client IP range (becomes 10.8.0.0/24)
+
+      # ── Routed (no NAT) hooks ────────────────────────────────
+      # No MASQUERADE rule — packets keep their real source IP
+      WG_POST_UP: >-
+        iptables -A INPUT -p udp -m udp --dport 51820 -j ACCEPT;
+        iptables -A FORWARD -i wg0 -j ACCEPT;
+        iptables -A FORWARD -o wg0 -j ACCEPT;
+      WG_POST_DOWN: >-
+        iptables -D INPUT -p udp -m udp --dport 51820 -j ACCEPT;
+        iptables -D FORWARD -i wg0 -j ACCEPT;
+        iptables -D FORWARD -o wg0 -j ACCEPT;

@@ -1,0 +1,4 @@
+name: wireguard
+working_dir: docker/vpn/wireguard
+compose_files:
+  - compose.yaml
