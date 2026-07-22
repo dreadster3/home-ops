@@ -4,13 +4,20 @@ services:
     restart: unless-stopped
     container_name: wg-easy
     network_mode: "host"
+    environment:
+      DISABLE_IPV6: true
     volumes:
       - /opt/docker/wireguard:/etc/wireguard
       - /lib/modules:/lib/modules:ro
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_drop:
+      - ALL
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    environment:
-      DISABLE_IPV6: true
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
