@@ -6,6 +6,8 @@ services:
     env_file: netbird.env
     environment:
       NB_MANAGEMENT_URL: https://netbird.${EXTERNAL_DOMAIN}
+    volumes:
+      - /var/log/docker/netbird:/var/log/netbird
     cap_add:
       - NET_ADMIN
     cap_drop:
@@ -13,3 +15,10 @@ services:
     security_opt:
       - no-new-privileges:true
     read_only: true
+    networks:
+      - netbird
+
+networks:
+  netbird:
+    name: netbird
+    driver: bridge
