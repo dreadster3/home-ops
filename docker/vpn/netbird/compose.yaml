@@ -1,0 +1,15 @@
+services:
+  netbird:
+    image: ghcr.io/netbirdio/netbird:0.74.7@sha256:b63f4c1584118aeebacfdfd841f0351122a53fccac182b4c43be428c2c9a6b73
+    restart: unless-stopped
+    container_name: netbird
+    env_file: netbird.env
+    environment:
+      NB_MANAGEMENT_URL: https://netbird.${EXTERNAL_DOMAIN}
+    cap_add:
+      - NET_ADMIN
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true

@@ -7,3 +7,8 @@ name: traefik
 working_dir: docker/vpn/traefik
 compose_files:
   - compose.yaml
+---
+name: netbird
+working_dir: docker/vpn/netbird
+compose_files:
+  - compose.yaml
