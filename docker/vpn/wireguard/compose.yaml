@@ -11,13 +11,11 @@ services:
       - /lib/modules:/lib/modules:ro
     devices:
       - /dev/net/tun:/dev/net/tun
-    cap_drop:
-      - ALL
     cap_add:
       - NET_ADMIN
+      - NET_RAW
       - SYS_MODULE
+    cap_drop:
+      - ALL
     security_opt:
       - no-new-privileges:true
-    read_only: true
-    tmpfs:
-      - /tmp
