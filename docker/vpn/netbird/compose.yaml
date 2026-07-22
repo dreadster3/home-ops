@@ -15,6 +15,9 @@ services:
     security_opt:
       - no-new-privileges:true
     read_only: true
+    tmpfs:
+      - /var/run
+      - /var/lib
     networks:
       - netbird
 
