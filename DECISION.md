@@ -168,4 +168,14 @@ Decisions made throughout the life of this project, with rationale and context.
 
 ---
 
+## 19. Migrate WireGuard VPN from wireguard-native to wg-easy, moved into this repo
+
+- **Date:** 2026-07-22
+- **Status:** Accepted
+- **Context:** The home network was already served by a wireguard-native deployment (manual `wg0.conf` on the management node) providing no-NAT remote access. Management was manual (hand-editing config, adding peers by hand) and the deployment lived outside this repo, so it received no Renovate dependency updates and diverged from the Doco-CD managed management-node stack. The initial setup exposed its WireGuard admin UI through Cloudflare Tunnels.
+- **Decision:** Migrate from wireguard-native to `wg-easy` v15, deployed via Docker Compose under `docker/vpn/wireguard/` and managed by Doco-CD. Same no-NAT routing design is preserved: host networking with tun device and `NET_ADMIN`/`NET_RAW`/`SYS_MODULE` caps, IPv6 disabled. A compose-based Traefik fronts the wg-easy UI, and a compose-based Netbird is added under `docker/vpn/` alongside it. The wg-easy admin UI is now exposed through Netbird instead of Cloudflare Tunnels, making it uniform with how other services are exposed. The existing OPNsense no-NAT design (static route for the VPN subnet via the management-node gateway, plus Hybrid Outbound NAT for the VPN subnet at the WAN edge for internet egress) is unchanged.
+- **Rationale:** wg-easy provides a web UI for peer/client management (add, remove, generate QR/config) replacing manual `wg0.conf` edits, while keeping the same WireGuard data plane and the existing no-NAT routing — so no OPNsense-side or client-side reconfiguration of the routing/NAT design was needed. Moving the deployment into this repo under `docker/vpn/` brings it under Doco-CD and Renovate, so the wg-easy image and Traefik/Netbird images get automated updates like the rest of the stack. Routing the admin UI through Netbird instead of Cloudflare Tunnels keeps service exposure consistent across the stack.
+
+---
+
 *This log is maintained to provide context for architectural decisions and onboarding.*
