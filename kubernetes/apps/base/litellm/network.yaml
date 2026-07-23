@@ -118,6 +118,15 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: paperless
+            app.kubernetes.io/instance: paperless
+            app.kubernetes.io/name: paperless
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: monitoring
             app.kubernetes.io/name: alloy
       toPorts:
