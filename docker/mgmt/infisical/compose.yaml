@@ -38,7 +38,7 @@ services:
       resources:
         reservations:
           cpus: "0.25"
-          memory: &memory 768M
+          memory: &memory 1.5G
         limits:
           memory: *memory
     user: "1001:1001"
