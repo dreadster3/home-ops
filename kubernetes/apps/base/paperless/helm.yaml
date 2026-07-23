@@ -77,7 +77,7 @@ spec:
               PAPERLESS_AI_LLM_EMBEDDING_MODEL: text-embedding-3
               PAPERLESS_AI_LLM_EMBEDDING_ENDPOINT: http://litellm.litellm.svc.cluster.local:4000/v1
               PAPERLESS_AI_LLM_BACKEND: openai-like
-              PAPERLESS_AI_LLM_MODEL: gpt-5.6-luna
+              PAPERLESS_AI_LLM_MODEL: minimax-m3
               PAPERLESS_AI_LLM_ENDPOINT: http://litellm.litellm.svc.cluster.local:4000/v1
             envFrom:
               - secretRef:
