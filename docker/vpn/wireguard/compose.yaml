@@ -1,0 +1,21 @@
+services:
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy:15.3.0@sha256:93bbd593e07bab98d02807a28770ac87ab6c48818e319e68c1f66561feb99876
+    restart: unless-stopped
+    container_name: wg-easy
+    network_mode: "host"
+    environment:
+      DISABLE_IPV6: true
+    volumes:
+      - /opt/docker/wireguard:/etc/wireguard
+      - /lib/modules:/lib/modules:ro
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_MODULE
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
