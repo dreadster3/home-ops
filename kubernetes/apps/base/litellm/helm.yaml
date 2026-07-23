@@ -628,6 +628,7 @@ spec:
         github:
           url: https://api.githubcopilot.com/mcp/
           auth_type: oauth2
+          oauth2_flow: authorization_code
           client_id: os.environ/GITHUB_OAUTH_CLIENT_ID
           client_secret: os.environ/GITHUB_OAUTH_CLIENT_SECRET
           transport: http
@@ -647,6 +648,7 @@ spec:
         context7:
           url: https://mcp.context7.com/mcp/oauth
           auth_type: oauth2
+          oauth2_flow: authorization_code
           transport: http
           allow_all_keys: true
         firecrawl:
