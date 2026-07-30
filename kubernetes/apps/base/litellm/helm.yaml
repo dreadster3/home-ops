@@ -276,8 +276,8 @@ spec:
             model: anthropic/claude-sonnet-5
             api_key: os.environ/ANTHROPIC_API_KEY
 
-        - model_name: anthropic/claude-opus-4-8
-          # from models.dev (anthropic): 1M ctx / 128k out, $5/$25 per M
+        - model_name: anthropic/claude-opus-5
+          # from models.dev (anthropic): 1M ctx / 128k out, $5/$25 per M, cache_read $0.5/M, cache_write $6.25/M
           model_info:
             mode: chat
             max_input_tokens: 1000000
@@ -289,7 +289,7 @@ spec:
             cache_read_input_token_cost: 0.0000005
             cache_creation_input_token_cost: 0.00000625
           litellm_params:
-            model: anthropic/claude-opus-4-8
+            model: anthropic/claude-opus-5
             api_key: os.environ/ANTHROPIC_API_KEY
 
         # ===== GitHub Copilot (OAuth device flow — tokens persisted in PVC) =====
@@ -569,7 +569,7 @@ spec:
         # Routing aliases — clean model_name → primary provider/model_name
         model_group_alias:
           claude-sonnet-5: github_copilot/claude-sonnet-5
-          claude-opus-4-8: anthropic/claude-opus-4-8
+          claude-opus-5: anthropic/claude-opus-5
           claude-fable-5: anthropic/claude-fable-5
           deepseek-v4-pro: ollama/deepseek-v4-pro
           kimi-k2.7-code: ollama/kimi-k2.7-code
