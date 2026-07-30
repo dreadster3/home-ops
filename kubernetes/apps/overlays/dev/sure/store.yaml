@@ -1,0 +1,16 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup-store
+  namespace: sure
+spec:
+  configuration:
+    destinationPath: s3://sure-cluster
+    endpointURL: http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+    s3Credentials:
+      accessKeyId:
+        name: sure-cluster-bucket
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: sure-cluster-bucket
+        key: AWS_SECRET_ACCESS_KEY

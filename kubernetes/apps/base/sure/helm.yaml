@@ -1,0 +1,119 @@
+---
+# Upstream chart source. The official Sure chart lives in-repo at
+# charts/sure and is not published to a Helm repository / OCI index.
+# Flux resolves the chart's two subchart dependencies (cloudnative-pg,
+# redis-operator) from their public Helm repos at build time via Chart.lock.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: sure-chart
+  namespace: sure
+spec:
+  interval: 24h
+  url: https://github.com/we-promise/sure
+  ref:
+    # Pinned to the last stable release tag. Renovate bumps this.
+    tag: v0.7.2
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sure
+  namespace: sure
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      # Path to the chart inside the we-promise/sure repository
+      chart: ./charts/sure
+      sourceRef:
+        kind: GitRepository
+        name: sure-chart
+        namespace: sure
+      # Rebuild on any upstream commit to the pinned ref
+      reconcileStrategy: Revision
+      interval: 24h
+  values:
+    image:
+      repository: ghcr.io/we-promise/sure
+      # Pin to the last non-prerelease; upstream "stable" tag floats to RCs.
+      tag: "0.7.2"
+
+    # Use the cluster's existing CloudNativePG + Dragonfly (defined outside the chart).
+    # The chart still lists the operator subcharts as deps; Flux resolves them
+    # from their public repos, but they render nothing with these disabled.
+    cnpg:
+      enabled: false
+      cluster:
+        enabled: false
+    redisOperator:
+      enabled: false
+      managed:
+        enabled: false
+    redisSimple:
+      enabled: false
+
+    rails:
+      existingSecret: sure-secret-env
+      # Self-hosted mode auto-derives AR encryption keys from SECRET_KEY_BASE
+      encryptionEnv:
+        enabled: false
+      settings:
+        SELF_HOSTED: "true"
+        ONBOARDING_STATE: "open"
+      extraEnv:
+        APP_DOMAIN: "sure.${EXTERNAL_DOMAIN}"
+        EXCHANGE_RATE_PROVIDER: yahoo_finance
+        SECURITIES_PROVIDER: yahoo_finance
+        WEBAUTHN_RP_ID: "${EXTERNAL_DOMAIN}"
+        WEBAUTHN_ALLOWED_ORIGINS: "https://sure.${EXTERNAL_DOMAIN}"
+        RAILS_FORCE_SSL: "true"
+        RAILS_ASSUME_SSL: "true"
+      # Inject DATABASE_URL, REDIS_URL, and OIDC_* from the app secret.
+      # The chart already wires SECRET_KEY_BASE via secretKeyRef from existingSecret;
+      # explicit env entries override envFrom keys with the same name, so no conflict.
+      extraEnvFrom:
+        - secretRef:
+            name: sure-secret-env
+
+    # Chart runs db:prepare as a Helm pre-install/pre-upgrade hook Job.
+    migrations:
+      strategy: job
+
+    service:
+      port: 3000
+
+    # ponytail: Sure has no built-in /metrics exporter; the ServiceMonitor
+    # is enabled for parity with other apps but scrapes empty until an
+    # exporter (prometheus_exporter gem) is added.
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 10s
+      path: /metrics
+      portName: http
+
+    web:
+      replicas: 2
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          memory: 512Mi
+
+    worker:
+      replicas: 2
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          memory: 512Mi

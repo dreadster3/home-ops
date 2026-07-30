@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: &app sure
+
+labels:
+  - pairs:
+      app.kubernetes.io/module: *app
+
+resources:
+  - namespace.yaml
+  - store.yaml
+  - pgcluster.yaml
+  - dragonfly.yaml
+  - secrets.yaml
+  - network.yaml
+  - httproute.yaml
+  - helm.yaml

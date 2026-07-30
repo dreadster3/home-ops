@@ -1,0 +1,175 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: sure
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": sure
+  ingress: []
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: sure
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: sure-cluster
+  ingress:
+    # Allow access from other cluster pods
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: sure
+            cnpg.io/cluster: sure-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+            - port: status
+              protocol: TCP
+    # Allow access from sure web/worker pods
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: sure
+            app.kubernetes.io/name: sure
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dragonfly
+  namespace: sure
+spec:
+  description: "Allow Dragonfly pods access"
+  endpointSelector:
+    matchLabels:
+      app: sure-dragonfly
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: sure
+            app.kubernetes.io/name: sure
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: sure-web
+  namespace: sure
+spec:
+  description: "Allow traffic to sure web"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: sure
+      app.kubernetes.io/controller: web
+  ingress:
+    # Envoy to sure
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    # Pangolin to sure
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: pangolin
+            app.kubernetes.io/name: pangolin
+            app.kubernetes.io/component: newt
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    # Netbird to sure
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: netbird
+            app.kubernetes.io/name: netbird-router
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+    # Uptime to sure
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: uptime
+            app.kubernetes.io/name: uptime
+            app.kubernetes.io/instance: uptime
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+  egress:
+    # OIDC provider (Authentik)
+    - toFQDNs:
+        - matchName: authentik.${EXTERNAL_DOMAIN}
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Yahoo Finance for exchange rates + securities prices
+    - toFQDNs:
+        - matchName: fc.yahoo.com
+        - matchName: query1.finance.yahoo.com
+        - matchName: query2.finance.yahoo.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # SMTP (maddy) for password resets / email reports
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: maddy
+            app.kubernetes.io/name: maddy
+            app.kubernetes.io/instance: maddy
+      toPorts:
+        - ports:
+            - port: smtp
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: sure-worker
+  namespace: sure
+spec:
+  description: "Allow sure worker egress"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: sure
+      app.kubernetes.io/controller: worker
+  egress:
+    # Yahoo Finance for background sync jobs
+    - toFQDNs:
+        - matchName: fc.yahoo.com
+        - matchName: query1.finance.yahoo.com
+        - matchName: query2.finance.yahoo.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # SMTP (maddy) for background email jobs
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: maddy
+            app.kubernetes.io/name: maddy
+            app.kubernetes.io/instance: maddy
+      toPorts:
+        - ports:
+            - port: smtp
+              protocol: TCP
