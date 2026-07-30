@@ -309,8 +309,8 @@ spec:
           litellm_params:
             model: github_copilot/claude-sonnet-5
 
-        - model_name: github_copilot/gemini-3.5-flash
-          # from models.dev (github-copilot): 128k input cap / 64k out, vision, reasoning, $1.5/$9 per M, cache_read $0.15/M; cache_write not published → 0
+        - model_name: github_copilot/gemini-3.6-flash
+          # from GitHub Copilot billing (models.dev github-copilot entry pending): 128k input cap / 64k out (assumed from 3.5-flash copilot cap), vision, reasoning, $1.5/$7.5 per M, cache_read $0.15/M; cache_write not published → 0
           model_info:
             mode: chat
             max_input_tokens: 128000
@@ -318,11 +318,11 @@ spec:
             supports_vision: true
             supports_reasoning: true
             input_cost_per_token: 0.0000015
-            output_cost_per_token: 0.000009
+            output_cost_per_token: 0.0000075
             cache_read_input_token_cost: 0.00000015
             cache_creation_input_token_cost: 0.0
           litellm_params:
-            model: github_copilot/gemini-3.5-flash
+            model: github_copilot/gemini-3.6-flash
 
         - model_name: github_copilot/gpt-5.6-luna
           # from GitHub Copilot billing (openai list price): 922k input cap / 128k out, vision, reasoning. Default <=200K: $1/$6 per M, cache_read $0.1/M, cache_write $1.25/M. Long context >200K: $2/$9 per M, cache_read $0.2/M. Primary; fallback to openai direct.
@@ -577,7 +577,7 @@ spec:
           deepseek-v4-flash: ollama/deepseek-v4-flash
           glm-5.2: ollama/glm-5.2
           glm-5.1: ollama/glm-5.1
-          gemini-3.5-flash: github_copilot/gemini-3.5-flash
+          gemini-3.6-flash: github_copilot/gemini-3.6-flash
           gpt-5.6-luna: github_copilot/gpt-5.6-luna
           gpt-5.6-terra: github_copilot/gpt-5.6-terra
           gpt-5.6-sol: openai/gpt-5.6-sol
