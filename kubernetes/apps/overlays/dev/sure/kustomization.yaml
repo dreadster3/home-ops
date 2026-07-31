@@ -21,10 +21,6 @@ patches:
   - path: store.yaml
     target:
       kind: ObjectStore
-  - path: secrets.yaml
-    target:
-      kind: ExternalSecret
-      name: sure-backup-s3-account
   - path: network.yaml
     target:
       kind: CiliumNetworkPolicy
