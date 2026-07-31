@@ -93,8 +93,12 @@ spec:
     # ponytail: Sure has no built-in /metrics exporter; the ServiceMonitor
     # is enabled for parity with other apps but scrapes empty until an
     # exporter (prometheus_exporter gem) is added.
+    # additionalLabels works around an upstream chart bug: toYaml of an empty
+    # map renders a bare {} that breaks the labels block (only with enabled=true).
     serviceMonitor:
       enabled: true
+      additionalLabels:
+        app.kubernetes.io/part-of: sure
       interval: 30s
       scrapeTimeout: 10s
       path: /metrics
