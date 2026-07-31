@@ -88,7 +88,7 @@ spec:
       strategy: job
 
     service:
-      port: 3000
+      port: 80
 
     # ponytail: Sure has no built-in /metrics exporter; the ServiceMonitor
     # is enabled for parity with other apps but scrapes empty until an
