@@ -97,6 +97,16 @@
         "commitMessageTopic": "{{{groupName}}} group"
       },
       "minimumGroupSize": 2
+    },
+    {
+      "description": "Litellm group",
+      "groupName": "Litellm",
+      "matchDatasources": ["docker", "helm"],
+      "matchPackageNames": ["/litellm/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
     }
   ]
 }
