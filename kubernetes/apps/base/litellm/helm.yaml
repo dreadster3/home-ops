@@ -506,7 +506,7 @@ spec:
             cache_read_input_token_cost: 0.0
             cache_creation_input_token_cost: 0.0
           litellm_params:
-            model: openai/deepseek-v4-flash
+            model: openai/deepseek-v4-flash:0731
             api_base: https://ollama.com/v1
             api_key: os.environ/OLLAMA_API_KEY
 
