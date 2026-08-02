@@ -6,7 +6,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: sure-chart
+  name: sure
   namespace: sure
 spec:
   interval: 24h
@@ -14,6 +14,19 @@ spec:
   ref:
     # Pinned to the last stable release tag. Renovate bumps this.
     tag: v0.7.2
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+metadata:
+  name: sure
+  namespace: sure
+spec:
+  interval: 24h
+  chart: ./charts/sure
+  sourceRef:
+    kind: GitRepository
+    name: sure
+    namespace: sure
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -29,17 +42,10 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  chart:
-    spec:
-      # Path to the chart inside the we-promise/sure repository
-      chart: ./charts/sure
-      sourceRef:
-        kind: GitRepository
-        name: sure-chart
-        namespace: sure
-      # Rebuild on any upstream commit to the pinned ref
-      reconcileStrategy: Revision
-      interval: 24h
+  chartRef:
+    kind: HelmChart
+    name: sure
+    namespace: sure
   values:
     image:
       repository: ghcr.io/we-promise/sure
