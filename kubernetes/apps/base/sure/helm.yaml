@@ -107,10 +107,10 @@ spec:
       replicas: 2
       resources:
         requests:
-          cpu: 100m
-          memory: 512Mi
+          cpu: 50m
+          memory: &memory 768Mi
         limits:
-          memory: 512Mi
+          memory: *memory
 
     worker:
       replicas: 2
