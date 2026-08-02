@@ -69,16 +69,15 @@ spec:
         SELF_HOSTED: "true"
         ONBOARDING_STATE: "open"
       extraEnv:
-        APP_DOMAIN: "sure.${EXTERNAL_DOMAIN}"
+        APP_DOMAIN: "sure.${INTERNAL_DOMAIN}"
+        AUTH_LOCAL_LOGIN_ENABLED: false
+        AUTH_LOCAL_ADMIN_OVERRIDE_ENABLED: false
         EXCHANGE_RATE_PROVIDER: yahoo_finance
         SECURITIES_PROVIDER: yahoo_finance
-        WEBAUTHN_RP_ID: "${EXTERNAL_DOMAIN}"
-        WEBAUTHN_ALLOWED_ORIGINS: "https://sure.${EXTERNAL_DOMAIN}"
+        WEBAUTHN_RP_ID: "${INTERNAL_DOMAIN}"
+        WEBAUTHN_ALLOWED_ORIGINS: "https://sure.${INTERNAL_DOMAIN}"
         RAILS_FORCE_SSL: "true"
         RAILS_ASSUME_SSL: "true"
-      # Inject DATABASE_URL, REDIS_URL, and OIDC_* from the app secret.
-      # The chart already wires SECRET_KEY_BASE via secretKeyRef from existingSecret;
-      # explicit env entries override envFrom keys with the same name, so no conflict.
       extraEnvFrom:
         - secretRef:
             name: sure-secret-env
