@@ -5,3 +5,7 @@ dbs:
       bucket: wireguard
       endpoint: https://truenas.${INTERNAL_DOMAIN}:30292
       path: wg-easy.db
+
+snapshot:
+  interval: 24h
+  retention: 168h # keep 7 days of history
