@@ -560,11 +560,14 @@ spec:
         set_verbose: false
         json_logs: true
         cache: true
+        enable_redis_auth_cache: true
         cache_params:
-          type: redis
+          type: redis-semantic
           host: os.environ/REDIS_HOST
           port: os.environ/REDIS_PORT
           password: os.environ/REDIS_PASSWORD
+          similarity_threshold: 0.8
+          redis_semantic_cache_embedding_model: openai/text-embedding-3-small
       router_settings:
         # Routing aliases — clean model_name → primary provider/model_name
         model_group_alias:
@@ -603,6 +606,7 @@ spec:
               - "openai/text-embedding-3-small"
 
       general_settings:
+        user_api_key_cache_ttl: 300
         alerting:
           - email
         master_key: os.environ/PROXY_MASTER_KEY
