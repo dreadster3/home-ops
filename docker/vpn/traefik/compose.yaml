@@ -116,6 +116,8 @@ networks:
   proxy:
     name: proxy
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "1450" # match eth0 MTU; bridges default to 1500 and oversize packets get dropped at the 1450 hop
     ipam:
       config:
         - subnet: 172.22.1.0/24
