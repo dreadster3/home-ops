@@ -20,8 +20,7 @@ services:
     security_opt:
       - no-new-privileges:true
   litestream:
-    # image: litestream/litestream:0.5.15-scratch@sha256:de6483d5652e67ddb23861fd4e94cdbb5f22895f0739589f49fbb047367555b2
-    image: litestream/litestream:0.5.15
+    image: litestream/litestream:0.5.15@sha256:f45ca298a567bef6edd23d43429b5f80721473a9a9719e467f11d7888999403e
     restart: unless-stopped
     container_name: wg-easy-litestream
     command: replicate
