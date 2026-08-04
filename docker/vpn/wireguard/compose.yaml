@@ -26,7 +26,7 @@ services:
     command: replicate
     volumes:
       - /opt/docker/wireguard/wg-easy.db:/data/wg-easy.db:ro
-      - ./litestream.yaml:/etc/litestream.yaml:ro
+      - ./litestream.yaml:/etc/litestream.yml:ro
     cap_drop:
       - ALL
     security_opt:
