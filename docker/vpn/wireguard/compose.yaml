@@ -1,3 +1,13 @@
+configs:
+  litestream.yaml:
+    content: |
+      access-key-id:     ${S3_ACCESS_KEY}
+      secret-access-key: ${S3_SECRET_KEY}
+
+      dbs:
+        - path: /data/wg-easy.db
+          replica:
+            url: s3://truenas.${INTERNAL_DOMAIN}:30292/wireguard
 services:
   wg-easy:
     image: ghcr.io/wg-easy/wg-easy:15.3.0@sha256:93bbd593e07bab98d02807a28770ac87ab6c48818e319e68c1f66561feb99876
@@ -19,3 +29,17 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
+  litestream:
+    image: litestream/litestream:0.5.15-scratch@sha256:de6483d5652e67ddb23861fd4e94cdbb5f22895f0739589f49fbb047367555b2
+    restart: unless-stopped
+    container_name: wg-easy-litestream
+    configs:
+      - source: litestream.yaml
+        target: /etc/litestream.yaml
+    volumes:
+      - /opt/docker/wireguard/wg-easy.db:/data/wg-easy.db:ro
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
