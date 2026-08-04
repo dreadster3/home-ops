@@ -23,6 +23,7 @@ services:
     image: litestream/litestream:0.5.15-scratch@sha256:de6483d5652e67ddb23861fd4e94cdbb5f22895f0739589f49fbb047367555b2
     restart: unless-stopped
     container_name: wg-easy-litestream
+    command: replicate
     volumes:
       - /opt/docker/wireguard/wg-easy.db:/data/wg-easy.db:ro
       - ./litestream.yaml:/etc/litestream.yaml:ro
