@@ -29,8 +29,8 @@ services:
     volumes:
       - /opt/docker/wireguard:/data
       - ./litestream.yml:/etc/litestream.yml:ro
-    # cap_drop:
-    #   - ALL
-    # security_opt:
-    #   - no-new-privileges:true
-    # read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
