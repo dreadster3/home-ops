@@ -2,11 +2,6 @@ keys:
   - &primary age1usemhw8v2nnr5nuxddrc7gsy3525hhv0na4hk2ur7tjara5cp90s7cpeen
 
 creation_rules:
-  - path_regex: litestream.yaml
-    encrypted_regex: ^(access-key-id|secret-access-key|url)$
-    key_groups:
-      - age:
-          - *primary
   - path_regex: ^.+\.sops\.ya?ml$
     encrypted_regex: ^(data|stringData|crt|key|token|secretboxencryptionsecret|bootstraptoken|secret|id)$
     key_groups:
