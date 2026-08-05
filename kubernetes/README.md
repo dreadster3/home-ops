@@ -62,11 +62,10 @@ GitOps-managed Kubernetes cluster using [Flux](https://fluxcd.io/).
 
 ### Databases
 
-| Component                                                            | Description                                                                                             |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| [CloudNativePG](https://cloudnative-pg.io/)                          | PostgreSQL operator — each app gets its own managed cluster                                             |
-| [DragonflyDB](https://dragonflydb.io/)                               | High-performance Redis-compatible cache (used by Immich, OpenWebUI, Harbor, Netbox, Paperless, Searxng) |
-| [Redis Operator](https://github.com/OT-CONTAINER-KIT/redis-operator) | Redis sentinel/replication clusters                                                                     |
+| Component                                   | Description                                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| [CloudNativePG](https://cloudnative-pg.io/) | PostgreSQL operator — each app gets its own managed cluster                                             |
+| [DragonflyDB](https://dragonflydb.io/)      | High-performance Redis-compatible cache (used by Immich, OpenWebUI, Harbor, Netbox, Paperless, Searxng) |
 
 ### Observability
 
@@ -91,22 +90,24 @@ GitOps-managed Kubernetes cluster using [Flux](https://fluxcd.io/).
 
 All apps are exposed internally via Envoy Gateway (HTTPS, TLS terminated) with individual per-app PostgreSQL clusters and Cilium network policies.
 
-| App                                                       | Description                                                |
-| --------------------------------------------------------- | ---------------------------------------------------------- |
-| [Authentik](https://goauthentik.io/)                      | Identity provider and SSO — used for login across all apps |
-| [Vaultwarden](https://github.com/dani-garcia/vaultwarden) | Self-hosted Bitwarden-compatible password manager          |
-| [Vault](https://www.vaultproject.io/)                     | HashiCorp Vault — secrets management (HA Raft, mTLS)       |
-| [Immich](https://immich.app/)                             | Self-hosted photo and video backup                         |
-| [Paperless-NGX](https://docs.paperless-ngx.com/)          | Document management and OCR                                |
-| [Joplin](https://joplinapp.org/)                          | Note-taking app with end-to-end encryption sync server     |
-| [Open WebUI](https://openwebui.com/)                      | Web interface for LLMs (Ollama) with SSO                   |
-| [n8n](https://n8n.io/)                                    | Workflow automation and integration platform               |
-| [Searxng](https://docs.searxng.org/)                      | Privacy-respecting meta search engine                      |
-| [Harbor](https://goharbor.io/)                            | Self-hosted container registry with vulnerability scanning |
-| [Netbox](https://netbox.dev/)                             | Network IPAM and infrastructure documentation              |
-| [Termix](https://github.com/lukegus/termix)               | Web-based bookmark and quick-launch dashboard              |
-| [Uptime Kuma](https://uptime.kuma.pet/)                   | Self-hosted uptime and service monitoring                  |
-| [Pangolin](https://fossorial.io/)                         | Self-hosted tunneling / reverse proxy (Newt client)        |
+| App                                                       | Description                                                                                  |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [Authentik](https://goauthentik.io/)                      | Identity provider and SSO — used for login across all apps                                   |
+| [Vaultwarden](https://github.com/dani-garcia/vaultwarden) | Self-hosted Bitwarden-compatible password manager                                            |
+| [Immich](https://immich.app/)                             | Self-hosted photo and video backup                                                           |
+| [Paperless-NGX](https://docs.paperless-ngx.com/)          | Document management and OCR                                                                  |
+| [Joplin](https://joplinapp.org/)                          | Note-taking app with end-to-end encryption sync server                                       |
+| [Open WebUI](https://openwebui.com/)                      | Web interface for LLMs (Ollama) with SSO                                                     |
+| [LiteLLM](https://docs.litellm.ai/)                       | LLM proxy gateway — unified API across multiple providers (backed by PostgreSQL + Dragonfly) |
+| [ToolHive](https://github.com/stacks-tools/toolhive)      | MCP server runtime and operator — manages MCP servers as Kubernetes resources                |
+| [n8n](https://n8n.io/)                                    | Workflow automation and integration platform                                                 |
+| [Searxng](https://docs.searxng.org/)                      | Privacy-respecting meta search engine                                                        |
+| [Harbor](https://goharbor.io/)                            | Self-hosted container registry with vulnerability scanning                                   |
+| [Netbox](https://netbox.dev/)                             | Network IPAM and infrastructure documentation                                                |
+| [Apache Tika](https://tika.apache.org/)                   | Content analysis and metadata extraction server (used by Paperless)                          |
+| [Termix](https://github.com/lukegus/termix)               | Self-hosted web-based SSH server management — terminal, tunneling, and file editing          |
+| [Uptime Kuma](https://uptime.kuma.pet/)                   | Self-hosted uptime and service monitoring                                                    |
+| [Pangolin](https://fossorial.io/)                         | Self-hosted tunneling / reverse proxy (Newt client)                                          |
 
 ## Directory Structure
 

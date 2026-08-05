@@ -1,8 +1,12 @@
 # Docker
 
-Docker Compose services running on the management node, managed through GitOps powered by [Doco-CD](https://github.com/kimdre/doco-cd). All service definitions live in this repo — Doco-CD watches for changes and automatically applies them.
+Docker Compose services managed through GitOps powered by [Doco-CD](https://github.com/kimdre/doco-cd). All service definitions live in this repo — Doco-CD watches for changes and automatically applies them.
 
 ## Services
+
+Enabled stacks are listed in each node's `.doco-cd.yaml` poll config; any directory not referenced there is currently disabled.
+
+### Management node (`docker/mgmt/`)
 
 | Service                                                   | Description                                                                                 |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -11,8 +15,6 @@ Docker Compose services running on the management node, managed through GitOps p
 | [Home Assistant](https://www.home-assistant.io/)          | Home automation platform                                                                    |
 | [Omada Controller](https://www.tp-link.com/en/omada-sdn/) | TP-Link Omada SDN network controller (backed by MongoDB)                                    |
 | [Duplicati](https://www.duplicati.com/)                   | Encrypted backup solution                                                                   |
-| [Apprise](https://github.com/caronc/apprise)              | Notification service supporting multiple providers                                          |
-| [Dockhand](https://github.com/fnsys/dockhand)             | Automated container image update management                                                 |
 | [Doco-CD](https://github.com/kimdre/doco-cd)              | Continuous delivery for Docker Compose stacks                                               |
 | [Databasus](https://databasus.com/)                       | Database management UI                                                                      |
 | [IT Tools](https://it-tools.tech/)                        | Collection of handy IT utilities                                                            |
@@ -20,26 +22,39 @@ Docker Compose services running on the management node, managed through GitOps p
 | [Peanut](https://github.com/brandawg93/peanut)            | UPS monitoring and management                                                               |
 | [Speedtest Tracker](https://docs.speedtest-tracker.dev/)  | Continuous internet speed monitoring (backed by PostgreSQL)                                 |
 | [Arcane](https://getarcane.app/)                          | Docker management UI with OIDC SSO (backed by PostgreSQL)                                   |
-| [cAdvisor](https://github.com/google/cadvisor)            | Container resource usage and performance metrics exporter                                   |
+
+### VPN node (`docker/vpn/`)
+
+| Service                                       | Description                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [Traefik](https://traefik.io/)                | Reverse proxy and TLS termination for VPN-hosted services (e.g. wg-easy UI)              |
+| [wg-easy](https://github.com/wg-easy/wg-easy) | WireGuard VPN management UI with noNAT setup (backed by Litestream DB replication to S3) |
+| [Netbird](https://netbird.io/)                | WireGuard-based overlay VPN client for remote access                                     |
+| [Doco-CD](https://github.com/kimdre/doco-cd)  | Continuous delivery for Docker Compose stacks                                            |
 
 ## Directory Structure
 
 ```
 docker/
-└── mgmt/               # Management node services
+├── mgmt/               # Management node services
+│   ├── traefik/
+│   ├── infisical/
+│   ├── home-assistant/
+│   ├── omada-controller/
+│   ├── duplicati/
+│   ├── appraise/        # disabled
+│   ├── dockhand/        # disabled
+│   ├── doco-cd/
+│   ├── databasus/
+│   ├── it-tools/
+│   ├── stirling-pdf/
+│   ├── peanut/
+│   ├── speedtracker/
+│   ├── arcane/
+│   └── cadvisor/        # disabled
+└── vpn/                # VPN node services
     ├── traefik/
-    ├── infisical/
-    ├── home-assistant/
-    ├── omada-controller/
-    ├── duplicati/
-    ├── appraise/
-    ├── dockhand/
-    ├── doco-cd/
-    ├── databasus/
-    ├── it-tools/
-    ├── stirling-pdf/
-    ├── peanut/
-    ├── speedtracker/
-    ├── arcane/
-    └── cadvisor/
+    ├── wireguard/      # wg-easy + litestream
+    ├── netbird/
+    └── doco-cd/
 ```
