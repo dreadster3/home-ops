@@ -19,3 +19,18 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
+  litestream:
+    image: litestream/litestream:0.5.15@sha256:f45ca298a567bef6edd23d43429b5f80721473a9a9719e467f11d7888999403e
+    restart: unless-stopped
+    container_name: wg-easy-litestream
+    command: replicate
+    env_file:
+      - ./litestream.env
+    volumes:
+      - /opt/docker/wireguard:/data
+      - ./litestream.yml:/etc/litestream.yml:ro
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true

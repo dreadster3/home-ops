@@ -69,6 +69,7 @@ services:
   traefik:
     container_name: traefik
     image: docker.io/traefik:v3.7.10@sha256:9c3b91d5fb7770853ca5c1124a23c34bf2d9b47ffaebeab2614cbaf410dcb2ac
+    restart: unless-stopped
     env_file:
       - traefik.env
     ports:
@@ -103,9 +104,6 @@ services:
     networks:
       proxy:
         ipv4_address: 172.22.1.254
-      netbird:
-        aliases:
-          - traefik.local
 
 volumes:
   letsencrypt:
@@ -115,9 +113,9 @@ networks:
   proxy:
     name: proxy
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "1450" # match eth0 MTU; bridges default to 1500 and oversize packets get dropped at the 1450 hop
     ipam:
       config:
         - subnet: 172.22.1.0/24
           gateway: 172.22.1.1
-  netbird:
-    external: true
