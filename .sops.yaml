@@ -8,15 +8,6 @@ creation_rules:
     key_groups:
       - age:
           - *primary
-  - path_regex: ^docker/pangolin01/pangolin/config/pangolin/config.yml$
-    encrypted_regex: ^(dashboard_url|base_endpoint|configure_url|base_domain|origins|no_reply)$
-    key_groups:
-      - age:
-          - *pangolin
-  - path_regex: ^docker/pangolin01.*
-    key_groups:
-      - age:
-          - *pangolin
   - path_regex: ^.+\.sops\.ya?ml$
     encrypted_regex: ^(data|stringData|crt|key|token|secretboxencryptionsecret|bootstraptoken|secret|id)$
     key_groups:
@@ -26,3 +17,23 @@ creation_rules:
     key_groups:
       - age:
           - *primary
+  # pangolin
+  - path_regex: ^docker/pangolin01/pangolin/config/crowdsec/postoverflows/s01-whitelist/01-home-whitelist.ya?ml$
+    encrypted_regex: ^(expression)$
+    key_groups:
+      - age:
+          - *pangolin
+  - path_regex: ^docker/pangolin01/pangolin/config/traefik/traefik-dynamic.ya?ml$
+    encrypted_regex: ^(rule|allowedIPAddresses)$
+    key_groups:
+      - age:
+          - *pangolin
+  - path_regex: ^docker/pangolin01/pangolin/config/pangolin/config.yml$
+    encrypted_regex: ^(dashboard_url|base_endpoint|configure_url|base_domain|origins|no_reply)$
+    key_groups:
+      - age:
+          - *pangolin
+  - path_regex: ^docker/pangolin01.*
+    key_groups:
+      - age:
+          - *pangolin
