@@ -45,9 +45,6 @@ services:
       - traefik.env
     environment:
       TZ: Europe/Lisbon
-    ports:
-      - 80:80
-      - 443:443
     configs:
       - source: traefik.yaml
         target: /etc/traefik/traefik.yaml
@@ -79,7 +76,6 @@ services:
     environment:
       COLLECTIONS: crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/linux crowdsecurity/iptables
     ports:
-      - 6060:6060
       - 8080:8080
     configs:
       - source: 01-home-whitelist.yaml
