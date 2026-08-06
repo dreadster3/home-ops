@@ -1,0 +1,407 @@
+services:
+  pangolin:
+    image: fosrl/pangolin:1.21
+    container_name: pangolin
+    restart: unless-stopped
+    env_file: pangolin.env
+    volumes:
+      - /opt/docker/pangolin:/app/config
+      - ./config/geolite:/app/geolite
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/"]
+      interval: "10s"
+      timeout: "10s"
+      retries: 15
+
+  gerbil:
+    image: fosrl/gerbil:1.4.3
+    container_name: gerbil
+    restart: unless-stopped
+    depends_on:
+      pangolin:
+        condition: service_healthy
+    command:
+      - --reachableAt=http://gerbil:3003
+      - --generateAndSaveKeyTo=/var/config/key
+      - --remoteConfig=http://pangolin:3001/api/v1/
+    volumes:
+      - /opt/docker/pangolin:/var/config
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    ports:
+      - 51820:51820/udp
+      - 21820:21820/udp
+      - 443:443
+      - 80:80
+      - 25565:25565
+
+  traefik:
+    image: docker.io/traefik:v3.7.10@sha256:9c3b91d5fb7770853ca5c1124a23c34bf2d9b47ffaebeab2614cbaf410dcb2ac
+    container_name: traefik
+    restart: unless-stopped
+    network_mode: service:gerbil
+    env_file:
+      - traefik.env
+    environment:
+      TZ: Europe/Lisbon
+    ports:
+      - 80:80
+      - 443:443
+    configs:
+      - source: traefik.yaml
+        target: /etc/traefik/traefik.yaml
+      - source: traefik-dynamic.yaml
+        target: /etc/traefik/traefik-dynamic.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+      - /var/log/docker/traefik:/var/log/traefik
+      - ./config/traefik:/etc/traefik/config:ro
+    secrets:
+      - crowdsec_lapi_key
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    cap_drop:
+      - ALL
+    cap_add:
+      - CAP_NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.7.8@sha256:2f527c9bb8b367120eb08b82890aa912ce96bfa1ada93dda0721700e4b4e0dde
+    container_name: crowdsec
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: crowdsecurity/traefik crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/linux crowdsecurity/iptables
+    ports:
+      - 6060:6060
+      - 8080:8080
+    configs:
+      - source: 01-home-whitelist.yaml
+        target: /etc/crowdsec/postoverflows/s01-whitelist/01-home-whitelist.yaml
+    volumes:
+      - ./config/crowdsec/acquis.d:/etc/crowdsec/acquis.d:ro
+      - /opt/docker/crowdsec:/etc/crowdsec
+      - /opt/docker/crowdsec/data:/var/lib/crowdsec/data
+      - /var/log/docker/traefik:/var/log/traefik:ro
+      - /var/log/journal:/var/log/host/journal:ro
+      - /var/log/auth.log:/var/log/host/auth.log:ro
+      - /var/log/syslog:/var/log/host/syslog:ro
+
+volumes:
+  letsencrypt:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
+    name: pangolin
+
+secrets:
+  crowdsec_lapi_key:
+    file: ./secrets/crowdsec_lapi_key
+
+configs:
+  pangolin.yaml:
+    content: |
+      gerbil:
+        start_port: 51820
+        base_endpoint: "pangolin.${EXTERNAL_DOMAIN}"
+
+      app:
+        dashboard_url: "https://pangolin.${EXTERNAL_DOMAIN}"
+        log_level: "info"
+        telemetry:
+          anonymous_usage: false
+
+      domains:
+        main:
+          base_domain: ${EXTERNAL_DOMAIN}
+          cert_resolver: letsencrypt
+
+      server:
+        maxmind_db_path: "/app/geolite/GeoLite2-Country.mmdb"
+        maxmind_asn_path: "/app/geolite/GeoLite2-ASN.mmdb"
+        cors:
+          origins: ["https://pangolin.${EXTERNAL_DOMAIN}"]
+          methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+          allowed_headers: ["X-CSRF-Token", "Content-Type"]
+          credentials: false
+
+      flags:
+        require_email_verification: true
+        disable_signup_without_invite: true
+        disable_user_create_org: false
+        allow_raw_resources: true
+        disable_enterprise_features: false
+
+      email:
+        smtp_host: smtp.gmail.com
+        smtp_port: 587
+        no_reply: no-reply@${EXTERNAL_DOMAIN}
+  traefik-dynamic.yaml:
+    content: |
+      http:
+        middlewares:
+          security-headers:
+            headers:
+              contentTypeNosniff: true
+              customFrameOptionsValue: SAMEORIGIN
+              customResponseHeaders:
+                Content-Security-Policy: "upgrade-insecure-requests; frame-ancestors 'self'"
+                Permissions-Policy: "accelerometer=(),camera=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),payment=(),usb=()"
+                Server: ""
+                X-Powered-By: ""
+              hostsProxyHeaders:
+                - X-Forwarded-Host
+              referrerPolicy: strict-origin-when-cross-origin
+              sslProxyHeaders:
+                X-Forwarded-Proto: https
+          badger:
+            plugin:
+              badger:
+                disableForwardAuth: true
+          crowdsec:
+            plugin:
+              bouncer:
+                enabled: true
+                logLevel: "info"
+                crowdsecMode: "live"
+                crowdsecLapiKeyFile: /run/secrets/crowdsec_lapi_key
+                crowdsecLapiHost: crowdsec:8080
+                crowdsecLapiScheme: http
+                crowdsecAppsecEnabled: true
+                crowdsecAppsecHost: crowdsec:7422
+                crowdsecAppsecFailureBlock: true
+                crowdsecAppsecUnreachableBlock: true
+                banHTMLFilePath: /etc/traefik/config/ban.html
+          geoblock:
+            plugin:
+              geoblock:
+                silentStartUp: false
+                allowLocalRequests: true
+                logLocalRequests: false
+                logAllowedRequests: false
+                logApiRequests: false
+                logFilePath: "/var/log/traefik/geoblock.log"
+                api: "https://get.geojs.io/v1/ip/country/{ip}"
+                apiTimeoutMs: 750
+                cacheSize: 25
+                ipDatabaseCachePath: "/opt/geoblock-cache.db"
+                forceMonthlyUpdate: true
+                allowUnknownCountries: false
+                unknownCountryApiResponse: "nil"
+                # Services narrow down the allowed countries.
+                # First layer of filtering is done by the geoblock plugin, second layer is done by the service itself.
+                allowedIPAddresses:
+                  - ${PUBLIC_IP}
+                  - ${NETBIRD_PUBLIC_IP}
+                countries:
+                  - PT
+                  - AE
+                  - NL
+
+          redirect-to-https:
+            redirectScheme:
+              scheme: https
+
+        routers:
+          # HTTP to HTTPS redirect router
+          main-app-router-redirect:
+            rule: "Host(`pangolin.${EXTERNAL_DOMAIN}`)"
+            service: next-service
+            entryPoints:
+              - web
+            middlewares:
+              - security-headers
+              - redirect-to-https
+              - crowdsec
+              - geoblock
+              - badger
+
+          # Next.js router (handles everything except API and WebSocket paths)
+          next-router:
+            rule: "Host(`pangolin.${EXTERNAL_DOMAIN}`) && !PathPrefix(`/api/v1`)"
+            service: next-service
+            entryPoints:
+              - websecure
+            middlewares:
+              - security-headers
+              - crowdsec
+              - geoblock
+              - badger
+            tls:
+              certResolver: letsencrypt
+
+          # API router (handles /api/v1 paths)
+          api-router:
+            rule: "Host(`pangolin.${EXTERNAL_DOMAIN}`) && PathPrefix(`/api/v1`)"
+            service: api-service
+            entryPoints:
+              - websecure
+            middlewares:
+              - security-headers
+              - crowdsec
+              - geoblock
+              - badger
+            tls:
+              certResolver: letsencrypt
+
+          # WebSocket router
+          ws-router:
+            rule: "Host(`pangolin.${EXTERNAL_DOMAIN}`)"
+            service: api-service
+            entryPoints:
+              - websecure
+            middlewares:
+              - security-headers
+              - crowdsec
+              - geoblock
+              - badger
+            tls:
+              certResolver: letsencrypt
+
+        services:
+          next-service:
+            loadBalancer:
+              servers:
+                - url: "http://pangolin:3002" # Next.js server
+
+          api-service:
+            loadBalancer:
+              servers:
+                - url: "http://pangolin:3000" # API/WebSocket server
+
+      tcp:
+        serversTransports:
+          pp-transport-v1:
+            proxyProtocol:
+              version: 1
+          pp-transport-v2:
+            proxyProtocol:
+              version: 2
+  traefik.yaml:
+    content: |
+      api:
+        dashboard: true
+        insecure: true
+
+      providers:
+        http:
+          endpoint: http://pangolin:3001/api/v1/traefik-config
+          pollInterval: 5s
+        docker:
+          exposedByDefault: false
+          network: proxy
+        file:
+          filename: /etc/traefik/traefik-dynamic.yaml
+
+      experimental:
+        plugins:
+          badger:
+            moduleName: github.com/fosrl/badger
+            version: v1.5.0
+          bouncer:
+            moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+            version: v1.7.1
+          geoblock:
+            moduleName: github.com/PascalMinder/geoblock
+            version: v0.3.8
+
+      entryPoints:
+        web:
+          address: ":80"
+          http:
+            redirections:
+              entryPoint:
+                to: websecure
+                scheme: https
+        websecure:
+          address: ":443"
+          http:
+            tls:
+              certResolver: "letsencrypt"
+            encodedCharacters:
+              allowEncodedSlash: true
+              allowEncodedQuestionMark: true
+
+      certificatesResolvers:
+        letsencrypt:
+          acme:
+            email: "afonso.antunes@live.com.pt"
+            storage: "/letsencrypt/acme.json"
+            caServer: "https://acme-v02.api.letsencrypt.org/directory"
+            dnsChallenge:
+              provider: cloudflare # or your DNS provider
+              resolvers:
+                - "1.1.1.1:53"
+                - "8.8.8.8:53"
+
+      log:
+        filePath: /var/log/traefik/traefik.log
+        format: json
+        level: DEBUG
+
+      accessLog:
+        filePath: /var/log/traefik/access.log
+        format: json
+
+      serversTransport:
+        insecureSkipVerify: true
+
+      ping:
+        entryPoint: "web"
+
+  01-home-whitelist.yaml:
+    content: |
+      name: home/whitelist ## Must be unqiue
+      description: "Whitelist events from my home dynamic IP"
+      whitelist:
+        reason: "Home dynamic IP"
+        expression:
+            - evt.Overflow.Alert.Source.IP in LookupHost("wg.${EXTERNAL_DOMAIN}")
+            - evt.Overflow.Alert.Source.IP in LookupHost("${OTHER_ALLOWED_DOMAIN}")
+
+  crowdsec-config.yaml:
+    content: |
+      common:
+      log_media: stdout
+      log_level: info
+      log_dir: /var/log/
+      config_paths:
+      config_dir: /etc/crowdsec/
+      data_dir: /var/lib/crowdsec/data/
+      simulation_path: /etc/crowdsec/simulation.yaml
+      hub_dir: /etc/crowdsec/hub/
+      index_path: /etc/crowdsec/hub/.index.json
+      notification_dir: /etc/crowdsec/notifications/
+      plugin_dir: /usr/local/lib/crowdsec/plugins/
+      crowdsec_service:
+      acquisition_path: /etc/crowdsec/acquis.yaml
+      acquisition_dir: /etc/crowdsec/acquis.d
+      parser_routines: 1
+      plugin_config:
+      user: nobody
+      group: nogroup
+      cscli:
+      output: human
+      db_config:
+      log_level: info
+      type: sqlite
+      db_path: /var/lib/crowdsec/data/crowdsec.db
+      flush:
+        max_items: 5000
+        max_age: 7d
+      use_wal: false
+      api:
+      client:
+        insecure_skip_verify: false
+        credentials_path: /etc/crowdsec/local_api_credentials.yaml
+      server:
+        log_level: info
+        listen_uri:

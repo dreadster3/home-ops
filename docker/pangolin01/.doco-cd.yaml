@@ -1,0 +1,4 @@
+name: pangolin
+working_dir: docker/pangolin01/pangolin
+compose_files:
+  - compose.yaml
