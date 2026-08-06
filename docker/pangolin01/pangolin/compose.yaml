@@ -139,7 +139,7 @@ configs:
         disable_signup_without_invite: true
         disable_user_create_org: false
         allow_raw_resources: true
-        disable_enterprise_features: false
+        disable_enterprise_features: true
 
       email:
         smtp_host: smtp.gmail.com
