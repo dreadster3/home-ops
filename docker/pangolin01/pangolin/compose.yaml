@@ -37,7 +37,6 @@ services:
       - 21820:21820/udp
       - 443:443
       - 80:80
-      - 25565:25565
 
   traefik:
     image: docker.io/traefik:v3.7.10@sha256:9c3b91d5fb7770853ca5c1124a23c34bf2d9b47ffaebeab2614cbaf410dcb2ac
@@ -320,9 +319,20 @@ configs:
               entryPoint:
                 to: websecure
                 scheme: https
+            middlewares:
+              - security-headers@file
+              - crowdsec@file
         websecure:
           address: ":443"
+          transport:
+            respondingTimeouts:
+              readTimeout: '0'
+              idleTimeout: '0'
+              writeTimeout: '0'
           http:
+            middlewares:
+              - security-headers@file
+              - crowdsec@file
             tls:
               certResolver: "letsencrypt"
             encodedCharacters:
@@ -345,6 +355,9 @@ configs:
         filePath: /var/log/traefik/traefik.log
         format: json
         level: DEBUG
+        maxBackups: 3
+        maxAge: 3
+        compress: true
 
       accessLog:
         filePath: /var/log/traefik/access.log
@@ -352,6 +365,9 @@ configs:
 
       serversTransport:
         insecureSkipVerify: true
+        forwardingTimeouts:
+          responseHeaderTimeout: 0s
+          idleConnTimeout: 0s
 
       ping:
         entryPoint: "web"
