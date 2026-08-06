@@ -47,6 +47,9 @@ services:
       - traefik.env
     environment:
       TZ: Europe/Lisbon
+    depends_on:
+      pangolin:
+        condition: service_healthy
     configs:
       - source: traefik.yaml
         target: /etc/traefik/traefik.yaml
