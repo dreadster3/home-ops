@@ -4,10 +4,8 @@ services:
     container_name: pangolin
     restart: unless-stopped
     env_file: pangolin.env
-    configs:
-      - source: pangolin.yaml
-        target: /app/config/config.yml
     volumes:
+      - ./config/pangolin/config.yml:/app/config/config.yml:ro
       - /opt/docker/pangolin:/app/config
       - ./config/geolite:/app/geolite
     healthcheck:

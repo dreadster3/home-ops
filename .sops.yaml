@@ -8,6 +8,11 @@ creation_rules:
     key_groups:
       - age:
           - *primary
+  - path_regex: ^docker/pangolin01/pangolin/config/pangolin/config.yml$
+    encrypted_regex: ^(dashboard_url|base_endpoint|configure_url|base_domain|origins|no_reply)$
+    key_groups:
+      - age:
+          - *pangolin
   - path_regex: ^docker/pangolin01.*
     key_groups:
       - age:
