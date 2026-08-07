@@ -1,0 +1,57 @@
+gerbil:
+    start_port: 51820
+    base_endpoint: ENC[AES256_GCM,data:pDTqgzkTojC6WAGibgbLp3zV/RRXiuI=,iv:G8KXDxm0Tjb5Oc3uhB1ZDjYbMXmKWcbRtaoCmJZXAvA=,tag:F2vbxi5xaoejSFIOhmA2bA==,type:str]
+app:
+    dashboard_url: ENC[AES256_GCM,data:d/jo7/vz87TqmD7kelNafvPnXwEWR8ODFOxjpjYzxQ==,iv:LDkWyT8CDSfgrUPRCTVaZ5AyWUWHp6iadUJya/s4lT0=,tag:7H4L6uVOJjtwydgXpAA1ng==,type:str]
+    log_level: info
+    telemetry:
+        anonymous_usage: false
+domains:
+    main:
+        base_domain: ENC[AES256_GCM,data:XgW1TyIIyq9oqUV7f/8=,iv:eEOlUbdcFABe6ySj6aVURHNYrMGZZy7P9Sf/eDKbuAk=,tag:nLlQO9a1Gnce+/nez3DUIg==,type:str]
+        cert_resolver: letsencrypt
+    family:
+        base_domain: ENC[AES256_GCM,data:UQLjq4isj33TTg==,iv:qEECfYoS+3EHA6MLx4qzIKCGdq0trBQEUUYqheoK6N8=,tag:TQrPMy1tgBGwEmIrCj+/vw==,type:str]
+        cert_resolver: letsencrypt
+server:
+    maxmind_db_path: /app/geolite/GeoLite2-Country.mmdb
+    maxmind_asn_path: /app/geolite/GeoLite2-ASN.mmdb
+    cors:
+        origins:
+            - ENC[AES256_GCM,data:YMke1XMpUD925k9lxPiRRTPlqQR6xeSSkfQUNYgGiQ==,iv:tHcRrZs07hKEfpnk+R637IL8YvjwBV9Sc2NF8Qy3lX8=,tag:oeOKS71VLg+489c65D1weQ==,type:str]
+        methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+        allowed_headers:
+            - X-CSRF-Token
+            - Content-Type
+        credentials: false
+flags:
+    require_email_verification: true
+    disable_signup_without_invite: true
+    disable_user_create_org: false
+    allow_raw_resources: true
+    disable_enterprise_features: true
+email:
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    smtp_secure: true
+    no_reply: ENC[AES256_GCM,data:dP2oPemRvW1KuUmRIYRRd1PLooVcZPE=,iv:YSYGwiIHadKXH1cEuaoex7udfWKodEgvWyK4iRXQHgM=,tag:w/dokw2scGadVua/hy8uKQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBtZm9YNXhOUUxMYTRVTkx4
+            OG9zR1k3NXhZMHhPMU0xUHQ3SWRMNGxCV2xRCjJrNytJeFUwOXBQOGhQMU5QKzNP
+            UjNxZkhVMlEyeVoyaFgxSC9ndk9BbUEKLS0tIDBtdnlLQ0swSEFiZXl5L3JPWldo
+            dy9mekl0Zk1VN25yeW5MY1lZTUtQSlEKFVrNI4Uz8VFiGSy3ueli+Bj5dnfofpt4
+            QGwL3jlW0TjTlMtTyC9kWLrs8AmAtxjDEnI7M/go0+oe5xVXCRk25w==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age12eqkqgn8vpp4lt0xutx7mz0typuj4n0lffx77752rrp9t4af758qhmr65n
+    encrypted_regex: ^(.*url|base_endpoint|base_domain|origins|no_reply)$
+    lastmodified: "2026-08-06T19:54:08Z"
+    mac: ENC[AES256_GCM,data:X/iiDY6o2Ne1GON8Vd7BSApHakI2Gl/buZoCplv8/kqI9BSGmjHTl58O3mPPi6wEjU5tPui8+DwAF21nzqUJQKB0cjpgWAiSul8YeuyBO0tOnyYRTu6xZrstiTAHkSPcu8gOsQDXS6pVSFbn5xIAMqVhPkcWKXKZHuDIEKTzvKQ=,iv:qGsWSctvO5lRXOeNLz4mB5m1LgGc0uQ9rNBBjZSanpU=,tag:6W6Yopbrrv0Qotc5fUoi8g==,type:str]
+    version: 3.13.3

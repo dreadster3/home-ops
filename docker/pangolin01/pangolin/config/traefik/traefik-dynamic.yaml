@@ -1,0 +1,146 @@
+http:
+    middlewares:
+        security-headers:
+            headers:
+                contentTypeNosniff: true
+                customFrameOptionsValue: SAMEORIGIN
+                customResponseHeaders:
+                    Content-Security-Policy: upgrade-insecure-requests; frame-ancestors 'self'
+                    Permissions-Policy: accelerometer=(),camera=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),payment=(),usb=()
+                    Server: ""
+                    X-Powered-By: ""
+                hostsProxyHeaders:
+                    - X-Forwarded-Host
+                referrerPolicy: strict-origin-when-cross-origin
+                sslProxyHeaders:
+                    X-Forwarded-Proto: https
+        badger:
+            plugin:
+                badger:
+                    disableForwardAuth: true
+        crowdsec:
+            plugin:
+                bouncer:
+                    enabled: true
+                    logLevel: info
+                    crowdsecMode: live
+                    crowdsecLapiKeyFile: /run/secrets/crowdsec_lapi_key
+                    crowdsecLapiHost: crowdsec:8080
+                    crowdsecLapiScheme: http
+                    crowdsecAppsecEnabled: true
+                    crowdsecAppsecHost: crowdsec:7422
+                    crowdsecAppsecFailureBlock: true
+                    crowdsecAppsecUnreachableBlock: true
+                    banHTMLFilePath: /etc/traefik/ban.html
+        geoblock:
+            plugin:
+                geoblock:
+                    silentStartUp: false
+                    allowLocalRequests: true
+                    logLocalRequests: false
+                    logAllowedRequests: false
+                    logApiRequests: false
+                    logFilePath: /var/log/traefik/geoblock.log
+                    api: https://get.geojs.io/v1/ip/country/{ip}
+                    apiTimeoutMs: 750
+                    cacheSize: 25
+                    ipDatabaseCachePath: /opt/geoblock-cache.db
+                    forceMonthlyUpdate: true
+                    allowUnknownCountries: false
+                    unknownCountryApiResponse: nil
+                    allowedIPAddresses:
+                        - ENC[AES256_GCM,data:D3SNH/LbeCzp,iv:VPWjt3K3p7Ni9Wc+oaxqQqfHt7KKm7kBBjAkSPjIBM4=,tag:LvEACFZzVbWvFkc3Xh77ag==,type:comment]
+                        - ENC[AES256_GCM,data:soN2Wb/lRE7dmB+q,iv:x6eRuXKMwZRI0SkYxHkpeq8nGx/rNbc+bKMNh628pBs=,tag:WrlBnTA1oQdXrikSLwX9pQ==,type:str]
+                        - ENC[AES256_GCM,data:V1mmHcWYQuI=,iv:nt58L7SlUw0LJF0UrmgMHrYLCL1puprNCvBJg4tFZ7A=,tag:BsCvpG1pDOj6uO0B9fNiLA==,type:comment]
+                        - ENC[AES256_GCM,data:vzSxKrMV6FnWj3xN5M8=,iv:0dgQywv9/mapj/qKiDi8Sk1ARy7Z7fh7qyy8X4PDoJM=,tag:qlAOiod38W5wgNUAOUImrA==,type:str]
+                    countries:
+                        - PT
+                        - AE
+                        - NL
+        redirect-to-https:
+            redirectScheme:
+                scheme: https
+    routers:
+        # HTTP to HTTPS redirect router
+        main-app-router-redirect:
+            rule: ENC[AES256_GCM,data:ERgNuHCQLLNe/16HcN/Szb5AsEetS14kvWwLqW4WPw==,iv:tPQwGJ4yhDBEHSLujx+Sa1+7ZGysExmWMxbqBVh674o=,tag:4YfulnMjt+j/FXQ/Y2+HpA==,type:str]
+            service: next-service
+            entryPoints:
+                - web
+            middlewares:
+                - security-headers
+                - redirect-to-https
+                - crowdsec
+                - geoblock
+                - badger
+        # Next.js router (handles everything except API and WebSocket paths)
+        next-router:
+            rule: ENC[AES256_GCM,data:RDfc7kfRvzT9MuDC16nqBbuYfOCALHUe3aumcc4ajh26kv8gO9KCjibiouxPXSc5HWB5xMwaCKpI,iv:JPAL31xfH7KSOjmBMbjs72KenIOL9RicivJ8LmBJBhw=,tag:eNHqm4KrO50hEfF3yk0fVg==,type:str]
+            service: next-service
+            entryPoints:
+                - websecure
+            middlewares:
+                - security-headers
+                - crowdsec
+                - geoblock
+                - badger
+            tls:
+                certResolver: letsencrypt
+        # API router (handles /api/v1 paths)
+        api-router:
+            rule: ENC[AES256_GCM,data:35HM72dG68O8LXwutc1dGVjbh+t2Qj6w+eXifaH6J3rJa2F5qJzNNOsczMWbKz8MvpjnTWu7rH4=,iv:ZhHeE4RkdWvGDlkkDVTvi/8+YvboAzBZ3DSkPR363Vw=,tag:F3bPToEcDnDMPhQc1qmzDA==,type:str]
+            service: api-service
+            entryPoints:
+                - websecure
+            middlewares:
+                - security-headers
+                - crowdsec
+                - geoblock
+                - badger
+            tls:
+                certResolver: letsencrypt
+        # WebSocket router
+        ws-router:
+            rule: ENC[AES256_GCM,data:v2CLt0LbUZzjLbgoMWIdxzubQnJL1bGPNO0sta0/9w==,iv:9G/corcV6R7mFJ96R9H0DAHvzn06GT+CVVnujZsqACM=,tag:dkhzlqS/f0hSLN46Fph1mg==,type:str]
+            service: api-service
+            entryPoints:
+                - websecure
+            middlewares:
+                - security-headers
+                - crowdsec
+                - geoblock
+                - badger
+            tls:
+                certResolver: letsencrypt
+    services:
+        next-service:
+            loadBalancer:
+                servers:
+                    - url: http://pangolin:3002 # Next.js server
+        api-service:
+            loadBalancer:
+                servers:
+                    - url: http://pangolin:3000 # API/WebSocket server
+tcp:
+    serversTransports:
+        pp-transport-v1:
+            proxyProtocol:
+                version: 1
+        pp-transport-v2:
+            proxyProtocol:
+                version: 2
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBGeWZYN2cybHdSdFo1b0hm
+            UnJKSFI2R25Da0dsY1loWkNzVVJrU3Q5bzJRCmF0bnE0SThGRnpCK2tqUC9QcmRO
+            Q0hJaitIWVErd1E1WWpSR1J0L3pCMFEKLS0tIFpPRFRoaHhuN3MzZFhmR2Jrelkv
+            ejhpR05aSUpDZ3Z4REFRbTV5VVowTVEKUU4oyjkm8sxtzhFLw62+HlDVl2Qa/dOe
+            ntiY9kjGtiw/pkterKTbls545Zxe/DOVVoMB/aQ5uDHT/vRw6KzNmQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age12eqkqgn8vpp4lt0xutx7mz0typuj4n0lffx77752rrp9t4af758qhmr65n
+    encrypted_regex: ^(rule|allowedIPAddresses)$
+    lastmodified: "2026-08-06T19:20:51Z"
+    mac: ENC[AES256_GCM,data:wQB+WySh4BQ2J90u7oYPSaM9MKrOvAH0s3Qe3Jxs6/ES7kECqTQpODVd3tkLU8qMnD3o9IJHYJ7hK9pCJUdIEcPkGz72Exe40P8bR4RrELbwCioveeMukHKik2r42seJ3+Oc+c3NkWIo1LDo/TxHtfZ2bmLtGaKm9kQWI2f5TwE=,iv:47I2CNidcXWCgfaeH3QdLkAg2OAoxyn4mx+lB1odKTg=,tag:bEoVqSgjWUGFjjkA9GBAxw==,type:str]
+    version: 3.13.3

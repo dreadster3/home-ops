@@ -1,0 +1,22 @@
+name: home/whitelist ## Must be unqiue
+description: Whitelist events from my home dynamic IP
+whitelist:
+  reason: Home dynamic IP
+  expression:
+    - ENC[AES256_GCM,data:Q+PRaoxXfBix0WG4O2EVuVCogcqm88UkPt/8u2PzoF3HYFf3oNUO0XJswUndgF7DQUHsMTwTW879btGJC2HE,iv:oTdkic6+2drh8tIucZDevZ9VwDF9cQE5uZ7M0XXlr9g=,tag:U+M0/opzQykwN8dVSuPahg==,type:str]
+    - ENC[AES256_GCM,data:7IARfeSE3lf8LwaYyfSPILE6JWGsAQeGNtRv+YD1kSNpdZyUloOUvsFzB8/9E2YY6cZTo6H3+aFU3n6GIJ9rN4by,iv:U3ecKa9EvJJX+9n0D877uLEvqQJrT4Wncwohkw3/JAg=,tag:qEmwNtGidNNfTU5Y1iq6LA==,type:str]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBMdHYzUFBVU2JKZjY2Ry9x
+        eUdzYVl6NjNERnJGMEhXYXV1YkdxTDY1RUhRCkY4akRZeFMzREtMUGxHNXI1RHlO
+        Y0gzOGFscHMwY0lDTG9NV212WjZSN1UKLS0tIFVxT3phNnJtbFl1VGFmczFWVThm
+        K1MzMXU5eGFIM1JYdGhiVGcwdkplNU0KSo1UvNpSzcQ7dQqkOGUOTdp6JC+XJYA6
+        qBIzOW6usUBrldE/Xhr81RxDGsFtsJXGBOynEu53pjje6QfR4oxMsg==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age12eqkqgn8vpp4lt0xutx7mz0typuj4n0lffx77752rrp9t4af758qhmr65n
+  encrypted_regex: ^(expression)$
+  lastmodified: "2026-08-06T19:24:22Z"
+  mac: ENC[AES256_GCM,data:ohNdJaunqnYC1wxJvUX6xHaRQta3C3V58yo7QcNfAM2lGUmmwPCPB8loWmPt9rqGngsxgeJdB2BnsSQiphfl9Yw3HVc9MEVBWTIQyjfO2lb7HAC/aJ+kkj8fd3RAesyCkZt53ldui012ZgXhWZUMLJexCTbAzcbTKjEPLri6EG8=,iv:Y1N+9aJcolTVHjcBWiZcUAQbIOWvvdBBwHL9f2+0lTs=,tag:+7RLjwcPfu2GZ9MdrP8Kog==,type:str]
+  version: 3.13.3
