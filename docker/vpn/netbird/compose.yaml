@@ -1,6 +1,6 @@
 services:
   netbird:
-    image: ghcr.io/netbirdio/netbird:0.74.7@sha256:b63f4c1584118aeebacfdfd841f0351122a53fccac182b4c43be428c2c9a6b73
+    image: ghcr.io/netbirdio/netbird:0.76.2@sha256:597a57aaf7d92de724996ccd887c2090eda6eccdf733955eb7986ebb652a2560
     restart: unless-stopped
     container_name: netbird
     hostname: vpn
