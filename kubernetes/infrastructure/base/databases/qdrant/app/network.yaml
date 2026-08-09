@@ -9,8 +9,10 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            "k8s:io.kubernetes.pod.namespace": qdrant
-  ingress: []
+            io.kubernetes.pod.namespace: qdrant
+  ingress:
+    - fromEndpoints:
+        matchLabels: {}
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -25,20 +27,6 @@ spec:
       app.kubernetes.io/instance: qdrant
   ingress:
     - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: qdrant
-            app.kubernetes.io/name: qdrant
-            app.kubernetes.io/instance: qdrant
-      toPorts:
-        - ports:
-            - port: "6333"
-              protocol: TCP
-            - port: "6334"
-              protocol: TCP
-            - port: "6335"
-              protocol: TCP
-  egress:
-    - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: qdrant
             app.kubernetes.io/name: qdrant
