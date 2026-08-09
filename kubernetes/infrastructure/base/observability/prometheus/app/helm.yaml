@@ -39,9 +39,9 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 466Mi
+              memory: &memory 466Mi
             limits:
-              memory: 466Mi
+              memory: *memory
 
           grpcListenLocal: false
           httpListenLocal: false
@@ -60,9 +60,9 @@ spec:
         resources:
           requests:
             cpu: 550m
-            memory: 5.5Gi
+            memory: &memory 6Gi
           limits:
-            memory: 5.5Gi
+            memory: *memory
 
         ruleSelectorNilUsesHelmValues: false
         podMonitorSelector:
@@ -87,9 +87,9 @@ spec:
         resources:
           requests:
             cpu: 10m
-            memory: 64Mi
+            memory: &memory 68Mi
           limits:
-            memory: 64Mi
+            memory: *memory
 
     crds:
       enabled: false

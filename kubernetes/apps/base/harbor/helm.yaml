@@ -39,7 +39,7 @@ spec:
       secretName: harbor-token-encryption
       resources:
         requests:
-          memory: &memory 256Mi
+          memory: &memory 320Mi
           cpu: 5m
         limits:
           memory: *memory
@@ -74,7 +74,7 @@ spec:
       registry:
         resources:
           requests:
-            memory: &memory 192Mi
+            memory: &memory 256Mi
             cpu: 5m
           limits:
             memory: *memory
@@ -107,9 +107,9 @@ spec:
       resources:
         requests:
           cpu: 5m
-          memory: &memory 1280Mi
+          memory: 256Mi
         limits:
-          memory: *memory
+          memory: 1280Mi
 
     expose:
       type: route
