@@ -9,4 +9,3 @@ resources:
   - dragonfly
   # - redis-operator
   - cnpg
-  - qdrant

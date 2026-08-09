@@ -161,13 +161,3 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: toolhive
             app: mcpremoteproxy
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: qdrant
-            app.kubernetes.io/name: qdrant
-      toPorts:
-        - ports:
-            - port: "6333"
-              protocol: TCP
-            - port: "6334"
-              protocol: TCP
