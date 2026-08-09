@@ -8,3 +8,9 @@ spec:
   env:
     - name: SEARXNG_URL
       value: http://searxng.searxng.svc.cluster.local
+  resources:
+    requests:
+      cpu: 5m
+      memory: &memory 65Mi
+    limits:
+      memory: *memory

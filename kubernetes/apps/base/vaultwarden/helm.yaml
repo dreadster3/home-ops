@@ -68,6 +68,12 @@ spec:
               - containerPort: 80
                 name: http
                 protocol: TCP
+            resources:
+              requests:
+                cpu: 5m
+                memory: &memory 168Mi
+              limits:
+                memory: *memory
         pod:
           securityContext:
             runAsUser: 1000

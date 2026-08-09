@@ -88,6 +88,13 @@ spec:
               namespace: envoy
           https: true
 
+      resources:
+        requests:
+          cpu: 85m
+          memory: &memory 873Mi
+        limits:
+          memory: *memory
+
     worker:
       replicas: 2
 
@@ -95,6 +102,13 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+
+      resources:
+        requests:
+          cpu: 80m
+          memory: &memory 450Mi
+        limits:
+          memory: *memory
 
     prometheus:
       rules:

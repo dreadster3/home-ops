@@ -73,10 +73,10 @@ spec:
                 protocol: TCP
             resources:
               limits:
-                memory: &apimemory 750Mi
+                memory: &memory 675Mi
               requests:
                 cpu: 155m
-                memory: *apimemory
+                memory: *memory
             securityContext: &securityContext
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -105,11 +105,12 @@ spec:
               - configMapRef:
                   name: immich-configmap
             resources:
-              limits:
-                memory: &msmemory 2.5Gi
               requests:
                 cpu: 495m
-                memory: *msmemory
+                # NOTE: Difference between memory usage is so big worth keeping requests and limits separate
+                memory: 1.5Gi
+              limits:
+                memory: 2.5Gi
             ports:
               - name: metrics
                 containerPort: 8082
@@ -163,11 +164,12 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 60
             resources:
-              limits:
-                memory: &mlmemory 2.5Gi
               requests:
                 cpu: 2000m
-                memory: *mlmemory
+                # NOTE: Difference between memory usage is so big worth keeping requests and limits separate
+                memory: 1.8Gi
+              limits:
+                memory: 2.5Gi
             securityContext: *securityContext
         pod: *pod
 

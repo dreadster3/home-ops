@@ -73,7 +73,7 @@ spec:
             resources:
               requests:
                 cpu: 50m
-                memory: &memory 1Gi
+                memory: &memory 0.5Gi
               limits:
                 memory: *memory
         pod:
