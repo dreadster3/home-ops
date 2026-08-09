@@ -134,6 +134,16 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: qdrant
+            app.kubernetes.io/name: qdrant
+      toPorts:
+        - ports:
+            - port: "6333"
+              protocol: TCP
+            - port: "6334"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: tika
             app.kubernetes.io/name: tika
       toPorts:

@@ -5,3 +5,4 @@ namespace: qdrant
 
 resources:
   - helm.yaml
+  - network.yaml
