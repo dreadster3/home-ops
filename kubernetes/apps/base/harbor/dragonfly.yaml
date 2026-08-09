@@ -31,7 +31,7 @@ spec:
     # Real resources required
     requests:
       cpu: 15m
-      memory: 50Mi
+      memory: 65Mi
     # Minimum required to initialize due to dragonfly-operator
     limits:
       memory: 512Mi
