@@ -1,0 +1,74 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: qdrant
+  namespace: qdrant
+spec:
+  interval: 24h
+  url: https://qdrant.github.io/qdrant-helm
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: qdrant
+  namespace: qdrant
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: qdrant
+      version: 1.x.x
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: qdrant
+  dependsOn:
+    - name: prometheus-operator
+      namespace: monitoring
+  values:
+    replicaCount: 3
+
+    apiKey:
+      valueFrom:
+        secretKeyRef:
+          name: qdrant-apikey
+          key: api-key
+
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: qdrant
+            app.kubernetes.io/instance: qdrant
+
+    resources:
+      requests:
+        cpu: 1000m
+        memory: &memory 1.5Gi
+      limits:
+        memory: *memory
+
+    persistence:
+      size: &disk 30Gi
+
+    snapshotPersistence:
+      enabled: true
+      size: *disk
+      storageClassName: nfs
+
+    config:
+      cluster:
+        enabled: true
+        p2p:
+          port: 6335
+          enable_tls: false
+        consensus:
+          tick_period_ms: 100
+      service:
+        enable_tls: false
+
+    metrics:
+      serviceMonitor:
+        enabled: true

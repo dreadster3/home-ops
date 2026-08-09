@@ -180,6 +180,13 @@ patches:
     kind: Kustomization
     name: alloy
 - patch: |-
+    - op: replace
+      path: /spec/path
+      value: ./kubernetes/infrastructure/overlays/dev/databases/qdrant/app
+  target:
+    kind: Kustomization
+    name: qdrant
+- patch: |-
     apiVersion: kustomize.toolkit.fluxcd.io/v1
     kind: Kustomization
     metadata:
