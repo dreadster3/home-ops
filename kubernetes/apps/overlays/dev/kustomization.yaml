@@ -8,17 +8,17 @@ labels:
 resources:
   # - authentik
   # - harbor
-  # - immich
+  - immich
   # - joplin
-  - litellm
+  # - litellm
   # - n8n
   # - netbox
   # - openwebui
   # - paperless
-  - searxng
+  # - searxng
   # - tika
   # - termix
   # - uptime
   # - vault
   # - vaultwarden
-  - ../../base/toolhive
+  # - ../../base/toolhive
