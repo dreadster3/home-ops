@@ -3,8 +3,6 @@ kind: Cluster
 metadata:
   name: immich-cluster
   namespace: immich
-  annotations:
-    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.10-standard-trixie
   instances: 2
@@ -18,9 +16,9 @@ spec:
   resources:
     requests:
       cpu: 200m
-      memory: 1Gi
+      memory: &memory 1Gi
     limits:
-      memory: 1Gi
+      memory: *memory
 
   postgresql:
     shared_preload_libraries:
