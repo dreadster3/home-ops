@@ -6,7 +6,7 @@ metadata:
   annotations:
     cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17-0.4.3
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.10-standard-trixie
   instances: 2
   primaryUpdateStrategy: unsupervised
   affinity:
@@ -25,17 +25,10 @@ spec:
   postgresql:
     shared_preload_libraries:
       - "vchord.so"
-
-  managed:
-    roles:
-      - name: immich
-        ensure: present
-        login: true
-        superuser: true
-        passwordSecret:
-          name: immich-cluster-credentials
-        connectionLimit: -1
-        inherit: true
+    extensions:
+      - name: vchord
+        image:
+          reference: ghcr.io/tensorchord/vchord-scratch:pg17-v1.1.1
 
   bootstrap:
     recovery:

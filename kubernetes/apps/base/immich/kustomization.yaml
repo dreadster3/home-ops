@@ -23,6 +23,7 @@ resources:
   - library.yaml
   - store.yaml
   - pgcluster.yaml
+  - database.yaml
   - dragonfly.yaml
   - network.yaml
   - secrets.yaml
