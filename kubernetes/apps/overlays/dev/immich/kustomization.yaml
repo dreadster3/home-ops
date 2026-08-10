@@ -9,6 +9,7 @@ labels:
 
 resources:
   - ../../../base/immich
+  - bucket.yaml
 
 patches:
   - path: helm.yaml
@@ -17,6 +18,9 @@ patches:
   - path: library.yaml
     target:
       kind: PersistentVolumeClaim
+  - path: store.yaml
+    target:
+      kind: ObjectStore
   - path: pgcluster.yaml
     target:
       kind: Cluster

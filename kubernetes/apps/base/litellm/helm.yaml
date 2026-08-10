@@ -566,16 +566,6 @@ spec:
           host: os.environ/REDIS_HOST
           port: os.environ/REDIS_PORT
           password: os.environ/REDIS_PASSWORD
-          # similarity_threshold: 0.95
-          # redis_semantic_cache_embedding_model: openai/text-embedding-3-small
-          # ttl: 3600
-          # supported_call_types:
-          #   - completion
-          #   - acompletion
-          #   - text_completion
-          #   - atext_completion
-          #   - responses
-          #   - aresponses
       router_settings:
         enable_pre_call_checks: true
         # Routing aliases — clean model_name → primary provider/model_name

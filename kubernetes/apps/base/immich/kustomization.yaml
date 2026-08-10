@@ -12,6 +12,7 @@ configMapGenerator:
     options:
       labels:
         grafana/dashboard: "true"
+        kustomize.toolkit.fluxcd.io/substitute: disabled
       annotations:
         grafana/folder: Immich
     files:
@@ -22,6 +23,7 @@ resources:
   - library.yaml
   - store.yaml
   - pgcluster.yaml
+  - database.yaml
   - dragonfly.yaml
   - network.yaml
   - secrets.yaml

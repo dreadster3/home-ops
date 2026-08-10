@@ -3,10 +3,8 @@ kind: Cluster
 metadata:
   name: immich-cluster
   namespace: immich
-  annotations:
-    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17-0.4.3
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-standard-trixie
   instances: 2
   primaryUpdateStrategy: unsupervised
   affinity:
@@ -18,53 +16,55 @@ spec:
   resources:
     requests:
       cpu: 200m
-      memory: 1Gi
+      memory: &memory 1Gi
     limits:
-      memory: 1Gi
+      memory: *memory
 
   postgresql:
     shared_preload_libraries:
       - "vchord.so"
-
-  managed:
-    roles:
-      - name: immich
-        ensure: present
-        login: true
-        superuser: true
-        passwordSecret:
-          name: immich-cluster-credentials
-        connectionLimit: -1
-        inherit: true
+    extensions:
+      - name: vchord
+        image:
+          reference: ghcr.io/tensorchord/vchord-scratch:pg18-v1.1.1
+        dynamic_library_path:
+          - /usr/lib/postgresql/18/lib
+        extension_control_path:
+          - /usr/share/postgresql/18/
 
   bootstrap:
-    recovery:
-      source: backup
+    initdb:
       database: immich
       owner: immich
       secret:
         name: immich-cluster-credentials
-    # initdb:
-    #   database: immich
-    #   owner: immich
-    #   secret:
-    #     name: immich-cluster-credentials
-    #   postInitSQL:
-    #     - CREATE EXTENSION IF NOT EXISTS "vchord" CASCADE;
-    #     - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
+      import:
+        type: microservice
+        databases:
+          - immich
+        source:
+          externalCluster: immich-cluster-old
   externalClusters:
-    - name: backup
-      plugin:
-        name: barman-cloud.cloudnative-pg.io
-        parameters:
-          barmanObjectName: backup-store
-          serverName: immich-cluster
+    - name: immich-cluster-old
+      connectionParameters:
+        host: immich-cluster-old-rw
+        user: immich
+      password:
+        name: immich-cluster-credentials
+        key: password
+    # - name: backup
+    #   plugin:
+    #     name: barman-cloud.cloudnative-pg.io
+    #     parameters:
+    #       barmanObjectName: backup-store
+    #       serverName: immich-cluster
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
         barmanObjectName: backup-store
+        serverName: immich-cluster-vchord
 
   monitoring:
     enablePodMonitor: true
