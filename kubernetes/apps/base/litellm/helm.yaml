@@ -61,8 +61,6 @@ spec:
       enabled: false
 
     service:
-      annotations:
-        netbird.io/expose: "true"
 
     # One Uvicorn worker per pod — scale horizontally via replicas (Kubernetes recommendation)
     numWorkers: 1

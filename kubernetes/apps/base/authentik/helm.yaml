@@ -75,8 +75,6 @@ spec:
           enabled: true
 
       service:
-        annotations:
-          netbird.io/expose: "true"
 
       route:
         main:

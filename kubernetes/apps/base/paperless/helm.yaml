@@ -213,8 +213,6 @@ spec:
       main:
         # Keep the service name as `paperless` (not `paperless-main`) for compatibility.
         forceRename: paperless
-        annotations:
-          netbird.io/expose: "true"
         controller: main
         ports:
           http:
