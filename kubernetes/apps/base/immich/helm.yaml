@@ -73,7 +73,7 @@ spec:
                 protocol: TCP
             resources:
               limits:
-                memory: &memory 675Mi
+                memory: &memory 750Mi
               requests:
                 cpu: 155m
                 memory: *memory
