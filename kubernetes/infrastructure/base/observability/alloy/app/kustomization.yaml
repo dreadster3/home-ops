@@ -20,5 +20,6 @@ configMapGenerator:
       disableNameSuffixHash: true
       labels:
         grafana/dashboard: "true"
+        kustomize.toolkit.fluxcd.io/substitute: disabled
     files:
       - dashboards/cadvisor.json

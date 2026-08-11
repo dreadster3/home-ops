@@ -13,6 +13,7 @@ configMapGenerator:
       disableNameSuffixHash: true
       labels:
         grafana/dashboard: "true"
+        kustomize.toolkit.fluxcd.io/substitute: disabled
       annotations:
         grafana/folder: Harbor
     files:
