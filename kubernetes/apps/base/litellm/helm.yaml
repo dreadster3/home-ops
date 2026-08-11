@@ -60,8 +60,6 @@ spec:
     ingress:
       enabled: false
 
-    service:
-
     # One Uvicorn worker per pod — scale horizontally via replicas (Kubernetes recommendation)
     numWorkers: 1
 

@@ -74,8 +74,6 @@ spec:
         serviceMonitor:
           enabled: true
 
-      service:
-
       route:
         main:
           enabled: true
