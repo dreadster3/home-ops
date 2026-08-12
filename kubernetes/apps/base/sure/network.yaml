@@ -105,6 +105,14 @@ spec:
         - ports:
             - port: http
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
   egress:
     # OIDC provider (Authentik)
     - toFQDNs:
