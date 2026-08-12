@@ -1,4 +1,4 @@
-name: Flux Local
+name: Validate Kubernetes Manifests
 
 on:
   pull_request:
@@ -13,47 +13,45 @@ concurrency:
 
 jobs:
   test:
-    name: Flux Local Test
+    name: Flate Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@889be9d6cc8afa8ed639e1e1ba4ab678e3b38d8c # v2.9.4
-
-      - name: Flux Local Test
-        uses: allenporter/flux-local/action/test@92d3a538c009c3fec120fbf50f6ef33b3e0a569c # 8.4.0
         with:
-          path: kubernetes/clusters/production
-          enable-helm: true
-          debug: true
+          fetch-depth: 0
+
+      - name: Setup Flate
+        uses: home-operations/flate/action@2862e47ed4d6efebeffb43c7691ee6df06b4536c # v0.5.0
+
+      - name: Flate Test
+        run: flate test all --path kubernetes/clusters/production
 
   diff:
-    name: Flux Local Diff
+    name: Flate Diff
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    strategy:
-      matrix:
-        resources: ["helmrelease", "kustomization"]
-      fail-fast: false
     steps:
       - name: Checkout Pull Request Branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@889be9d6cc8afa8ed639e1e1ba4ab678e3b38d8c # v2.9.4
-
-      - name: Flux Local Diff
-        uses: allenporter/flux-local/action/diff@92d3a538c009c3fec120fbf50f6ef33b3e0a569c # 8.4.0
-        id: diff
         with:
-          live-branch: ${{ github.event.repository.default_branch }}
-          path: kubernetes/clusters/production
-          resource: ${{matrix.resources}}
-          sources: flux-system
-          debug: true
+          fetch-depth: 0
+
+      - name: Setup Flate
+        uses: home-operations/flate/action@2862e47ed4d6efebeffb43c7691ee6df06b4536c # v0.5.0
+        with:
+          base: ${{ github.event.repository.default_branch }}
+
+      - name: Flate Diff
+        id: diff
+        run: |
+          flate diff all --path kubernetes/clusters/production -o diff > diff.txt
+          {
+            echo 'diff<<EOF'
+            cat diff.txt
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
 
       - name: Generate Token
         if: ${{ steps.diff.outputs.diff != '' }}
@@ -68,7 +66,7 @@ jobs:
         uses: mshick/add-pr-comment@ec328af66588ab8f77cdeb2c264f14aba45bbf59 # v3.12.0
         with:
           repo-token: "${{ steps.app-token.outputs.token }}"
-          message-id: "${{ github.event.pull_request.number }}/kubernetes/${{ matrix.resources }}"
+          message-id: "${{ github.event.pull_request.number }}/kubernetes"
           message-failure: Diff was not successful
           message: |
             ```diff

@@ -20,25 +20,27 @@ tasks:
   diff:
     desc: Output the diff of the current changes
     cmds:
-      - flux-local diff ks --sources flux-system --path {{.PATH}}
-      - flux-local diff hr --sources flux-system --path {{.PATH}}
+      - flate diff ks --sources flux-system --path {{.PATH}}
+      - flate diff hr --sources flux-system --path {{.PATH}}
     vars:
       PATH: "kubernetes/clusters/production"
     preconditions:
-      - sh: which flux-local
-        msg: flux-local is not installed
+      - sh: which flate
+        msg: flate is not installed
       - sh: which flux
         msg: flux is not installed
 
   test:
     desc: Verify that resources are valid
+    env:
+      FLATE_LOG_LEVEL: "{{if .CLI_VERBOSE}}debug{{else}}info{{end}}"
     cmds:
-      - flux-local test --all-namespaces --path {{.PATH}} --enable-helm {{if .CLI_VERBOSE}}--verbose{{end}}
+      - flate test all --path {{.PATH}}
     vars:
       PATH: "kubernetes/clusters/production"
     preconditions:
-      - sh: which flux-local
-        msg: flux-local is not installed
+      - sh: which flate
+        msg: flate is not installed
       - sh: which flux
         msg: flux is not installed
 
