@@ -1,0 +1,132 @@
+---
+# Upstream chart source. The official Sure chart lives in-repo at
+# charts/sure and is not published to a Helm repository / OCI index.
+# Flux resolves the chart's two subchart dependencies (cloudnative-pg,
+# redis-operator) from their public Helm repos at build time via Chart.lock.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: sure
+  namespace: sure
+spec:
+  interval: 24h
+  url: https://github.com/we-promise/sure
+  ref:
+    # Pinned to the last stable release tag. Renovate bumps this.
+    tag: v0.7.3
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+metadata:
+  name: sure
+  namespace: sure
+spec:
+  interval: 24h
+  chart: ./charts/sure
+  sourceRef:
+    kind: GitRepository
+    name: sure
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sure
+  namespace: sure
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chartRef:
+    kind: HelmChart
+    name: sure
+    namespace: sure
+  values:
+    image:
+      repository: ghcr.io/we-promise/sure
+      # Pin to the last non-prerelease; upstream "stable" tag floats to RCs.
+      tag: 0.7.3@sha256:12361b7b309f867002b8a1f54200607ca1a321e1b57cf21890caaf83602c3cd0
+
+    # Use the cluster's existing CloudNativePG + Dragonfly (defined outside the chart).
+    # The chart still lists the operator subcharts as deps; Flux resolves them
+    # from their public repos, but they render nothing with these disabled.
+    cnpg:
+      enabled: false
+      cluster:
+        enabled: false
+    redisOperator:
+      enabled: false
+      managed:
+        enabled: false
+    redisSimple:
+      enabled: false
+
+    rails:
+      existingSecret: sure-secret-env
+      # Self-hosted mode auto-derives AR encryption keys from SECRET_KEY_BASE
+      encryptionEnv:
+        enabled: false
+      settings:
+        SELF_HOSTED: "true"
+        ONBOARDING_STATE: "open"
+      extraEnv:
+        APP_DOMAIN: "sure.${INTERNAL_DOMAIN}"
+        AUTH_JIT_MODE: create_and_link
+        AUTH_LOCAL_LOGIN_ENABLED: false
+        AUTH_LOCAL_ADMIN_OVERRIDE_ENABLED: false
+        OIDC_ISSUER: "https://authentik.${INTERNAL_DOMAIN}/application/o/sure"
+        OIDC_REDIRECT_URI: "https://sure.${INTERNAL_DOMAIN}/auth/openid_connect/callback"
+        EXCHANGE_RATE_PROVIDER: yahoo_finance
+        SECURITIES_PROVIDER: yahoo_finance
+        WEBAUTHN_RP_ID: "${INTERNAL_DOMAIN}"
+        WEBAUTHN_ALLOWED_ORIGINS: "https://sure.${INTERNAL_DOMAIN}"
+        RAILS_FORCE_SSL: "true"
+        RAILS_ASSUME_SSL: "true"
+        OPENAI_URI_BASE: http://litellm.litellm.svc.cluster.local:4000/v1
+        OPENAI_MODEL: deepseek-v4-flash
+      extraEnvFrom:
+        - secretRef:
+            name: sure-secret-env
+
+    # Chart runs db:prepare as a Helm pre-install/pre-upgrade hook Job.
+    migrations:
+      strategy: job
+
+    service:
+      port: 80
+
+    # ponytail: Sure has no built-in /metrics exporter; the ServiceMonitor
+    # is enabled for parity with other apps but scrapes empty until an
+    # exporter (prometheus_exporter gem) is added.
+    # additionalLabels works around an upstream chart bug: toYaml of an empty
+    # map renders a bare {} that breaks the labels block (only with enabled=true).
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        app.kubernetes.io/part-of: sure
+      interval: 30s
+      scrapeTimeout: 10s
+      path: /metrics
+      portName: http
+
+    web:
+      replicas: 2
+      resources:
+        requests:
+          cpu: 50m
+          memory: &memory 768Mi
+        limits:
+          memory: *memory
+
+    worker:
+      replicas: 2
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          memory: 512Mi

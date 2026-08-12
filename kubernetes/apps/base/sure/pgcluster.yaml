@@ -1,0 +1,69 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: sure-cluster
+  namespace: sure
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.3-standard-trixie
+  instances: 2
+  primaryUpdateStrategy: unsupervised
+  affinity:
+    podAntiAffinityType: required
+  storage:
+    storageClass: ceph-block
+    size: 5Gi
+
+  bootstrap:
+    # Greenfield deploy: no backup exists yet, so initialize fresh.
+    # Switch to recovery once a barman backup exists (see externalClusters below).
+    initdb:
+      database: sure
+      owner: sure
+      secret:
+        name: sure-cluster-credentials
+    # recovery:
+    #   source: backup
+    #   database: sure
+    #   owner: sure
+    #   secret:
+    #     name: sure-cluster-credentials
+
+  externalClusters:
+    - name: backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: backup-store
+          serverName: sure-cluster
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backup-store
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: &memory 512Mi
+    limits:
+      memory: *memory
+
+  monitoring:
+    enablePodMonitor: true
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: sure-cluster-backup
+  namespace: sure
+spec:
+  cluster:
+    name: sure-cluster
+  schedule: "0 0 0 * * *"
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io

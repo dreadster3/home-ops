@@ -1,0 +1,51 @@
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: sure-dragonfly
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  image: ghcr.io/dragonflydb/dragonfly:v1.39.0@sha256:0fa01a2b929e704c7a9300d23e7f52002ebd39e90996fb8bb63826aed92fa06f
+  replicas: 2
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app: sure-dragonfly
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1Mi
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=2
+  authentication:
+    passwordFromSecret:
+      name: sure-dragonfly-credentials
+      key: DRAGONFLY_PASSWORD
+  resources:
+    requests:
+      cpu: 15m
+      memory: 50Mi
+    limits:
+      memory: 512Mi
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: &app sure-dragonfly
+  labels:
+    group: dragonfly
+    app: *app
+spec:
+  selector:
+    matchLabels:
+      app: *app
+  podTargetLabels:
+    - app
+  podMetricsEndpoints:
+    - port: admin

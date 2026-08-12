@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: sure-cluster
+  namespace: sure
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  bootstrap:
+    recovery: null
+    initdb:
+      database: sure
+      owner: sure
+      secret:
+        name: sure-cluster-credentials

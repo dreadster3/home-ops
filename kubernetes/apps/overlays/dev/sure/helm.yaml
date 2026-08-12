@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sure
+  namespace: sure
+spec:
+  values:
+    web:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
+    worker:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi

@@ -1,0 +1,28 @@
+# Dev: no Authentik in the dev cluster, so drop the OIDC egress rule.
+# Yahoo Finance + maddy egress rules are patched to the dev domain where needed.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: sure-web
+  namespace: sure
+spec:
+  egress:
+    # Yahoo Finance for exchange rates + securities prices
+    - toFQDNs:
+        - matchName: fc.yahoo.com
+        - matchName: query1.finance.yahoo.com
+        - matchName: query2.finance.yahoo.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # SMTP (maddy) for password resets / email reports
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: maddy
+            app.kubernetes.io/name: maddy
+            app.kubernetes.io/instance: maddy
+      toPorts:
+        - ports:
+            - port: smtp
+              protocol: TCP
