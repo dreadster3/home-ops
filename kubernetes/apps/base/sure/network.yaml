@@ -74,7 +74,7 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: sure
-      app.kubernetes.io/controller: web
+      app.kubernetes.io/component: web
   ingress:
     # Envoy to sure
     - fromEndpoints:
@@ -91,15 +91,6 @@ spec:
             io.kubernetes.pod.namespace: pangolin
             app.kubernetes.io/name: pangolin
             app.kubernetes.io/component: newt
-      toPorts:
-        - ports:
-            - port: http
-              protocol: TCP
-    # Netbird to sure
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: netbird
-            app.kubernetes.io/name: netbird-router
       toPorts:
         - ports:
             - port: http
@@ -152,6 +143,7 @@ spec:
               protocol: TCP
     - toFQDNs:
         - matchName: api.github.com
+        - matchName: api.enablebanking.com
       toPorts:
         - ports:
             - port: "443"
@@ -167,7 +159,7 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: sure
-      app.kubernetes.io/controller: worker
+      app.kubernetes.io/component: worker
   egress:
     # Yahoo Finance for background sync jobs
     - toFQDNs:
@@ -187,4 +179,10 @@ spec:
       toPorts:
         - ports:
             - port: smtp
+              protocol: TCP
+    - toFQDNs:
+        - matchName: api.enablebanking.com
+      toPorts:
+        - ports:
+            - port: "443"
               protocol: TCP
