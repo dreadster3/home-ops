@@ -72,7 +72,7 @@ spec:
         enabled: false
       settings:
         SELF_HOSTED: "true"
-        ONBOARDING_STATE: "open"
+        ONBOARDING_STATE: "closed"
       extraEnv:
         APP_DOMAIN: "sure.${INTERNAL_DOMAIN}"
         AUTH_JIT_MODE: create_and_link
