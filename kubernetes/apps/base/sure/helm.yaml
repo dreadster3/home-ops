@@ -78,8 +78,7 @@ spec:
         AUTH_JIT_MODE: create_and_link
         AUTH_LOCAL_LOGIN_ENABLED: false
         AUTH_LOCAL_ADMIN_OVERRIDE_ENABLED: false
-        OIDC_ISSUER: "https://authentik.${INTERNAL_DOMAIN}/application/o/sure"
-        OIDC_REDIRECT_URI: "https://sure.${INTERNAL_DOMAIN}/auth/openid_connect/callback"
+        AUTH_PROVIDERS_SOURCE: db
         EXCHANGE_RATE_PROVIDER: yahoo_finance
         SECURITIES_PROVIDER: yahoo_finance
         WEBAUTHN_RP_ID: "${INTERNAL_DOMAIN}"
