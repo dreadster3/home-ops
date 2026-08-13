@@ -114,18 +114,15 @@ spec:
             - port: http
               protocol: TCP
   egress:
-    # OIDC provider (Authentik)
     - toFQDNs:
-        - matchName: authentik.${EXTERNAL_DOMAIN}
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
-    # Yahoo Finance for exchange rates + securities prices
-    - toFQDNs:
+        # Yahoo Finance for exchange rates + securities prices
         - matchName: fc.yahoo.com
         - matchName: query1.finance.yahoo.com
         - matchName: query2.finance.yahoo.com
+        # Github
+        - matchName: api.github.com
+        # Enable Banking API for bank account aggregation
+        - matchName: api.enablebanking.com
       toPorts:
         - ports:
             - port: "443"
@@ -149,12 +146,14 @@ spec:
         - ports:
             - port: "10443"
               protocol: TCP
-    - toFQDNs:
-        - matchName: api.github.com
-        - matchName: api.enablebanking.com
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+            app.kubernetes.io/name: litellm
+            app.kubernetes.io/instance: litellm
       toPorts:
         - ports:
-            - port: "443"
+            - port: "4000"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
@@ -169,11 +168,13 @@ spec:
       app.kubernetes.io/name: sure
       app.kubernetes.io/component: worker
   egress:
-    # Yahoo Finance for background sync jobs
     - toFQDNs:
+        # Yahoo Finance for background sync jobs
         - matchName: fc.yahoo.com
         - matchName: query1.finance.yahoo.com
         - matchName: query2.finance.yahoo.com
+        # Enable Banking API for background sync jobs
+        - matchName: api.enablebanking.com
       toPorts:
         - ports:
             - port: "443"
@@ -188,9 +189,12 @@ spec:
         - ports:
             - port: smtp
               protocol: TCP
-    - toFQDNs:
-        - matchName: api.enablebanking.com
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+            app.kubernetes.io/name: litellm
+            app.kubernetes.io/instance: litellm
       toPorts:
         - ports:
-            - port: "443"
+            - port: "4000"
               protocol: TCP

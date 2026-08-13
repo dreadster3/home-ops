@@ -125,6 +125,14 @@ spec:
         - ports:
             - port: "4000"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: sure
+            app.kubernetes.io/name: sure
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
   egress:
     - toEntities:
         - world
