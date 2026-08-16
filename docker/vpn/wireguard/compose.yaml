@@ -4,8 +4,14 @@ services:
     restart: unless-stopped
     container_name: wg-easy
     network_mode: "host"
+    env_file:
+      - ./wireguard.env
     environment:
       DISABLE_IPV6: true
+      OAUTH_PROVIDERS: oidc
+      OAUTH_AUTO_REGISTER: true
+      OAUTH_AUTO_LAUNCH: true
+      DISABLE_PASSWORD_AUTH: true
     volumes:
       - /opt/docker/wireguard:/etc/wireguard
       - /lib/modules:/lib/modules:ro
@@ -28,7 +34,7 @@ services:
       - ./litestream.env
     volumes:
       - /opt/docker/wireguard:/data
-      - ./litestream.yml:/etc/litestream.yml:ro
+      - ./config/litestream.yml:/etc/litestream.yml:ro
     cap_drop:
       - ALL
     security_opt:
