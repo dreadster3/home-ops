@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.x
+      version: 5.1.x
       interval: 24h
       sourceRef:
         kind: HelmRepository
