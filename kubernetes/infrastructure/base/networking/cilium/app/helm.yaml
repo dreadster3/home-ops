@@ -18,12 +18,18 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: 1.20.x
+      version: 1.20.0
       interval: 24h
       sourceRef:
         kind: HelmRepository
         name: cilium
   values:
+    resources:
+      requests:
+        cpu: 135m
+        memory: &memory 600Mi
+      limits:
+        memory: *memory
     ipam:
       mode: kubernetes
     kubeProxyReplacement: true
@@ -63,8 +69,28 @@ spec:
       enabled: true
       relay:
         enabled: true
+        resources:
+          requests:
+            cpu: 5m
+            memory: &memory 40Mi
+          limits:
+            memory: *memory
       ui:
         enabled: true
+        backend:
+          resources:
+            requests:
+              cpu: 25m
+              memory: &memory 64Mi
+            limits:
+              memory: *memory
+        frontend:
+          resources:
+            requests:
+              cpu: 5m
+              memory: &memory 16Mi
+            limits:
+              memory: *memory
       metrics:
         enabled:
           - dns
@@ -92,13 +118,25 @@ spec:
         labelValue: "true"
         annotations:
           grafana/folder: Cilium
+      resources:
+        requests:
+          cpu: 5m
+          memory: &memory 256Mi
+        limits:
+          memory: *memory
     dashboards:
       enabled: true
       label: grafana/dashboard
       labelValue: "true"
       annotations:
         grafana/folder: Cilium
-
     bpf:
       masquerade: true
       lbExternalClusterIP: true
+    envoy:
+      resources:
+        requests:
+          cpu: 5m
+          memory: &memory 100Mi
+        limits:
+          memory: *memory
