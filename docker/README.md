@@ -29,8 +29,17 @@ Enabled stacks are listed in each node's `.doco-cd.yaml` poll config; any direct
 | --------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [Traefik](https://traefik.io/)                | Reverse proxy and TLS termination for VPN-hosted services (e.g. wg-easy UI)              |
 | [wg-easy](https://github.com/wg-easy/wg-easy) | WireGuard VPN management UI with noNAT setup (backed by Litestream DB replication to S3) |
-| [Netbird](https://netbird.io/)                | WireGuard-based overlay VPN client for remote access                                     |
+| [Newt](https://fossorial.io/)                 | Pangolin tunnel client for remote access to internal services                            |
 | [Doco-CD](https://github.com/kimdre/doco-cd)  | Continuous delivery for Docker Compose stacks                                            |
+
+### Pangolin node (`docker/pangolin01/`)
+
+| Service                                      | Description                                                                  |
+| -------------------------------------------- | ---------------------------------------------------------------------------- |
+| [Pangolin](https://fossorial.io/)            | Self-hosted tunneling / reverse proxy (with [Gerbil](https://fossorial.io/)) |
+| [Traefik](https://traefik.io/)               | Reverse proxy and TLS termination fronting the Pangolin UI                   |
+| [CrowdSec](https://www.crowdsec.net/)        | Crowd-sourced intrusion detection and IP reputation filtering                |
+| [Doco-CD](https://github.com/kimdre/doco-cd) | Continuous delivery for Docker Compose stacks                                |
 
 ## Directory Structure
 
@@ -52,9 +61,12 @@ docker/
 │   ├── speedtracker/
 │   ├── arcane/
 │   └── cadvisor/        # disabled
+├── pangolin01/          # Pangolin node services
+│   ├── pangolin/        # pangolin + gerbil + traefik + crowdsec
+│   └── doco-cd/
 └── vpn/                # VPN node services
     ├── traefik/
     ├── wireguard/      # wg-easy + litestream
-    ├── netbird/
+    ├── newt/
     └── doco-cd/
 ```
