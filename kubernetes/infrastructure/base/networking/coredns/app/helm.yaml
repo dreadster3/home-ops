@@ -44,6 +44,7 @@ spec:
               lameduck 5s
           - name: ready
           - name: log
+            parameters: .
             configBlock: |-
               class error
           - name: prometheus
