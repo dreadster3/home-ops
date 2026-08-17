@@ -31,6 +31,9 @@ spec:
     service:
       name: kube-dns
       clusterIP: 10.96.0.10
+    prometheus:
+      service:
+        enabled: true
     servers:
       - zones:
           - zone: .
@@ -51,16 +54,15 @@ spec:
           - name: kubernetes
             parameters: cluster.local in-addr.arpa ip6.arpa
             configBlock: |-
-              pods verified
+              pods insecure
               fallthrough in-addr.arpa ip6.arpa
+              ttl 30
           - name: forward
             parameters: . /etc/resolv.conf
             configBlock: |-
               max_concurrent 1000
           - name: cache
-            configBlock: |-
-              prefetch 20
-              serve_stale
+            parameters: 30
           - name: loop
           - name: reload
           - name: loadbalance
