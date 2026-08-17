@@ -37,7 +37,6 @@ spec:
     servers:
       - zones:
           - zone: .
-            scheme: dns://
             use_tcp: true
         port: 53
         plugins:
@@ -63,6 +62,9 @@ spec:
               max_concurrent 1000
           - name: cache
             parameters: 30
+            configBlock: |-
+              disable success cluster.local
+              disable denial cluster.local
           - name: loop
           - name: reload
           - name: loadbalance
