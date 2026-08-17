@@ -5,10 +5,10 @@ labels:
       app.kubernetes.io/category: apps
       app.kubernetes.io/environment: dev
 
-resources:
+resources: []
   # - authentik
   # - harbor
-  - immich
+  # - immich
   # - joplin
   # - litellm
   # - n8n
