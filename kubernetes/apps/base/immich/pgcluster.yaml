@@ -4,7 +4,7 @@ metadata:
   name: immich-cluster
   namespace: immich
 spec:
-  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-standard-trixie
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.6-standard-trixie
   instances: 2
   primaryUpdateStrategy: unsupervised
   affinity:
