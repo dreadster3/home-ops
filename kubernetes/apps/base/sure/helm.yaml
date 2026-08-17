@@ -116,8 +116,8 @@ spec:
       replicas: 2
       resources:
         requests:
-          cpu: 50m
-          memory: &memory 768Mi
+          cpu: 150m
+          memory: &memory 550Mi
         limits:
           memory: *memory
 
@@ -125,7 +125,7 @@ spec:
       replicas: 2
       resources:
         requests:
-          cpu: 100m
-          memory: 512Mi
+          cpu: 60m
+          memory: &memory 600Mi
         limits:
-          memory: 512Mi
+          memory: *memory
