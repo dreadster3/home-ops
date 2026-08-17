@@ -82,3 +82,7 @@ spec:
       - effect: NoSchedule
         key: node.cloudprovider.kubernetes.io/uninitialized
         operator: Exists
+    deployment:
+      selector:
+        matchLabels:
+          k8s-app: kube-dns
