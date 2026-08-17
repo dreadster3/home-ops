@@ -9,5 +9,6 @@ resources:
   - envoy-gateway
   - cilium
   - external-dns
+  - coredns
   # - netbird
   - maddy

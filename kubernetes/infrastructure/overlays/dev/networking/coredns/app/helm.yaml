@@ -1,0 +1,35 @@
+- op: replace
+  path: /spec/values/servers/0/plugins
+  value:
+    - name: errors
+    - name: health
+      configBlock: |-
+        lameduck 5s
+    - name: ready
+    - name: log
+      configBlock: |-
+        class error
+    - name: prometheus
+      parameters: :9153
+    - name: kubernetes
+      parameters: cluster.local in-addr.arpa ip6.arpa
+      configBlock: |-
+        pods insecure
+        fallthrough in-addr.arpa ip6.arpa
+        ttl 30
+    - name: hosts
+      configBlock: |-
+        192.168.39.1 host.minikube.internal
+        fallthrough
+    - name: forward
+      parameters: . /etc/resolv.conf
+      configBlock: |-
+        max_concurrent 1000
+    - name: cache
+      parameters: 30
+      configBlock: |-
+        disable success cluster.local
+        disable denial cluster.local
+    - name: loop
+    - name: reload
+    - name: loadbalance
