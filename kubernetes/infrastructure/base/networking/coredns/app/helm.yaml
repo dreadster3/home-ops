@@ -22,8 +22,6 @@ spec:
     name: coredns
   values:
     fullnameOverride: coredns
-    image:
-      repository: registry.k8s.io/coredns/coredns
     replicaCount: 2
     k8sAppLabelOverride: kube-dns
     serviceAccount:
