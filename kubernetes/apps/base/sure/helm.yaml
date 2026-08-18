@@ -75,6 +75,10 @@ spec:
         ONBOARDING_STATE: "closed"
       extraEnv:
         APP_DOMAIN: "sure.${INTERNAL_DOMAIN}"
+        SMTP_ADDRESS: maddy.maddy.svc.cluster.local
+        SMTP_PORT: 25
+        SMTP_TLS_ENABLED: false
+        EMAIL_SENDER: "no-reply@${EXTERNAL_DOMAIN}"
         AUTH_JIT_MODE: create_and_link
         AUTH_LOCAL_LOGIN_ENABLED: false
         AUTH_LOCAL_ADMIN_OVERRIDE_ENABLED: false
