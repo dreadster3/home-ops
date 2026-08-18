@@ -87,6 +87,28 @@ spec:
         RAILS_ASSUME_SSL: "true"
         OPENAI_URI_BASE: http://litellm.litellm.svc.cluster.local:4000/v1
         OPENAI_MODEL: deepseek-v4-flash
+        # ActiveStorage on RGW S3 (PDFs/statements). generic_s3 service in
+        # config/storage.yml; creds come from the OBC-generated secret.
+        ACTIVE_STORAGE_SERVICE: generic_s3
+        GENERIC_S3_ENDPOINT: http://rook-ceph-rgw-k8s-ceph-objectstore.rook-ceph.svc
+        GENERIC_S3_REGION: us-east-1
+        GENERIC_S3_FORCE_PATH_STYLE: "true"
+      extraEnvVars:
+        - name: GENERIC_S3_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: sure-storage-bucket
+              key: BUCKET_NAME
+        - name: GENERIC_S3_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: sure-storage-bucket
+              key: AWS_ACCESS_KEY_ID
+        - name: GENERIC_S3_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: sure-storage-bucket
+              key: AWS_SECRET_ACCESS_KEY
       extraEnvFrom:
         - secretRef:
             name: sure-secret-env

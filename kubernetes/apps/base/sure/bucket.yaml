@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: sure-storage-bucket
+  namespace: sure
+spec:
+  generateBucketName: sure-storage
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 1G
