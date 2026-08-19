@@ -115,6 +115,11 @@
       "description": ["Link Toolhive release notes from GitHub"],
       "matchPackageNames": ["/toolhive/"],
       "sourceUrl": "https://github.com/stacklok/toolhive"
+    },
+    {
+      "description": ["Link Gerbil release notes from GitHub"],
+      "matchPackageNames": ["/gerbil/"],
+      "sourceUrl": "https://github.com/fosrl/gerbil"
     }
   ]
 }
