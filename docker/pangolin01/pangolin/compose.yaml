@@ -15,7 +15,7 @@ services:
       retries: 15
 
   gerbil:
-    image: fosrl/gerbil:1.4.3@sha256:35cf48759a18e7ef3a28302131c4beed75b217dc92dea16dabc6f20ca9627546
+    image: fosrl/gerbil:1.5.0@sha256:6da170863132c79c67c580ef6a76606ea05fec704706d87988f52b06ba6d6b93
     container_name: gerbil
     restart: unless-stopped
     depends_on:
