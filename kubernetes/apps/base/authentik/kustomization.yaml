@@ -14,3 +14,4 @@ resources:
   - network.yaml
   - secrets.yaml
   - helm.yaml
+  - reference-grants.yaml
