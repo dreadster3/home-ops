@@ -16,6 +16,12 @@ configMapGenerator:
         kustomize.toolkit.fluxcd.io/substitute: disabled
     files:
       - scripts/backup.sh
+  - name: litestream-config
+    namespace: *app
+    options:
+      disableNameSuffixHash: true
+    files:
+      - config/litestream.yml
 
 resources:
   - namespace.yaml

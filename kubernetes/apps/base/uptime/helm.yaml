@@ -47,6 +47,26 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
+          litestream:
+            image:
+              repository: litestream/litestream
+              tag: 0.5.16@sha256:f085f8bce71a5ad4ce8e28b28ea522de1d9e0d7dd0af3ea5c1bd626d0f341954
+            args: [replicate]
+            env:
+              TZ: Europe/Lisbon
+            envFrom:
+              - secretRef:
+                  name: litestream-backup-credentials
+            resources:
+              requests:
+                cpu: 70m
+                memory: &memory 128Mi
+              limits:
+                memory: *memory
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
         pod:
           securityContext:
             runAsNonRoot: true
@@ -85,3 +105,13 @@ spec:
         size: 3Gi
         globalMounts:
           - path: /app/data
+      litestream:
+        enabled: true
+        type: configMap
+        name: litestream-config
+        advancedMounts:
+          main:
+            litestream:
+              - path: /etc/litestream.yml
+                readOnly: true
+                subPath: litestream.yml

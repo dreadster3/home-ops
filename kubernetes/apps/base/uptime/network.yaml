@@ -44,14 +44,18 @@ spec:
             - port: http
               protocol: TCP
   egress:
-    - toCIDR:
-        - 192.168.30.20/32
+    # Truenas and rustfs
+    - toFQDNs:
+        - matchName: truenas.${INTERNAL_DOMAIN}
       toPorts:
         - ports:
+            - port: "30292"
+              protocol: TCP
             - port: "30293"
               protocol: TCP
             - port: "443"
               protocol: TCP
+    # Allow external DNS resolution
     - toCIDR:
         - 1.1.1.1/32
         - 1.0.0.1/32
@@ -63,6 +67,7 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
+    # Version check and external resources
     - toFQDNs:
         - matchPattern: "*.${EXTERNAL_DOMAIN}"
         - matchName: uptime.kuma.pet
