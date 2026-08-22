@@ -21,5 +21,6 @@ resources:
   - namespace.yaml
   - helm.yaml
   - network.yaml
+  - securitypolicy.yaml
   - secrets.yaml
   - cronjob.yaml

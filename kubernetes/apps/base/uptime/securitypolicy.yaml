@@ -1,0 +1,37 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: uptime
+  namespace: uptime
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: uptime
+  extAuth:
+    failOpen: false
+    recomputeRoute: true
+    headersToExtAuth:
+      - "X-Forwarded-For"
+      - "X-Real-Ip"
+      - "accept"
+      - "cookie"
+      - "authorization"
+      - "proxy-authorization"
+      - "x-forwarded-proto"
+    http:
+      backendRefs:
+        - kind: Service
+          name: ak-outpost-authentik-embedded-outpost
+          namespace: authentik
+          port: 9000
+      # This path is hardcoded in Authentik for Envoy support.
+      path: /outpost.goauthentik.io/auth/envoy
+      headersToBackend:
+        - "Set-Cookie"
+        - "X-authentik-uid"
+        - "X-authentik-username"
+        - "X-authentik-name"
+        - "X-authentik-email"
+        - "X-authentik-groups"
+        - "X-authentik-entitlements"
