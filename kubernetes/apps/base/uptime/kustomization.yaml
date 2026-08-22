@@ -8,14 +8,6 @@ labels:
       app.kubernetes.io/module: *app
 
 configMapGenerator:
-  - name: uptime-backup-scripts
-    namespace: *app
-    options:
-      disableNameSuffixHash: true
-      labels:
-        kustomize.toolkit.fluxcd.io/substitute: disabled
-    files:
-      - scripts/backup.sh
   - name: litestream-config
     namespace: *app
     options:
@@ -29,4 +21,3 @@ resources:
   - network.yaml
   - securitypolicy.yaml
   - secrets.yaml
-  - cronjob.yaml
