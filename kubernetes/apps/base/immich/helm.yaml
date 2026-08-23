@@ -81,13 +81,20 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-        pod: &pod
-          securityContext:
+        pod:
+          securityContext: &podSecurityContext
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000
             fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/controller: api
       microservices:
         type: deployment
         strategy: RollingUpdate
@@ -116,7 +123,15 @@ spec:
                 containerPort: 8082
                 protocol: TCP
             securityContext: *securityContext
-        pod: *pod
+        pod:
+          securityContext: *podSecurityContext
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/controller: microservices
       machine-learning:
         type: deployment
         strategy: RollingUpdate
@@ -171,7 +186,15 @@ spec:
               limits:
                 memory: 2.5Gi
             securityContext: *securityContext
-        pod: *pod
+        pod:
+          securityContext: *podSecurityContext
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/controller: machine-learning
 
     service:
       api:
