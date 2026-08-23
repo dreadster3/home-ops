@@ -91,7 +91,8 @@
     {
       "description": ["Link Termix release notes from GitHub"],
       "matchPackageNames": ["ghcr.io/lukegus/termix"],
-      "sourceUrl": "https://github.com/Termix-SSH/Termix"
+      "sourceUrl": "https://github.com/Termix-SSH/Termix",
+      "extractVersion": "^(?:release-)?(?<version>\\d+\\.\\d+\\.\\d+)(?:-tag)?$"
     },
     {
       "description": ["Link Toolhive release notes from GitHub"],

@@ -10,31 +10,21 @@
     ":automergeDigest",
     ":automergeBranch",
     ":timezone(Europe/Lisbon)",
+    "github>home-operations/renovate-presets#8.1.0",
+    "github>home-operations/renovate-presets//apps/cnpg.json5#8.1.0",
+    "github>home-operations/renovate-presets//apps/grafanaDashboards.json5#8.1.0",
+    "github>home-operations/renovate-presets//apps/searxng.json5#8.1.0",
     "local>dreadster3/home-ops//.renovate/overrides.json",
     "local>dreadster3/home-ops//.renovate/labels.json",
     "local>dreadster3/home-ops//.renovate/automerge.json",
     "local>dreadster3/home-ops//.renovate/groups.json",
-    "local>dreadster3/home-ops//.renovate/customManagers.json",
     "local>dreadster3/home-ops//.renovate/releasenotes.json"
   ],
-  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
-  "ignorePaths": ["**/*.enc.*", "**/.archive/**", "**/talos/**", "**/*.env"],
-  "docker-compose": {
-    "managerFilePatterns": ["/(^|/)(?:docker-)?compose[^/]*\\.ya?ml$/"]
-  },
-  "flux": {
-    "managerFilePatterns": ["/\\.yaml(?:\\.j2)?$/"]
-  },
-  "helm-values": {
-    "managerFilePatterns": ["/\\.yaml(?:\\.j2)?$/"]
-  },
-  "kubernetes": {
-    "managerFilePatterns": ["/\\.yaml(?:\\.j2)?$/"]
-  },
-  "github-actions": {
-    "rangeStrategy": "pin"
-  },
-  "registryAliases": {
-    "mirror.gcr.io": "docker.io"
-  }
+  "ignorePaths": [
+    "**/*.enc.*",
+    "**/.archive/**",
+    "**/talos/**",
+    "**/*.env",
+    "**/*.sops.*"
+  ]
 }
