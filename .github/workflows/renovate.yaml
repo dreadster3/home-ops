@@ -19,10 +19,10 @@ on:
       logLevel:
         description: Log Level
         type: choice
-        default: debug
+        default: info
         options:
-          - debug
           - info
+          - debug
         required: true
       version:
         description: Renovate Version

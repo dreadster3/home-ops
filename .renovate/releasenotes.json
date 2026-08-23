@@ -102,6 +102,11 @@
       "description": ["Link Gerbil release notes from GitHub"],
       "matchPackageNames": ["/gerbil/"],
       "sourceUrl": "https://github.com/fosrl/gerbil"
+    },
+    {
+      "description": ["Link uptime-kuma release notes from GitHub"],
+      "matchPackageNames": ["/uptime-kuma/"],
+      "sourceUrl": "https://github.com/louislam/uptime-kuma"
     }
   ]
 }
