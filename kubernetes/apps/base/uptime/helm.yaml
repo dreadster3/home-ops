@@ -26,6 +26,31 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          litestream-restore:
+            image:
+              repository: litestream/litestream
+              tag: 0.5.16@sha256:f085f8bce71a5ad4ce8e28b28ea522de1d9e0d7dd0af3ea5c1bd626d0f341954
+            args:
+              - restore
+              - -if-db-not-exists
+              - -if-replica-exists
+              - /app/data/kuma.db
+            env:
+              TZ: Europe/Lisbon
+            envFrom:
+              - secretRef:
+                  name: litestream-backup-credentials
+            resources:
+              requests:
+                cpu: 70m
+                memory: &memory 128Mi
+              limits:
+                memory: *memory
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
         containers:
           main:
             image:
@@ -100,8 +125,8 @@ spec:
       data:
         enabled: true
         type: persistentVolumeClaim
-        accessMode: ReadWriteMany
-        storageClass: ceph-filesystem
+        accessMode: ReadWriteOnce
+        storageClass: ceph-block
         size: 3Gi
         globalMounts:
           - path: /app/data
@@ -111,6 +136,10 @@ spec:
         name: litestream-config
         advancedMounts:
           main:
+            litestream-restore:
+              - path: /etc/litestream.yml
+                readOnly: true
+                subPath: litestream.yml
             litestream:
               - path: /etc/litestream.yml
                 readOnly: true
