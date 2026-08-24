@@ -7,6 +7,13 @@ labels:
   - pairs:
       app.kubernetes.io/module: *app
 
+configMapGenerator:
+  - name: litellm-proxy-config
+    options:
+      disableNameSuffixHash: true
+    files:
+      - resources/config.yaml
+
 resources:
   - namespace.yaml
   - store.yaml
@@ -18,4 +25,3 @@ resources:
   - httproute.yaml
   - helm.yaml
   - servicemonitor.yaml
-

@@ -1,0 +1,562 @@
+model_list:
+  # ===== Image Generation =====
+  - model_name: openai/gpt-image-2
+    # from LiteLLM community map (gpt-image-2): text $5/M in / $10/M out, image $8/M in / $30/M out, $1.25/M cache_read; multimodal text+image input.
+    # models.dev lists only the image output rate ($30/M); community map distinguishes text vs image output, used here.
+    model_info:
+      mode: image_generation
+      supports_vision: true
+      # input_cost_per_token: 0.000005
+      # output_cost_per_token: 0.00001
+      # input_cost_per_image_token: 0.000008
+      # output_cost_per_image_token: 0.00003
+      # cache_read_input_token_cost: 0.00000125
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/gpt-image-2
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: gemini/gemini-3.1-flash-image
+    # GA model `gemini-3.1-flash-image` (Nano Banana 2). models.dev only has the older `-preview` (65k/65k, $0.5/$60); GA values from Google AI pricing: 131072 ctx / 32768 out, $0.25/M input, $1.50/M text out, $60/M image out, $0.045/image. Reasoning supported per Google docs. Cache not published → 0.
+    model_info:
+      mode: image_generation
+      max_input_tokens: 131072
+      max_output_tokens: 32768
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.00000025
+      # output_cost_per_token: 0.0000015
+      # output_cost_per_image_token: 0.00006
+      # output_cost_per_image: 0.045
+      # input_cost_per_token_batches: 0.000000125
+      # output_cost_per_token_batches: 0.00000075
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: gemini/gemini-3.1-flash-image
+      api_key: os.environ/GEMINI_API_KEY
+
+  - model_name: gemini/gemini-3.1-flash-lite-image
+    # from Google AI pricing (Flash Lite Image, not in LiteLLM community map): $0.25/M input, $1.50/M text out, $30/M image out (~$0.0336/1K image); 131072 ctx (est from sibling) / 32768 out
+    model_info:
+      mode: image_generation
+      max_input_tokens: 131072
+      max_output_tokens: 32768
+      supports_vision: true
+      # input_cost_per_token: 0.00000025
+      # output_cost_per_token: 0.0000015
+      # output_cost_per_image_token: 0.00003
+      # output_cost_per_image: 0.0336
+      # input_cost_per_token_batches: 0.000000125
+      # output_cost_per_token_batches: 0.00000075
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: gemini/gemini-3.1-flash-lite-image
+      api_key: os.environ/GEMINI_API_KEY
+
+  # ===== Audio (TTS / STT) =====
+  - model_name: openai/tts-1
+    # from LiteLLM community map (tts-1): mode=audio_speech, $15 per 1M characters (input_cost_per_character); text->speech
+    model_info:
+      mode: audio_speech
+      supports_vision: false
+      supports_reasoning: false
+      # input_cost_per_character: 0.000015
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/tts-1
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: openai/whisper-1
+    # from LiteLLM community map (whisper-1): mode=audio_transcription, $0.006/min = $0.0001/second (input_cost_per_second); audio->text
+    model_info:
+      mode: audio_transcription
+      supports_vision: false
+      supports_reasoning: false
+      # input_cost_per_second: 0.0001
+      # output_cost_per_second: 0.0001
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/whisper-1
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: deepgram/nova-2
+    # from LiteLLM community map (deepgram/nova-2): mode=audio_transcription, $0.0043/min = $0.00007167/second (input_cost_per_second); audio->text
+    model_info:
+      mode: audio_transcription
+      supports_vision: false
+      supports_reasoning: false
+      # input_cost_per_second: 0.00007167
+      # output_cost_per_second: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: deepgram/nova-2
+      api_key: os.environ/DEEPGRAM_API_KEY
+
+  # ===== Embeddings =====
+  - model_name: openai/text-embedding-3-large
+    # from OpenAI docs + LiteLLM community map (text-embedding-3-large): 8191 max input tokens, 3072-dim vectors, $0.13/M input tokens (batch $0.065/M); embeddings have no output/cache cost
+    model_info:
+      mode: embedding
+      max_input_tokens: 8191
+      max_tokens: 8191
+      output_vector_size: 3072
+      supports_vision: false
+      supports_reasoning: false
+      # input_cost_per_token: 0.00000013
+      # input_cost_per_token_batches: 0.000000065
+      # output_cost_per_token: 0.0
+      # output_cost_per_token_batches: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/text-embedding-3-large
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: openai/text-embedding-3-small
+    # from OpenAI docs + LiteLLM community map (text-embedding-3-small): 8191 max input tokens, 1536-dim vectors, $0.02/M input tokens (batch $0.01/M); embeddings have no output/cache cost
+    model_info:
+      mode: embedding
+      max_input_tokens: 8191
+      max_tokens: 8191
+      output_vector_size: 1536
+      supports_vision: false
+      supports_reasoning: false
+      # input_cost_per_token: 0.00000002
+      # input_cost_per_token_batches: 0.00000001
+      # output_cost_per_token: 0.0
+      # output_cost_per_token_batches: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/text-embedding-3-small
+      api_key: os.environ/OPENAI_API_KEY
+
+  # ===== Anthropic (direct API) =====
+  - model_name: anthropic/claude-fable-5
+    # from models.dev (anthropic): 1M ctx / 128k out, $10/$50 per M
+    model_info:
+      mode: chat
+      max_input_tokens: 1000000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.00001
+      # output_cost_per_token: 0.00005
+      # cache_read_input_token_cost: 0.000001
+      # cache_creation_input_token_cost: 0.0000125
+    litellm_params:
+      model: anthropic/claude-fable-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  # Fallback for claude-sonnet-5 (github_copilot > anthropic direct)
+  - model_name: anthropic/claude-sonnet-5
+    # from models.dev (anthropic): 1M ctx / 128k out, $2/$10 per M
+    model_info:
+      mode: chat
+      max_input_tokens: 1000000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.000002
+      # output_cost_per_token: 0.00001
+      # cache_read_input_token_cost: 0.0000002
+      # cache_creation_input_token_cost: 0.0000025
+    litellm_params:
+      model: anthropic/claude-sonnet-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: anthropic/claude-opus-5
+    # from models.dev (anthropic): 1M ctx / 128k out, $5/$25 per M, cache_read $0.5/M, cache_write $6.25/M
+    model_info:
+      mode: chat
+      max_input_tokens: 1000000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.000005
+      # output_cost_per_token: 0.000025
+      # cache_read_input_token_cost: 0.0000005
+      # cache_creation_input_token_cost: 0.00000625
+    litellm_params:
+      model: anthropic/claude-opus-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  # ===== GitHub Copilot (OAuth device flow — tokens persisted in PVC) =====
+  # claude-sonnet-5: primary = github_copilot, fallback = anthropic direct
+  - model_name: github_copilot/claude-sonnet-5
+    # from models.dev (github-copilot): 1M ctx / 128k out, vision, reasoning, $2/$10 per M, cache_read $0.2/M, cache_write $2.5/M
+    model_info:
+      mode: chat
+      max_input_tokens: 1000000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.000002
+      # output_cost_per_token: 0.00001
+      # cache_read_input_token_cost: 0.0000002
+      # cache_creation_input_token_cost: 0.0000025
+    litellm_params:
+      model: github_copilot/claude-sonnet-5
+
+  - model_name: github_copilot/gemini-3.6-flash
+    # from GitHub Copilot billing (models.dev github-copilot entry pending): 128k input cap / 64k out (assumed from 3.5-flash copilot cap), vision, reasoning, $1.5/$7.5 per M, cache_read $0.15/M; cache_write not published → 0
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 64000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.0000015
+      # output_cost_per_token: 0.0000075
+      # cache_read_input_token_cost: 0.00000015
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: github_copilot/gemini-3.6-flash
+
+  - model_name: github_copilot/gpt-5.6-luna
+    # from GitHub Copilot billing (openai list price): 922k input cap / 128k out, vision, reasoning. Default <=200K: $0.2/$1.2 per M, cache_read $0.02/M, cache_write $0.25/M. Long context >200K: $0.4/$1.8 per M, cache_read $0.04/M. Primary; fallback to openai direct.
+    model_info:
+      mode: responses
+      max_input_tokens: 922000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.0000002
+      # output_cost_per_token: 0.0000012
+      # cache_read_input_token_cost: 0.00000002
+      # cache_creation_input_token_cost: 0.00000025
+      # input_cost_per_token_above_200k_tokens: 0.0000004
+      # output_cost_per_token_above_200k_tokens: 0.0000018
+      # cache_read_input_token_cost_above_200k_tokens: 0.00000004
+    litellm_params:
+      model: github_copilot/gpt-5.6-luna
+
+  - model_name: github_copilot/gpt-5.6-terra
+    # from GitHub Copilot billing (openai list price): 922k input cap / 128k out, vision, reasoning. Default <=272K: $2/$12 per M, cache_read $0.2/M, cache_write $2.5/M. Long context >272K: $4/$18 per M, cache_read $0.4/M. Primary; fallback to openai direct.
+    model_info:
+      mode: responses
+      max_input_tokens: 922000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.000002
+      # output_cost_per_token: 0.000012
+      # cache_read_input_token_cost: 0.0000002
+      # cache_creation_input_token_cost: 0.0000025
+      # input_cost_per_token_above_272k_tokens: 0.000004
+      # output_cost_per_token_above_272k_tokens: 0.000018
+      # cache_read_input_token_cost_above_272k_tokens: 0.0000004
+    litellm_params:
+      model: github_copilot/gpt-5.6-terra
+
+  # ===== OpenAI direct API (fallback targets for copilot, + sol API-only) =====
+  # gpt-5.6-luna: fallback for github_copilot/gpt-5.6-luna
+  - model_name: openai/gpt-5.6-luna
+    # from models.dev (openai): 922k input cap / 128k out, vision, reasoning. Default <=272K: $0.2/$1.2 per M, cache_read $0.02/M, cache_write $0.25/M. Long context >272K: $0.4/$1.8 per M, cache_read $0.04/M, cache_write $0.5/M
+    model_info:
+      mode: responses
+      max_input_tokens: 922000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.0000002
+      # output_cost_per_token: 0.0000012
+      # cache_read_input_token_cost: 0.00000002
+      # cache_creation_input_token_cost: 0.00000025
+      # input_cost_per_token_above_272k_tokens: 0.0000004
+      # output_cost_per_token_above_272k_tokens: 0.0000018
+      # cache_read_input_token_cost_above_272k_tokens: 0.00000004
+      # cache_creation_input_token_cost_above_272k_tokens: 0.0000005
+    litellm_params:
+      model: openai/gpt-5.6-luna
+      api_key: os.environ/OPENAI_API_KEY
+
+  # gpt-5.6-terra: fallback for github_copilot/gpt-5.6-terra
+  - model_name: openai/gpt-5.6-terra
+    # from models.dev (openai): 922k input cap / 128k out, vision, reasoning. Default <=272K: $2/$12 per M, cache_read $0.2/M, cache_write $2.5/M. Long context >272K: $4/$18 per M, cache_read $0.4/M, cache_write $5/M
+    model_info:
+      mode: responses
+      max_input_tokens: 922000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.000002
+      # output_cost_per_token: 0.000012
+      # cache_read_input_token_cost: 0.0000002
+      # cache_creation_input_token_cost: 0.0000025
+      # input_cost_per_token_above_272k_tokens: 0.000004
+      # output_cost_per_token_above_272k_tokens: 0.000018
+      # cache_read_input_token_cost_above_272k_tokens: 0.0000004
+      # cache_creation_input_token_cost_above_272k_tokens: 0.000005
+    litellm_params:
+      model: openai/gpt-5.6-terra
+      api_key: os.environ/OPENAI_API_KEY
+
+  # gpt-5.6-sol: API-only (not available on this Copilot subscription tier)
+  - model_name: openai/gpt-5.6-sol
+    # from models.dev (openai): 922k input cap / 128k out, vision, reasoning. Default <=272K: $5/$30 per M, cache_read $0.5/M, cache_write $6.25/M. Long context >272K: $10/$45 per M, cache_read $1/M, cache_write $12.5/M
+    model_info:
+      mode: responses
+      max_input_tokens: 922000
+      max_output_tokens: 128000
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.000005
+      # output_cost_per_token: 0.00003
+      # cache_read_input_token_cost: 0.0000005
+      # cache_creation_input_token_cost: 0.00000625
+      # input_cost_per_token_above_272k_tokens: 0.00001
+      # output_cost_per_token_above_272k_tokens: 0.000045
+      # cache_read_input_token_cost_above_272k_tokens: 0.000001
+      # cache_creation_input_token_cost_above_272k_tokens: 0.0000125
+    litellm_params:
+      model: openai/gpt-5.6-sol
+      api_key: os.environ/OPENAI_API_KEY
+
+  # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
+  - model_name: ollama/glm-5.1
+    # from models.dev (ollama-cloud): 202752 ctx / 131072 out; cost set to 0 (ollama-cloud billing handled outside LiteLLM)
+    model_info:
+      mode: chat
+      max_input_tokens: 202752
+      max_output_tokens: 131072
+      supports_vision: false
+      supports_reasoning: true
+      # input_cost_per_token: 0.0
+      # output_cost_per_token: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/glm-5.1
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/deepseek-v4-pro
+    # from models.dev (ollama-cloud): 1048576 ctx / 1048576 out; cost set to 0 (ollama-cloud billing handled outside LiteLLM)
+    model_info:
+      mode: chat
+      max_input_tokens: 1048576
+      max_output_tokens: 1048576
+      supports_vision: false
+      supports_reasoning: true
+      # input_cost_per_token: 0.0
+      # output_cost_per_token: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/deepseek-v4-pro
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/kimi-k2.7-code
+    # from models.dev (ollama-cloud): 262144 ctx / 262144 out, multimodal, reasoning; cost set to 0 (ollama-cloud billing handled outside LiteLLM)
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+      max_output_tokens: 262144
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.0
+      # output_cost_per_token: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/kimi-k2.7-code
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/minimax-m3
+    # from models.dev (ollama-cloud): 512000 ctx / 131072 out, multimodal (text+image+video), reasoning; cost set to 0 (ollama-cloud billing handled outside LiteLLM)
+    model_info:
+      mode: chat
+      max_input_tokens: 512000
+      max_output_tokens: 131072
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.0
+      # output_cost_per_token: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/minimax-m3
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/deepseek-v4-flash
+    # from models.dev (ollama-cloud): 1048576 ctx / 1048576 out; cost set to 0 (ollama-cloud billing handled outside LiteLLM)
+    model_info:
+      mode: chat
+      max_input_tokens: 1048576
+      max_output_tokens: 1048576
+      supports_vision: false
+      supports_reasoning: true
+      # input_cost_per_token: 0.0
+      # output_cost_per_token: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/deepseek-v4-flash:0731
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/glm-5.2
+    # from models.dev (ollama-cloud): 976000 ctx / 131072 out; cost set to 0 (ollama-cloud billing handled outside LiteLLM)
+    model_info:
+      mode: chat
+      max_input_tokens: 976000
+      max_output_tokens: 131072
+      supports_vision: false
+      supports_reasoning: true
+      # input_cost_per_token: 0.0
+      # output_cost_per_token: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/glm-5.2
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  # Ollama-only models (no fallback)
+  - model_name: ollama/gemma4
+    # from models.dev (ollama-cloud): 262144 ctx / 262144 out, multimodal, reasoning; cost set to 0 (ollama-cloud billing handled outside LiteLLM)
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+      max_output_tokens: 262144
+      supports_vision: true
+      supports_reasoning: true
+      # input_cost_per_token: 0.0
+      # output_cost_per_token: 0.0
+      # cache_read_input_token_cost: 0.0
+      # cache_creation_input_token_cost: 0.0
+    litellm_params:
+      model: openai/gemma4
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+litellm_settings:
+  callbacks:
+    - prometheus
+    - smtp_email
+  prometheus_initialize_budget_metrics: true
+  enable_end_user_cost_tracking_prometheus_only: true
+  service_callback: ["prometheus_system"]
+  require_auth_for_metrics_endpoint: true
+
+  drop_params: true
+  request_timeout: 600
+  num_retries: 2
+  set_verbose: false
+  json_logs: true
+  cache: true
+  enable_redis_auth_cache: true
+  cache_params:
+    type: redis
+    host: os.environ/REDIS_HOST
+    port: os.environ/REDIS_PORT
+    password: os.environ/REDIS_PASSWORD
+router_settings:
+  routing_strategy: simple-shuffle
+
+  # redis connection
+  redis_url: os.environ/REDIS_URL
+  redis_port: os.environ/REDIS_PORT
+  enable_pre_call_checks: true
+
+  # Routing aliases — clean model_name → primary provider/model_name
+  model_group_alias:
+    claude-sonnet-5: github_copilot/claude-sonnet-5
+    claude-opus-5: anthropic/claude-opus-5
+    claude-fable-5: anthropic/claude-fable-5
+    deepseek-v4-pro: ollama/deepseek-v4-pro
+    kimi-k2.7-code: ollama/kimi-k2.7-code
+    minimax-m3: ollama/minimax-m3
+    deepseek-v4-flash: ollama/deepseek-v4-flash
+    glm-5.2: ollama/glm-5.2
+    glm-5.1: ollama/glm-5.1
+    gemini-3.6-flash: github_copilot/gemini-3.6-flash
+    gpt-5.6-luna: github_copilot/gpt-5.6-luna
+    gpt-5.6-terra: github_copilot/gpt-5.6-terra
+    gpt-5.6-sol: openai/gpt-5.6-sol
+    gemma4: ollama/gemma4
+    tts: openai/tts-1
+    stt: deepgram/nova-2
+    image: gemini/gemini-3.1-flash-image
+    text-embedding-3: openai/text-embedding-3-large
+
+  # Fallback chains: github_copilot > direct API key
+  fallbacks:
+    - "claude-sonnet-5":
+        - "anthropic/claude-sonnet-5"
+    - "gpt-5.6-luna":
+        - "openai/gpt-5.6-luna"
+    - "gpt-5.6-terra":
+        - "openai/gpt-5.6-terra"
+    - "stt":
+        - "openai/whisper-1"
+    - "image":
+        - "openai/gpt-image-2"
+        - "gemini/gemini-3.1-flash-lite-image"
+    - "text-embedding-3":
+        - "openai/text-embedding-3-small"
+
+general_settings:
+  user_api_key_cache_ttl: 300
+  alerting:
+    - email
+  master_key: os.environ/PROXY_MASTER_KEY
+  database_url: os.environ/DATABASE_URL
+  store_model_in_db: true
+  # Per-user usage tracking from Open WebUI
+  user_header_mappings:
+    - header_name: X-OpenWebUI-User-Id
+      litellm_user_role: internal_user
+    - header_name: X-OpenWebUI-User-Email
+      litellm_user_role: customer
+  # Production best practices (https://docs.litellm.ai/docs/proxy/prod)
+  proxy_batch_write_at: 60
+  database_connection_pool_limit: 10
+  disable_error_logs: true
+
+search_tools:
+  - search_tool_name: searxng-search
+    litellm_params:
+      search_provider: searxng
+      api_base: http://searxng.searxng.svc.cluster.local
+
+mcp_servers:
+  github:
+    url: https://api.githubcopilot.com/mcp/
+    auth_type: oauth2
+    oauth2_flow: authorization_code
+    client_id: os.environ/GITHUB_OAUTH_CLIENT_ID
+    client_secret: os.environ/GITHUB_OAUTH_CLIENT_SECRET
+    transport: http
+    scopes:
+      - repo
+      - read:packages
+      - read:org
+    allow_all_keys: true
+  terraform:
+    url: http://mcp-terraform-proxy.toolhive.svc.cluster.local:8080/mcp
+    auth_type: none
+    allow_all_keys: true
+  searxng:
+    url: http://mcp-searxng-proxy.toolhive.svc.cluster.local:8080/mcp
+    auth_type: none
+    allow_all_keys: true
+  context7:
+    url: https://mcp.context7.com/mcp/oauth
+    auth_type: oauth2
+    oauth2_flow: authorization_code
+    transport: http
+    allow_all_keys: true
+  firecrawl:
+    url: http://mcp-firecrawl-remote-proxy.toolhive.svc.cluster.local:8080/mcp
+    auth_type: none
+    allow_all_keys: true

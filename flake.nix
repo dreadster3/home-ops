@@ -49,6 +49,7 @@
               yq-go
               gitleaks
               pre-commit
+              talosctl
               # Sourced from nixos-26.05 stable, not nixos-unstable.
               # nixos-unstable's minikube fetches its source by tag, so
               # `src.rev` resolves to `refs/tags/v1.38.1`. That string
