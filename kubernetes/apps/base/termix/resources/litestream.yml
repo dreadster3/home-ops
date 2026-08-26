@@ -1,0 +1,10 @@
+dbs:
+  - path: /app/data/db.sqlite
+    replica:
+      type: s3
+      bucket: termix
+      endpoint: https://truenas.${INTERNAL_DOMAIN}:30292
+
+snapshot:
+  interval: 24h
+  retention: 168h # keep 7 days of history

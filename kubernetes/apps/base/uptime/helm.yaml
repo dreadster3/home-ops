@@ -37,14 +37,14 @@ spec:
               - -if-replica-exists
               - /app/data/kuma.db
             env:
-              TZ: Europe/Lisbon
+              TZ: ${TIMEZONE}
             envFrom:
               - secretRef:
                   name: litestream-backup-credentials
             resources:
               requests:
-                cpu: 70m
-                memory: &memory 128Mi
+                cpu: 15m
+                memory: &memory 50Mi
               limits:
                 memory: *memory
             securityContext:
@@ -57,7 +57,7 @@ spec:
               repository: docker.io/louislam/uptime-kuma
               tag: 2.5.3@sha256:3e24e96c89efff0e3a4b0698cbdd36c15ad3022371db57166e5588853002ee5c
             env:
-              TZ: Europe/Lisbon
+              TZ: ${TIMEZONE}
               UPTIME_KUMA_DB_TYPE: sqlite
             ports:
               - containerPort: 3001
@@ -78,14 +78,14 @@ spec:
               tag: 0.5.16@sha256:f085f8bce71a5ad4ce8e28b28ea522de1d9e0d7dd0af3ea5c1bd626d0f341954
             args: [replicate]
             env:
-              TZ: Europe/Lisbon
+              TZ: ${TIMEZONE}
             envFrom:
               - secretRef:
                   name: litestream-backup-credentials
             resources:
               requests:
-                cpu: 70m
-                memory: &memory 128Mi
+                cpu: 15m
+                memory: &memory 50Mi
               limits:
                 memory: *memory
             securityContext:

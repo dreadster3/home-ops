@@ -7,7 +7,16 @@ labels:
   - pairs:
       app.kubernetes.io/module: *app
 
+configMapGenerator:
+  - name: litestream-config
+    namespace: *app
+    options:
+      disableNameSuffixHash: true
+    files:
+      - resources/litestream.yml
+
 resources:
   - namespace.yaml
   - helm.yaml
   - network.yaml
+  - secrets.yaml

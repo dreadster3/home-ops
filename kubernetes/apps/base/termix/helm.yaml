@@ -26,30 +26,136 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          litestream-restore:
+            image:
+              repository: litestream/litestream
+              tag: 0.5.16@sha256:f085f8bce71a5ad4ce8e28b28ea522de1d9e0d7dd0af3ea5c1bd626d0f341954
+            args:
+              - restore
+              - -if-db-not-exists
+              - -if-replica-exists
+              - /app/data/db.sqlite
+            env:
+              TZ: ${TIMEZONE}
+            envFrom:
+              - secretRef:
+                  name: litestream-backup-credentials
+            resources:
+              requests:
+                cpu: 15m
+                memory: &memory 50Mi
+              limits:
+                memory: *memory
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
         containers:
           main:
             image:
               repository: ghcr.io/lukegus/termix
               tag: 2.7.1@sha256:931e4ce466f4d29b157eb8d6dcd4d36ee5114495c6edddbb19d4e360e2a60f8d
             env:
-              TZ: Europe/Lisbon
+              TZ: ${TIMEZONE}
               PORT: &port 8080
+              NODE_ENV: production
+              DATA_DIR: /app/data
+
+              # Database configuration
+              # INFO: litestream does not support encrypted SQLite databases
+              DB_FILE_ENCRYPTION: false
+
+              # Guacamole configuration
+              GUACD_HOST: localhost
+              GUACD_TUNNEL_HOST: termix
+              GUACD_RECORDING_BACKEND_PATH: /app/data/recordings/guacamole
+              GUACD_RECORDING_PATH: /app/data/recordings/guacamole
+
+              # OIDC configuration
+              OIDC_ISSUER_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/termix/
+              OIDC_AUTHORIZATION_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/authorize/
+              OIDC_TOKEN_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/token/
+              OIDC_IDENTIFIER_PATH: sub
+              OIDC_NAME_PATH: preferred_username
+              OIDC_SCOPES: openid profile email
+              OIDC_GROUP_CLAIM: groups
+              OIDC_ADMIN_GROUP: AuthentikAdmins
+              OIDC_ALLOW_REGISTRATION: true
+
+              # Authentication configuration
+              ALLOW_REGISTRATION: false
+              ALLOW_PASSWORD_LOGIN: false
+              ALLOW_PASSWORD_RESET: false
+
+              ENABLE_TELEMETRY: false
+            envFrom:
+              - secretRef:
+                  name: termix-secret-env
             ports:
               - containerPort: *port
                 name: http
                 protocol: TCP
             resources:
               requests:
-                cpu: 5m
-                memory: 128Mi
+                cpu: 34m
+                memory: &memory 155Mi
               limits:
-                cpu: 100m
-                memory: 512Mi
+                memory: *memory
             securityContext:
               allowPrivilegeEscalation: false
               # Needs to be false for nginx files to work
               readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                spec:
+                  initialDelaySeconds: 15
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+          guacd:
+            image:
+              repository: guacamole/guacd
+              tag: 1.6.0@sha256:8974eaa9ba32f713daf311e7cc8cd7e4cdfba1edea39eed75524e78ef4b08f4f
+            ports:
+              - containerPort: 4822
+                name: guacd
+                protocol: TCP
+            securityContext:
+              runAsNonRoot: true
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+          litestream:
+            image:
+              repository: litestream/litestream
+              tag: 0.5.16@sha256:f085f8bce71a5ad4ce8e28b28ea522de1d9e0d7dd0af3ea5c1bd626d0f341954
+            args: [replicate]
+            env:
+              TZ: ${TIMEZONE}
+            envFrom:
+              - secretRef:
+                  name: litestream-backup-credentials
+            resources:
+              requests:
+                cpu: 15m
+                memory: &memory 50Mi
+              limits:
+                memory: *memory
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
         pod:
           securityContext:
             runAsNonRoot: true
@@ -85,6 +191,20 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         storageClass: ceph-block
-        size: 1Gi
+        size: 5Gi
         globalMounts:
           - path: /app/data
+      litestream:
+        enabled: true
+        type: configMap
+        name: litestream-config
+        advancedMounts:
+          main:
+            litestream-restore:
+              - path: /etc/litestream.yml
+                readOnly: true
+                subPath: litestream.yml
+            litestream:
+              - path: /etc/litestream.yml
+                readOnly: true
+                subPath: litestream.yml
