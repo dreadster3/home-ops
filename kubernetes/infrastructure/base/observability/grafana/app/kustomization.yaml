@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - helm.yaml
   - secrets.yaml
+  - datasources.yaml
 
 configMapGenerator:
   - name: grafana-dashboards
