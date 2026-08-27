@@ -23,8 +23,6 @@ spec:
       auth.generic_oauth:
         enabled: false
         auto_login: false
-        client_id: ""
-        client_secret: ""
         scopes: ""
         auth_url: ""
         token_url: ""
