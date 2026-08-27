@@ -15,3 +15,21 @@ spec:
         requests:
           cpu: 0m
           memory: 0Mi
+    # Dev has no authentik — disable OIDC and remove the authentik secret mount
+    extraSecretMounts: []
+    grafana.ini:
+      auth:
+        signout_redirect_url: ""
+      auth.generic_oauth:
+        enabled: false
+        auto_login: false
+        client_id: ""
+        client_secret: ""
+        scopes: ""
+        auth_url: ""
+        token_url: ""
+        api_url: ""
+        role_attribute_path: ""
+    route:
+      main:
+        enabled: false

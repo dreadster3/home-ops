@@ -82,10 +82,29 @@ spec:
         provider:
           foldersFromFilesStructure: true
       datasources:
-        enabled: true
-        label: grafana/datasource
-        value: "true"
-        searchNamespace: monitoring
+        enabled: false
+
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        deleteDatasources:
+          - { name: Alertmanager, orgId: 1 }
+          - { name: Prometheus, orgId: 1 }
+          - { name: Loki, orgId: 1 }
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            uid: prometheus
+            access: proxy
+            url: http://victoria-metrics:8428
+            isDefault: true
+            jsonData:
+              timeInterval: 15s
+          - name: VictoriaLogs
+            type: victoriametrics-logs-datasource
+            uid: victorialogs
+            access: proxy
+            url: http://victoria-logs-single:9428
 
     podAnnotations:
       reloader.stakater.com/auto: "true"
