@@ -37,16 +37,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        - name: LOKI_USER
-          valueFrom:
-            secretKeyRef:
-              name: loki-auth
-              key: username
-        - name: LOKI_PASS
-          valueFrom:
-            secretKeyRef:
-              name: loki-auth
-              key: password
 
     configReloader:
       resources:
