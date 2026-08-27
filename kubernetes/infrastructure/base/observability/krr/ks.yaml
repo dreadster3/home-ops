@@ -15,7 +15,7 @@ spec:
     name: flux-system
     namespace: flux-system
   dependsOn:
-    - name: prometheus
+    - name: victoria-metrics
       namespace: monitoring
   interval: 1h
   timeout: 5m

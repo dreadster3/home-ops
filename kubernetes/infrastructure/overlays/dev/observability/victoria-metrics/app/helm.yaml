@@ -1,0 +1,15 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-metrics
+  namespace: monitoring
+spec:
+  values:
+    server:
+      retentionPeriod: "2d"
+      persistentVolume:
+        size: 10Gi
+      resources:
+        requests:
+          cpu: 0m
+          memory: 0Mi
