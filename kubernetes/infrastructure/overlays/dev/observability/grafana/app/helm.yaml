@@ -15,7 +15,10 @@ spec:
         requests:
           cpu: 0m
           memory: 0Mi
-    # Dev has no authentik — disable OIDC and remove the authentik secret mount
+    # Dev has no authentik — disable OIDC and remove the authentik secret mount.
+    # assertNoLeakedSecrets is disabled so we can blank out client_id/client_secret,
+    # which otherwise reference $__file{...} paths that aren't mounted in dev.
+    assertNoLeakedSecrets: false
     extraSecretMounts: []
     grafana.ini:
       auth:
@@ -23,6 +26,8 @@ spec:
       auth.generic_oauth:
         enabled: false
         auto_login: false
+        client_id: ""
+        client_secret: ""
         scopes: ""
         auth_url: ""
         token_url: ""
