@@ -460,17 +460,39 @@ model_list:
 
   - model_name: zai/glm-5.3
     model_info:
-      max_input_tokens: 1000000
-      max_output_tokens: 131072
-      supports_vision: false
-      supports_reasoning: true
-      supports_prompt_caching: true
-      input_cost_per_token: 0.0000014
-      output_cost_per_token: 0.0000044
-      cache_read_input_token_cost: 0.00000026
-      cache_creation_input_token_cost: 0.0
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
     litellm_params:
       model: zai/glm-5.3
+      api_key: os.environ/ZAI_API_KEY
+
+  - model_name: zai/glm-5.3-flash
+    model_info:
+      max_input_tokens: 1000000
+      max_output_tokens: 131072
+      supports_vision: true
+      supports_reasoning: true
+      supports_prompt_caching: true
+      supports_function_calling: true
+      supports_tool_choice: true
+      input_cost_per_token: 0.00000015
+      output_cost_per_token: 0.00000050
+      cache_read_input_token_cost: 0.00000015
+      cache_creation_input_token_cost: 0.0
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: zai/glm-5.3-flash
       api_key: os.environ/ZAI_API_KEY
 
   - model_name: moonshot/kimi-k3
@@ -510,6 +532,27 @@ model_list:
       model: openrouter/qwen/qwen3.8-max
       api_key: os.environ/OPENROUTER_API_KEY
 
+  - model_name: openrouter/qwen/qwen3.8-flash
+    model_info:
+      max_input_tokens: 1000000
+      max_output_tokens: 131072
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_response_schema: true
+      supports_tool_choice: true
+      supports_vision: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: false
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: openrouter/qwen/qwen3.8-flash
+      api_key: os.environ/OPENROUTER_API_KEY
+
   - model_name: openrouter/z-ai/glm-5.3
     model_info:
       max_input_tokens: 1000000
@@ -526,6 +569,26 @@ model_list:
       supports_max_reasoning_effort: true
     litellm_params:
       model: openrouter/z-ai/glm-5.3
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: openrouter/z-ai/glm-5.3-flash
+    model_info:
+      max_input_tokens: 1000000
+      max_output_tokens: 131072
+      supports_vision: true
+      supports_reasoning: true
+      supports_prompt_caching: true
+      supports_function_calling: true
+      supports_tool_choice: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: openrouter/z-ai/glm-5.3-flash
       api_key: os.environ/OPENROUTER_API_KEY
 
   - model_name: openrouter/deepseek/deepseek-v4-flash
@@ -614,8 +677,10 @@ router_settings:
 
     # openrouter models
     glm-5.3: openrouter/z-ai/glm-5.3
+    glm-5.3-flash: openrouter/z-ai/glm-5.3-flash
     kimi-k3: openrouter/moonshotai/kimi-k3
     qwen3.8-max: openrouter/qwen/qwen3.8-max
+    qwen3.8-flash: openrouter/qwen/qwen3.8-flash
 
     tts: openai/tts-1
     stt: deepgram/nova-2
@@ -651,6 +716,8 @@ router_settings:
         - "openrouter/minimax/minimax-m3"
     - "glm-5.3":
         - "zai/glm-5.3"
+    - "glm-5.3-flash":
+        - "zai/glm-5.3-flash"
     - "kimi-k3":
         - "moonshot/kimi-k3"
 
