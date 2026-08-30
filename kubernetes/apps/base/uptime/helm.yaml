@@ -85,7 +85,7 @@ spec:
             resources:
               requests:
                 cpu: 15m
-                memory: &memory 50Mi
+                memory: &memory 100Mi
               limits:
                 memory: *memory
             securityContext:
