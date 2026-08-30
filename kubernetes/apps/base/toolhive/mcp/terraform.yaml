@@ -3,7 +3,7 @@ kind: MCPServer
 metadata:
   name: terraform
 spec:
-  image: hashicorp/terraform-mcp-server:1.2.0@sha256:bd095e2b442a2cb61255fe4db52f9e824f35d307a2044784c95d37a93f18d324
+  image: hashicorp/terraform-mcp-server:1.3.0@sha256:423a6b8e2ee06affcf090892f40c86469caba45fd2448ffa8ca5d717a174f7d5
   transport: stdio
   resources:
     requests:
