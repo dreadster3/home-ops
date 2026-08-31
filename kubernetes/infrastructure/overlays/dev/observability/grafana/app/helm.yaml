@@ -33,6 +33,3 @@ spec:
         token_url: ""
         api_url: ""
         role_attribute_path: ""
-    route:
-      main:
-        enabled: false
