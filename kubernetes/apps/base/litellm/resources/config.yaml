@@ -387,6 +387,48 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
+  - model_name: ollama/glm-5.3
+    model_info:
+      mode: chat
+      max_input_tokens: 1000000
+      max_output_tokens: 131072
+      supports_vision: false
+      supports_reasoning: true
+      supports_prompt_caching: true
+      supports_function_calling: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: openai/glm-5.3
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/glm-5.3-flash
+    model_info:
+      max_input_tokens: 1000000
+      max_output_tokens: 131072
+      supports_vision: true
+      supports_reasoning: true
+      supports_prompt_caching: true
+      supports_function_calling: true
+      supports_tool_choice: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: openai/glm-5.3-flash
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
   # Ollama-only models (no fallback)
   - model_name: ollama/gemma4
     model_info:
@@ -674,10 +716,10 @@ router_settings:
     deepseek-v4-pro: ollama/deepseek-v4-pro
     glm-5.2: ollama/glm-5.2
     gemma4: ollama/gemma4
+    glm-5.3: ollama/glm-5.3
+    glm-5.3-flash: ollama/glm-5.3-flash
 
     # openrouter models
-    glm-5.3: openrouter/z-ai/glm-5.3
-    glm-5.3-flash: openrouter/z-ai/glm-5.3-flash
     kimi-k3: openrouter/moonshotai/kimi-k3
     qwen3.8-max: openrouter/qwen/qwen3.8-max
     qwen3.8-flash: openrouter/qwen/qwen3.8-flash
@@ -715,8 +757,10 @@ router_settings:
     - "minimax-m3":
         - "openrouter/minimax/minimax-m3"
     - "glm-5.3":
+        - "openrouter/z-ai/glm-5.3"
         - "zai/glm-5.3"
     - "glm-5.3-flash":
+        - "openrouter/z-ai/glm-5.3-flash"
         - "zai/glm-5.3-flash"
     - "kimi-k3":
         - "moonshot/kimi-k3"
