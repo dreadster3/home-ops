@@ -23,10 +23,11 @@ spec:
     server:
       fullnameOverride: victoria-logs
       retentionPeriod: "30d"
+      retentionMaxDiskUsagePercent: 85
 
       persistentVolume:
         enabled: true
-        size: 20Gi
+        size: 50Gi
         storageClassName: ceph-block
 
       resources:
