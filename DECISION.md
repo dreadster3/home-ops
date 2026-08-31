@@ -178,4 +178,23 @@ Decisions made throughout the life of this project, with rationale and context.
 
 ---
 
+## 20. Introduce scale-to-zero with KEDA for stateless apps
+
+- **Date:** 2026-08-31
+- **Status:** Accepted
+- **Context:** Every app in the cluster runs fixed replicas (mostly 2), so stateless utility services consume idle compute around the clock. The only existing autoscaling is the immich HPAs (which floor at 2). The goal is to reclaim idle resources by scaling appropriate workloads to zero when they are not needed, without kubectl/one-off cluster surgery (GitOps-only change).
+- **Decision:** Install the KEDA operator as a platform infrastructure component (`kubernetes/infrastructure/base/platform/keda/`, chart `kedacore/keda` 2.x). Enable scale-to-zero via KEDA `cron` ScaledObjects on three stateless, non-critical apps — `tika`, `searxng`, `termix` — scaling to 0 replicas between 23:00–07:00 UTC and to 1 replica during 07:00–23:00 UTC (Europe/Lisbon local ≈ 00:00–08:00). The ScaledObject pattern is copy-paste extendable to further apps.
+
+### 20a. KEDA operator
+
+- **Decision:** Add KEDA as a `platform` infrastructure component with its own namespace and HelmRelease (chart repo `https://kedacore.github.io/charts`), wired through the standard component `ks.yaml` pattern. Webhooks disabled and single replicas for both operator and metrics server to keep the footprint small.
+- **Rationale:** Stock HPA cannot scale below 1 replica, so true scale-to-zero requires KEDA. KEDA is the de-facto CNCF-graduated solution, works with the existing Flux/Helm workflow, and Renovate will keep the chart updated.
+
+### 20b. Cron-based ScaledObjects and app selection
+
+- **Decision:** Use KEDA cron triggers (active 07:00–23:00 UTC at 1 replica, zero outside) for `tika`, `searxng` and `termix`. All are stateless: tika is an on-demand content-extraction utility consumed by Open WebUI (and optionally Paperless), searxng is a stateless meta-search frontend (SearXNG) whose Dragonfly cache is unaffected, termix is a personal web terminal with litestream-backed SQLite.
+- **Rationale:** The cron scaler is the only dependency-free trigger that can scale *from* zero in this cluster — CPU/memory HPAs cannot see an idle (0-replica) workload, and there is no Prometheus-backed request metric wired to KEDA. A request-based solution (KEDA HTTP add-on holding traffic in front of Envoy Gateway) was considered and rejected as too invasive for now. Stateful/DB-backed apps are excluded (PGCluster/Dragonfly/PVC data safety); `pangolin` (remote access path), `uptime` (monitoring must always run) and `vault` (secrets) are excluded for availability reasons. Known trade-off: consumers hitting tika/searxng during the zero window get connection failures until the scheduled wake-up; acceptable for home-lab usage patterns.
+
+---
+
 *This log is maintained to provide context for architectural decisions and onboarding.*
