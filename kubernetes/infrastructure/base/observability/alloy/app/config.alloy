@@ -238,7 +238,7 @@ loki.process "canary_pods" {
 
 loki.write "loki" {
 	endpoint {
-		url = "http://victoria-logs-single-server:9428/insert/loki/api/v1/push"
+		url = "http://victoria-logs:9428/insert/loki/api/v1/push"
 	}
 }
 

@@ -20,9 +20,8 @@ spec:
     kind: OCIRepository
     name: victoria-logs
   values:
-    fullnameOverride: victoria-logs-single
-
     server:
+      fullnameOverride: victoria-logs
       retentionPeriod: "30d"
 
       persistentVolume:
