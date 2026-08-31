@@ -156,6 +156,11 @@ spec:
           gnetId: 24965
           revision: 2
           datasource: Prometheus
+        speedtracker:
+          gnetId: 24608
+          revision: 5
+          datasource:
+            - { name: DS_PROMETHEUS, value: Prometheus }
 
     plugins:
       - grafana-clock-panel

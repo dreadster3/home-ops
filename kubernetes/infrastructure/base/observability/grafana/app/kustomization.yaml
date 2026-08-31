@@ -16,4 +16,3 @@ configMapGenerator:
         grafana/folder: Other
     files:
       - dashboards/peanut.json
-      - dashboards/speedtracker.json
