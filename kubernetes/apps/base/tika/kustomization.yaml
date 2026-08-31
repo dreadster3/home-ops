@@ -11,4 +11,5 @@ resources:
   - namespace.yaml
   - helm.yaml
   - network.yaml
+  - proxy.yaml
   - autoscaling.yaml

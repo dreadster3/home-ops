@@ -1,0 +1,20 @@
+---
+# Bridge traffic from searxng's in-cluster consumers (openwebui, litellm,
+# toolhive MCP) to the KEDA HTTP add-on interceptor proxy in the keda
+# namespace. Hitting this Service generates the request counts that wake
+# searxng from zero; the interceptor then forwards to the real searxng
+# Service. ExternalName is DNS-only, so callers must use the interceptor
+# proxy's port (8080) and send this Service's DNS name as the Host header,
+# which must stay listed in the InterceptorRoute hosts.
+apiVersion: v1
+kind: Service
+metadata:
+  name: searxng-proxy
+  namespace: searxng
+spec:
+  type: ExternalName
+  externalName: keda-add-ons-http-interceptor-proxy.keda.svc.cluster.local
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

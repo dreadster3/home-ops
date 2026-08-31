@@ -1,3 +1,28 @@
+---
+# Routes searxng traffic through the KEDA HTTP add-on interceptor, which counts
+# requests and holds them while the deployment scales up from zero. The
+# HTTPRoute backendRefs point at the interceptor proxy (gateway.networking.k8s.io
+# ReferenceGrant in the keda namespace); in-cluster callers go through the
+# searxng-proxy ExternalName Service. Host headers are matched with the port
+# stripped, so the bare service DNS names cover :80/:8080 callers.
+apiVersion: http.keda.sh/v1beta1
+kind: InterceptorRoute
+metadata:
+  name: searxng
+  namespace: searxng
+spec:
+  target:
+    service: searxng
+    port: 80
+  rules:
+    - hosts:
+        - searxng.${INTERNAL_DOMAIN}
+        - searxng-proxy
+        - searxng-proxy.searxng.svc.cluster.local
+  scalingMetric:
+    concurrency:
+      targetValue: 100
+---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
@@ -14,9 +39,7 @@ spec:
   advanced:
     restoreToOriginalReplicaCount: false
   triggers:
-    - type: cron
+    - type: external-push
       metadata:
-        timezone: Etc/UTC
-        start: "0 7 * * *"
-        end: "0 23 * * *"
-        desiredReplicas: "1"
+        scalerAddress: keda-add-ons-http-external-scaler.keda:9090
+        interceptorRoute: searxng

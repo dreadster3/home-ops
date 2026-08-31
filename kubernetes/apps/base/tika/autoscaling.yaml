@@ -1,3 +1,26 @@
+---
+# Routes tika traffic through the KEDA HTTP add-on interceptor, which counts
+# requests and holds them while the deployment scales up from zero. In-cluster
+# consumers reach tika via the tika-proxy ExternalName Service, which resolves
+# to the interceptor proxy; the Host header they send must be listed in
+# spec.rules[].hosts (ports are stripped from Host before matching).
+apiVersion: http.keda.sh/v1beta1
+kind: InterceptorRoute
+metadata:
+  name: tika
+  namespace: tika
+spec:
+  target:
+    service: tika
+    port: 80
+  rules:
+    - hosts:
+        - tika-proxy
+        - tika-proxy.tika.svc.cluster.local
+  scalingMetric:
+    concurrency:
+      targetValue: 100
+---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
@@ -14,9 +37,7 @@ spec:
   advanced:
     restoreToOriginalReplicaCount: false
   triggers:
-    - type: cron
+    - type: external-push
       metadata:
-        timezone: Etc/UTC
-        start: "0 7 * * *"
-        end: "0 23 * * *"
-        desiredReplicas: "1"
+        scalerAddress: keda-add-ons-http-external-scaler.keda:9090
+        interceptorRoute: tika
