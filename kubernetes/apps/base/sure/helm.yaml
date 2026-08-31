@@ -13,7 +13,7 @@ spec:
   url: https://github.com/we-promise/sure
   ref:
     # Pinned to the last stable release tag. Renovate bumps this.
-    tag: v0.7.3
+    tag: v0.7.4
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmChart
