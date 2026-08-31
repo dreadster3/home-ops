@@ -20,3 +20,4 @@ resources:
   - helm.yaml
   - network.yaml
   - secrets.yaml
+  - autoscaling.yaml

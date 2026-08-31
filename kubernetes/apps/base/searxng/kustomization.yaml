@@ -21,3 +21,4 @@ resources:
   - secrets.yaml
   - helm.yaml
   - dragonfly.yaml
+  - autoscaling.yaml
