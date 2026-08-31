@@ -25,7 +25,35 @@ spec:
       api:
         type: deployment
         strategy: RollingUpdate
-        replicas: 2
+        horizontalPodAutoscaler:
+          minReplicas: 1
+          maxReplicas: 2
+          metrics: &hpaMetrics
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 70
+            - type: Resource
+              resource:
+                name: memory
+                target:
+                  type: Utilization
+                  averageUtilization: 80
+          behavior: &hpaBehavior
+            scaleDown:
+              stabilizationWindowSeconds: 300
+              policies:
+                - type: Pods
+                  value: 1
+                  periodSeconds: 60
+            scaleUp:
+              stabilizationWindowSeconds: 60
+              policies:
+                - type: Pods
+                  value: 2
+                  periodSeconds: 30
         labels:
           nfsMount: "true"
         containers:
@@ -72,11 +100,12 @@ spec:
                 containerPort: 8081
                 protocol: TCP
             resources:
-              limits:
-                memory: &memory 750Mi
               requests:
                 cpu: 155m
-                memory: *memory
+                # NOTE: Difference between memory usage for HPA
+                memory: 750Mi
+              limits:
+                memory: 1Gi
             securityContext: &securityContext
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -98,7 +127,11 @@ spec:
       microservices:
         type: deployment
         strategy: RollingUpdate
-        replicas: 2
+        horizontalPodAutoscaler:
+          minReplicas: 1
+          maxReplicas: 2
+          metrics: *hpaMetrics
+          behavior: *hpaBehavior
         labels:
           nfsMount: "true"
         containers:
@@ -114,7 +147,7 @@ spec:
             resources:
               requests:
                 cpu: 495m
-                # NOTE: Difference between memory usage is so big worth keeping requests and limits separate
+                # NOTE: Difference between memory usage for HPA
                 memory: 1.5Gi
               limits:
                 memory: 2.5Gi
@@ -125,6 +158,10 @@ spec:
             securityContext: *securityContext
         pod:
           securityContext: *podSecurityContext
+          # Immich jobs (ML search indexing, thumbnail generation, video transcodes) can run
+          # for a long time — let SIGTERM-strapped pods finish instead of getting SIGKILLed,
+          # even mid scale-in.
+          terminationGracePeriodSeconds: 1800
           topologySpreadConstraints:
             - maxSkew: 1
               topologyKey: kubernetes.io/hostname
@@ -135,7 +172,11 @@ spec:
       machine-learning:
         type: deployment
         strategy: RollingUpdate
-        replicas: 2
+        horizontalPodAutoscaler:
+          minReplicas: 1
+          maxReplicas: 2
+          metrics: *hpaMetrics
+          behavior: *hpaBehavior
         containers:
           main:
             image:
@@ -181,13 +222,14 @@ spec:
             resources:
               requests:
                 cpu: 2000m
-                # NOTE: Difference between memory usage is so big worth keeping requests and limits separate
+                # NOTE: Difference between memory usage for HPA
                 memory: 1.8Gi
               limits:
                 memory: 2.5Gi
             securityContext: *securityContext
         pod:
           securityContext: *podSecurityContext
+          terminationGracePeriodSeconds: 1800
           topologySpreadConstraints:
             - maxSkew: 1
               topologyKey: kubernetes.io/hostname
