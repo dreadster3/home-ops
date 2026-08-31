@@ -113,7 +113,6 @@ model_list:
       model: anthropic/claude-fable-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  # Fallback for claude-sonnet-5 (github_copilot > anthropic direct)
   - model_name: anthropic/claude-sonnet-5
     model_info:
       mode: chat
@@ -136,130 +135,6 @@ model_list:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  # ===== GitHub Copilot (OAuth device flow — tokens persisted in PVC) =====
-  - model_name: github_copilot/claude-sonnet-5
-    model_info:
-      mode: chat
-      max_input_tokens: 1000000
-      max_output_tokens: 128000
-      supports_adaptive_thinking: true
-      supports_mid_conversation_system: true
-      supports_assistant_prefill: false
-      supports_computer_use: true
-      supports_function_calling: true
-      supports_native_structured_output: true
-      supports_pdf_input: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_sampling_params: false
-      supports_tool_choice: true
-      supports_vision: true
-      supports_output_config: true
-      supports_xhigh_reasoning_effort: true
-      supports_max_reasoning_effort: true
-      prompt_cache_min_tokens: 1024
-      input_cost_per_token: 0.000002
-      output_cost_per_token: 0.00001
-      cache_read_input_token_cost: 0.0000002
-      cache_creation_input_token_cost: 0.0000025
-    litellm_params:
-      model: github_copilot/claude-sonnet-5
-
-  - model_name: github_copilot/gemini-3.6-flash
-    model_info:
-      mode: chat
-      max_input_tokens: 128000
-      max_output_tokens: 64000
-      supports_audio_output: false
-      supports_audio_input: true
-      supports_function_calling: true
-      supports_parallel_function_calling: true
-      supports_pdf_input: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_url_context: true
-      supports_video_input: true
-      supports_vision: true
-      supports_web_search: true
-      supports_native_streaming: true
-      prompt_cache_min_tokens: 4096
-      input_cost_per_token: 0.0000015
-      output_cost_per_token: 0.0000075
-      cache_read_input_token_cost: 0.00000015
-      cache_creation_input_token_cost: 0.0
-    litellm_params:
-      model: github_copilot/gemini-3.6-flash
-
-  - model_name: github_copilot/gpt-5.6-luna
-    model_info:
-      mode: responses
-      max_input_tokens: 922000
-      max_output_tokens: 128000
-      supports_function_calling: true
-      supports_native_streaming: true
-      supports_parallel_function_calling: true
-      supports_pdf_input: true
-      supports_prompt_cache_breakpoint: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_vision: true
-      supports_web_search: true
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: true
-      supports_max_reasoning_effort: true
-      input_cost_per_token: 0.0000002
-      output_cost_per_token: 0.0000012
-      cache_read_input_token_cost: 0.00000002
-      cache_creation_input_token_cost: 0.00000025
-      input_cost_per_token_above_200k_tokens: 0.0000004
-      output_cost_per_token_above_200k_tokens: 0.0000018
-      cache_read_input_token_cost_above_200k_tokens: 0.00000004
-    litellm_params:
-      model: github_copilot/gpt-5.6-luna
-
-  - model_name: github_copilot/gpt-5.6-terra
-    model_info:
-      mode: responses
-      max_input_tokens: 922000
-      max_output_tokens: 128000
-      supports_function_calling: true
-      supports_native_streaming: true
-      supports_parallel_function_calling: true
-      supports_pdf_input: true
-      supports_prompt_cache_breakpoint: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_vision: true
-      supports_web_search: true
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: true
-      supports_max_reasoning_effort: true
-      input_cost_per_token: 0.000002
-      output_cost_per_token: 0.000012
-      cache_read_input_token_cost: 0.0000002
-      cache_creation_input_token_cost: 0.0000025
-      input_cost_per_token_above_272k_tokens: 0.000004
-      output_cost_per_token_above_272k_tokens: 0.000018
-      cache_read_input_token_cost_above_272k_tokens: 0.0000004
-    litellm_params:
-      model: github_copilot/gpt-5.6-terra
-
   # ===== OpenAI direct API (fallback targets for copilot, + sol API-only) =====
   - model_name: openai/gpt-5.6-luna
     model_info:
@@ -272,7 +147,6 @@ model_list:
       model: openai/gpt-5.6-luna
       api_key: os.environ/OPENAI_API_KEY
 
-  # gpt-5.6-terra: fallback for github_copilot/gpt-5.6-terra
   - model_name: openai/gpt-5.6-terra
     model_info:
       mode: responses
@@ -697,17 +571,14 @@ router_settings:
   # Routing aliases — clean model_name → primary provider/model_name
   model_group_alias:
     # anthropic models
-    claude-sonnet-5: github_copilot/claude-sonnet-5
+    claude-sonnet-5: anthropic/claude-sonnet-5
     claude-opus-5: anthropic/claude-opus-5
     claude-fable-5: anthropic/claude-fable-5
 
     # openai models
-    gpt-5.6-luna: github_copilot/gpt-5.6-luna
-    gpt-5.6-terra: github_copilot/gpt-5.6-terra
+    gpt-5.6-luna: openai/gpt-5.6-luna
+    gpt-5.6-terra: openai/gpt-5.6-terra
     gpt-5.6-sol: openai/gpt-5.6-sol
-
-    # google models
-    gemini-3.6-flash: github_copilot/gemini-3.6-flash
 
     # ollama models
     minimax-m3: ollama/minimax-m3
@@ -730,14 +601,7 @@ router_settings:
     imagedit: gemini/gemini-3.1-flash-image
     embedding: openrouter/qwen/qwen3-embedding-8b
 
-  # Fallback chains: github_copilot > direct API key
   fallbacks:
-    - "claude-sonnet-5":
-        - "anthropic/claude-sonnet-5"
-    - "gpt-5.6-luna":
-        - "openai/gpt-5.6-luna"
-    - "gpt-5.6-terra":
-        - "openai/gpt-5.6-terra"
     - "stt":
         - "openai/whisper-1"
     - "imagen":
