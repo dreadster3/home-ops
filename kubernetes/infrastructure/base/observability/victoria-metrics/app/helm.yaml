@@ -29,8 +29,6 @@ spec:
     server:
       fullnameOverride: victoria-metrics
       retentionPeriod: "90d"
-      extraArgs:
-        downsampling.period: "15d:5m,30d:1h,60d:2h"
 
       persistentVolume:
         enabled: true
