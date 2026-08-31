@@ -22,7 +22,7 @@ spec:
   dependsOn:
     - name: victoria-logs
       namespace: monitoring
-    - name: prometheus
+    - name: victoria-metrics
       namespace: monitoring
   interval: 1h
   timeout: 5m

@@ -1,0 +1,48 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: victoria-metrics
+  namespace: monitoring
+spec:
+  interval: 24h
+  url: oci://ghcr.io/victoriametrics/helm-charts/victoria-metrics-single
+  ref:
+    tag: "0.45.0"
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-metrics
+  namespace: monitoring
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  chartRef:
+    kind: OCIRepository
+    name: victoria-metrics
+  values:
+    server:
+      fullnameOverride: victoria-metrics
+      retentionPeriod: "90d"
+      extraArgs:
+        downsampling.period: "15d:5m,30d:1h,60d:2h"
+
+      persistentVolume:
+        enabled: true
+        size: 50Gi
+        storageClassName: ceph-block
+
+      resources:
+        requests:
+          cpu: 200m
+          memory: &memory 1Gi
+        limits:
+          memory: *memory
+
+      serviceMonitor:
+        enabled: true

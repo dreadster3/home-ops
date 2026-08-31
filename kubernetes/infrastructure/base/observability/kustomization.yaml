@@ -9,8 +9,8 @@ resources:
   - namespace.yaml
   - metrics-server
   - victoria-logs
-  - thanos
   - prometheus
+  - victoria-metrics
   - alloy
   - grafana
   - krr

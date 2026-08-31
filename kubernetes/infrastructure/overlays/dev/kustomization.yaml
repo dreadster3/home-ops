@@ -78,16 +78,6 @@ patches:
       apiVersion: kustomize.toolkit.fluxcd.io/v1
       kind: Kustomization
       metadata:
-        name: prometheus
-        namespace: monitoring
-    target:
-      kind: Kustomization
-      name: prometheus
-  - patch: |-
-      $patch: delete
-      apiVersion: kustomize.toolkit.fluxcd.io/v1
-      kind: Kustomization
-      metadata:
         name: metrics-server
         namespace: metrics-server
     target:
@@ -154,10 +144,10 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/path
-        value: ./kubernetes/infrastructure/overlays/dev/observability/thanos/app
+        value: ./kubernetes/infrastructure/overlays/dev/observability/victoria-metrics/app
     target:
       kind: Kustomization
-      name: thanos
+      name: victoria-metrics
   - patch: |-
       - op: replace
         path: /spec/path
@@ -165,13 +155,6 @@ patches:
     target:
       kind: Kustomization
       name: victoria-logs
-  - patch: |-
-      - op: replace
-        path: /spec/path
-        value: ./kubernetes/infrastructure/overlays/dev/observability/prometheus/app
-    target:
-      kind: Kustomization
-      name: prometheus
   - patch: |-
       - op: replace
         path: /spec/path
@@ -250,6 +233,7 @@ resources:
   - ../../base/security
   - ../../base/databases
   - ../../base/observability/prometheus
+  - ../../base/observability/victoria-metrics
   - ../../base/observability/victoria-logs
   - ../../base/observability/namespace.yaml
   - ../../base/platform
