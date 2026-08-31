@@ -161,10 +161,10 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/path
-        value: ./kubernetes/infrastructure/overlays/dev/observability/loki/app
+        value: ./kubernetes/infrastructure/overlays/dev/observability/victoria-logs/app
     target:
       kind: Kustomization
-      name: loki
+      name: victoria-logs
   - patch: |-
       - op: replace
         path: /spec/path
@@ -250,6 +250,7 @@ resources:
   - ../../base/security
   - ../../base/databases
   - ../../base/observability/prometheus
+  - ../../base/observability/victoria-logs
   - ../../base/observability/namespace.yaml
   - ../../base/platform
   - ../../base/networking

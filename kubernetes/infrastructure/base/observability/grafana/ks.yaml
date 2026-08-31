@@ -24,7 +24,7 @@ spec:
   dependsOn:
     - name: external-secrets-store
       namespace: external-secrets
-    - name: loki
+    - name: victoria-logs
       namespace: monitoring
   interval: 1h
   timeout: 5m

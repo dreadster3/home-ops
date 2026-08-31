@@ -1,3 +1,17 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  interval: 15m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "13.0.1"
+  url: oci://ghcr.io/grafana-community/helm-charts/grafana
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -5,14 +19,9 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1h
-  chart:
-    spec:
-      chart: grafana
-      version: 10.*
-      interval: 24h
-      sourceRef:
-        kind: HelmRepository
-        name: grafana
+  chartRef:
+    kind: OCIRepository
+    name: grafana
   values:
     extraSecretMounts:
       - name: auth-authentik-secret-mount
@@ -49,6 +58,11 @@ spec:
         - ReadWriteMany
       size: 1Gi
 
+    admin:
+      existingSecret: grafana-admin
+      userKey: username
+      passwordKey: password
+
     resources:
       requests:
         cpu: 50m
@@ -73,10 +87,36 @@ spec:
         provider:
           foldersFromFilesStructure: true
       datasources:
-        enabled: true
-        label: grafana/datasource
-        value: "true"
-        searchNamespace: monitoring
+        enabled: false
+
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        deleteDatasources:
+          - { name: Alertmanager, orgId: 1 }
+          - { name: Prometheus, orgId: 1 }
+          - { name: Loki, orgId: 1 }
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            uid: prometheus
+            access: proxy
+            url: http://victoria-metrics:8428
+            isDefault: true
+            jsonData:
+              timeInterval: 15s
+          - name: VictoriaLogs
+            type: victoriametrics-logs-datasource
+            uid: victorialogs
+            access: proxy
+            url: http://victoria-logs:9428
+          - name: Alertmanager
+            type: alertmanager
+            uid: alertmanager
+            access: proxy
+            url: http://prometheus-alertmanager.monitoring.svc.cluster.local:9093
+            jsonData:
+              implementation: prometheus
 
     podAnnotations:
       reloader.stakater.com/auto: "true"
@@ -121,6 +161,7 @@ spec:
       - grafana-clock-panel
       - grafana-piechart-panel
       - grafana-worldmap-panel
+      - victoriametrics-logs-datasource
 
     route:
       main:

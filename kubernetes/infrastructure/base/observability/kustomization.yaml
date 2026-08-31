@@ -8,7 +8,7 @@ labels:
 resources:
   - namespace.yaml
   - metrics-server
-  - loki
+  - victoria-logs
   - thanos
   - prometheus
   - alloy
