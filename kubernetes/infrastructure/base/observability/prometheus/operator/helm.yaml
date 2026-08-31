@@ -136,7 +136,16 @@ spec:
       enabled: false
 
     alertmanager:
-      enabled: false
+      enabled: true
+      alertmanagerSpec:
+        image:
+          tag: v0.28.1
+        resources:
+          requests:
+            cpu: 10m
+            memory: &memory 68Mi
+          limits:
+            memory: *memory
 
     prometheus:
       enabled: false
