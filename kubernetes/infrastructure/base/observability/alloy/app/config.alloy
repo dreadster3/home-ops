@@ -238,12 +238,7 @@ loki.process "canary_pods" {
 
 loki.write "loki" {
 	endpoint {
-		url = "http://loki-gateway/loki/api/v1/push"
-
-		basic_auth {
-			username = env("LOKI_USER")
-			password = env("LOKI_PASS")
-		}
+		url = "http://victoria-logs:9428/insert/loki/api/v1/push"
 	}
 }
 
