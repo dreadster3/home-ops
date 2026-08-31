@@ -26,5 +26,7 @@
     "**/talos/**",
     "**/*.env",
     "**/*.sops.*"
-  ]
+  ],
+  "automergeType": "pr",
+  "automergeStrategy": "squash"
 }
