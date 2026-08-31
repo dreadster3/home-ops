@@ -17,7 +17,7 @@ spec:
   chart:
     spec:
       chart: alloy
-      version: v1.*
+      version: 1.12.1
       interval: 24h
       sourceRef:
         kind: HelmRepository
