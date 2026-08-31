@@ -13,6 +13,10 @@ spec:
       kind: HelmRelease
       name: *app
       namespace: *namespace
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: keda-http-add-on
+      namespace: *namespace
   path: ./kubernetes/infrastructure/base/platform/keda/app
   prune: true
   sourceRef:
