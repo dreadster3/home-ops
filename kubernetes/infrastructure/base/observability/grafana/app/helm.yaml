@@ -58,6 +58,11 @@ spec:
         - ReadWriteMany
       size: 1Gi
 
+    admin:
+      existingSecret: grafana-admin
+      userKey: username
+      passwordKey: password
+
     resources:
       requests:
         cpu: 50m
