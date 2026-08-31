@@ -1,11 +1,16 @@
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: OCIRepository
 metadata:
   name: grafana
   namespace: monitoring
 spec:
-  interval: 24h
-  url: https://grafana.github.io/helm-charts
+  interval: 15m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "13.0.1"
+  url: oci://ghcr.io/grafana-community/helm-charts/grafana
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -14,14 +19,9 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1h
-  chart:
-    spec:
-      chart: grafana
-      version: 10.*
-      interval: 24h
-      sourceRef:
-        kind: HelmRepository
-        name: grafana
+  chartRef:
+    kind: OCIRepository
+    name: grafana
   values:
     extraSecretMounts:
       - name: auth-authentik-secret-mount
