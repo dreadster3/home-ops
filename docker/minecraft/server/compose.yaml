@@ -9,6 +9,7 @@ services:
     tty: true
     stdin_open: true
     environment:
+      TIMEZONE: Europe/Lisbon
       EULA: "true"
       TYPE: "AUTO_CURSEFORGE"
       CF_SLUG: "better-mc-forge-bmc4"
@@ -26,6 +27,7 @@ services:
       - default
     volumes:
       - /opt/docker/minecraft/data:/data
+    user: 1000:1000
     security_opt:
       - no-new-privileges:true
     cap_drop:
