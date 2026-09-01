@@ -61,7 +61,7 @@ services:
       - 25565:25565
     networks:
       - default
-      # - edge
+      - edge
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -73,6 +73,6 @@ networks:
     driver: bridge
     driver_opts:
       com.docker.network.driver.mtu: "1450"
-  # edge:
-  #   name: edge
-  #   external: true
+  edge:
+    name: edge
+    external: true
