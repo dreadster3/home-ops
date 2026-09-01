@@ -37,14 +37,15 @@ services:
     depends_on:
       - minecraft
     environment:
-      # external hostname (as reached through Pangolin) = backend container:port
-      MAPPING: minecraft=minecraft:25565
+      MAPPING: |
+        minecraft.${EXTERNAL_DOMAIN}=minecraft:25565
+        minecraft.${INTERNAL_DOMAIN}=minecraft:25565
       PORT: 25565
     ports:
       - 25565:25565
     networks:
       - default
-      - edge
+      # - edge
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -53,6 +54,6 @@ services:
 
 networks:
   default:
-  edge:
-    name: edge
-    external: true
+  # edge:
+  #   name: edge
+  #   external: true
