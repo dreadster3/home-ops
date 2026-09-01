@@ -32,7 +32,7 @@ services:
     cap_drop:
       - ALL
     tmpfs:
-      - /tmp
+      - /tmp:exec
     read_only: true
 
   mc-router:
