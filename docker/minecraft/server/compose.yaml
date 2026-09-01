@@ -20,6 +20,8 @@ services:
       ENABLE_WHITELIST: "true"
       ENFORCE_WHITELIST: "true"
       MOTD: "Better MC BMC4"
+
+      RCON_PASSWORD: ${RCON_PASSWORD}
     networks:
       - default
     volumes:
