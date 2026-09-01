@@ -1,6 +1,6 @@
 services:
   doco-cd:
-    container_name: minecraft-doco-cd
+    container_name: doco-cd
     image: ghcr.io/kimdre/doco-cd:latest
     environment:
       TZ: Europe/Lisbon

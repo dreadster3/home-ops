@@ -21,7 +21,6 @@ services:
       ENABLE_WHITELIST: "true"
       ENFORCE_WHITELIST: "true"
       MOTD: "Better MC BMC4"
-
       RCON_PASSWORD: ${RCON_PASSWORD}
     networks:
       - default
@@ -32,6 +31,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    tmpfs:
+      - /tmp
     read_only: true
 
   mc-router:
