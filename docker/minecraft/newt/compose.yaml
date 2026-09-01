@@ -1,0 +1,18 @@
+services:
+  newt:
+    image: fosrl/newt:1.16.0@sha256:345fdeb369be6608d82c41d70637636c78b2c04a6112ff6ec20fc21c48afc899
+    container_name: minecraft-newt
+    restart: unless-stopped
+    env_file:
+      - newt.env
+    networks:
+      - edge
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+networks:
+  edge:
+    name: edge

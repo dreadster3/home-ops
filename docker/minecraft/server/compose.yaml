@@ -1,0 +1,78 @@
+name: server
+
+# Docker networks must match the host NIC MTU (1450 here): on a mismatch,
+# container egress to MTU-limiting paths (e.g. Mojang's CDN) blackholes large
+# TLS handshake packets and hangs the Forge installer.
+
+services:
+  minecraft:
+    image: itzg/minecraft-server:2026.8.2-java17@sha256:1a6efb48c6f40abaef8b4ee8eb6b5e786dcdb0c5a9bd1199262bee6734f13127
+    container_name: minecraft
+    restart: unless-stopped
+    stop_grace_period: 2m
+    tty: true
+    stdin_open: true
+    environment:
+      TIMEZONE: Europe/Lisbon
+      EULA: "true"
+      TYPE: "AUTO_CURSEFORGE"
+      CF_SLUG: "better-mc-forge-bmc4"
+      CF_API_KEY: ${CF_API_KEY}
+      INIT_MEMORY: &memory 8G
+      MAX_MEMORY: *memory
+      USE_AIKAR_FLAGS: "true"
+      USE_MEOWICE_FLAGS: "true"
+      ENABLE_WHITELIST: "true"
+      ENFORCE_WHITELIST: "true"
+      MOTD: "Better MC BMC4"
+      RCON_PASSWORD: ${RCON_PASSWORD}
+    networks:
+      - default
+    volumes:
+      - /opt/docker/minecraft/data:/data
+    user: 1000:1000
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:exec
+    read_only: true
+    deploy:
+      resources:
+        reservations:
+          cpus: "2"
+          memory: &memory 10G
+        limits:
+          memory: *memory
+
+  mc-router:
+    image: itzg/mc-router:1.46.4@sha256:92766cd72262e4e13569463708af2bb87457ee5b3ba914b72ccbc8b09f8eb384
+    container_name: minecraft-mc-router
+    restart: unless-stopped
+    depends_on:
+      - minecraft
+    environment:
+      MAPPING: |
+        minecraft.${EXTERNAL_DOMAIN}=minecraft:25565
+        minecraft.${INTERNAL_DOMAIN}=minecraft:25565
+      PORT: 25565
+    ports:
+      - 25565:25565
+    networks:
+      - default
+      - edge
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "1450"
+  edge:
+    name: edge
+    external: true

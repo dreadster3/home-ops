@@ -23,7 +23,7 @@ spec:
   chart:
     spec:
       chart: newt
-      version: 1.*
+      version: 1.5.0
       interval: 24h
       sourceRef:
         kind: HelmRepository
@@ -31,7 +31,10 @@ spec:
   values:
     global:
       image:
-        tag: "1.9.0"
+        registry: ghcr.io
+        repository: fosrl/newt
+        # renovate: datasource=docker depName=ghcr.io/fosrl/newt
+        tag: 1.16.0@sha256:345fdeb369be6608d82c41d70637636c78b2c04a6112ff6ec20fc21c48afc899
       podLabels:
         app.kubernetes.io/name: pangolin
       notes:
