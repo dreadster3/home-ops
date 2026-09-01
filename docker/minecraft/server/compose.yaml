@@ -38,6 +38,15 @@ services:
     tmpfs:
       - /tmp:exec
     read_only: true
+    # BMC4 cold boot takes 6+ min (mod scanning on 4 cores); the image default
+    # start_period (2m) expires mid-boot, the healthcheck goes unhealthy and
+    # doco-cd kills the container mid-deploy. Failures during start_period are
+    # free, so set it well beyond worst-case boot. Heap is 8G of a 10G limit.
+    healthcheck:
+      test: ["CMD-SHELL", "mc-health"]
+      interval: 30s
+      retries: 3
+      start_period: 15m
     deploy:
       resources:
         reservations:
