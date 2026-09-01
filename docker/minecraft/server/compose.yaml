@@ -1,5 +1,9 @@
 name: server
 
+# Docker networks must match the host NIC MTU (1450 here): on a mismatch,
+# container egress to MTU-limiting paths (e.g. Mojang's CDN) blackholes large
+# TLS handshake packets and hangs the Forge installer.
+
 services:
   minecraft:
     image: itzg/minecraft-server:2026.8.2-java17@sha256:1a6efb48c6f40abaef8b4ee8eb6b5e786dcdb0c5a9bd1199262bee6734f13127
@@ -60,6 +64,9 @@ services:
 
 networks:
   default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "1450"
   # edge:
   #   name: edge
   #   external: true
