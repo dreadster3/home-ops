@@ -22,6 +22,7 @@ services:
       ENFORCE_WHITELIST: "true"
       MOTD: "Better MC BMC4"
       RCON_PASSWORD: ${RCON_PASSWORD}
+    mem_limit: 8g
     networks:
       - default
     volumes:
