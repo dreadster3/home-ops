@@ -18,7 +18,12 @@ services:
       TYPE: "AUTO_CURSEFORGE"
       CF_SLUG: "better-mc-forge-bmc4"
       CF_API_KEY: ${CF_API_KEY}
-      MEMORY: "80%"
+      # Explicit heap: percentage sizing (MEMORY=80%) breaks on this host — LXC
+      # exposes host MemTotal (~94G) to the JVM, so MaxRAMPercentage sized a 75G
+      # heap against the 8G cgroup limit and AlwaysPreTouch got it OOM-killed.
+      # 6g ≈ 75% of the 8g limit; remainder covers metaspace/direct/off-heap.
+      INIT_MEMORY: "6g"
+      MAX_MEMORY: "6g"
       USE_AIKAR_FLAGS: "true"
       USE_MEOWICE_FLAGS: "true"
       ENABLE_WHITELIST: "true"
