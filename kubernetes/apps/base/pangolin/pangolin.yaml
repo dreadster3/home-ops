@@ -31,8 +31,9 @@ spec:
   values:
     global:
       image:
-        repository: ghcr.io/fosrl/newt
-        # renovate: datasource=github-releases depName=ghcr.io/fosrl/newt
+        registry: ghcr.io
+        repository: fosrl/newt
+        # renovate: datasource=docker depName=ghcr.io/fosrl/newt
         tag: 1.16.0@sha256:345fdeb369be6608d82c41d70637636c78b2c04a6112ff6ec20fc21c48afc899
       podLabels:
         app.kubernetes.io/name: pangolin
