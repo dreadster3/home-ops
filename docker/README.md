@@ -41,6 +41,15 @@ Enabled stacks are listed in each node's `.doco-cd.yaml` poll config; any direct
 | [CrowdSec](https://www.crowdsec.net/)        | Crowd-sourced intrusion detection and IP reputation filtering                |
 | [Doco-CD](https://github.com/kimdre/doco-cd) | Continuous delivery for Docker Compose stacks                                |
 
+### Minecraft node (`docker/minecraft/`)
+
+| Service                                       | Description                                                                           |
+| --------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [Minecraft](https://docker-minecraft-server.readthedocs.io/) | Better MC (BMC4) Forge modded server (CurseForge `AUTO_CURSEFORGE`)     |
+| [mc-router](https://github.com/itzg/mc-router) | Routes Minecraft client connections by hostname to backend servers                     |
+| [Newt](https://fossorial.io/)                 | Pangolin tunnel client for external access to the Minecraft server                    |
+| [Doco-CD](https://github.com/kimdre/doco-cd)  | Continuous delivery for Docker Compose stacks                                         |
+
 ## Directory Structure
 
 ```
@@ -64,9 +73,13 @@ docker/
 ├── pangolin01/          # Pangolin node services
 │   ├── pangolin/        # pangolin + gerbil + traefik + crowdsec
 │   └── doco-cd/
-└── vpn/                # VPN node services
-    ├── traefik/
-    ├── wireguard/      # wg-easy + litestream
-    ├── newt/
+├── vpn/                 # VPN node services
+│   ├── traefik/
+│   ├── wireguard/      # wg-easy + litestream
+│   ├── newt/
+│   └── doco-cd/
+└── minecraft/         # Minecraft node services
+    ├── server/          # Better MC (BMC4) minecraft server + mc-router
+    ├── newt/            # Pangolin tunnel client
     └── doco-cd/
 ```

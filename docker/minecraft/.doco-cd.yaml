@@ -1,0 +1,9 @@
+name: server
+working_dir: docker/minecraft/server
+compose_files:
+  - compose.yaml
+# ---
+# name: newt
+# working_dir: docker/minecraft/newt
+# compose_files:
+#   - compose.yaml

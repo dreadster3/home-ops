@@ -1,0 +1,58 @@
+name: server
+
+services:
+  minecraft:
+    image: itzg/minecraft-server:java17@sha256:bf6f994ae140d32c512c9396920c6dff425c4f46e52b56bb0c034c700a2bee99
+    container_name: minecraft
+    restart: unless-stopped
+    stop_grace_period: 2m
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: "true"
+      TYPE: "AUTO_CURSEFORGE"
+      CF_SLUG: "better-mc-forge-bmc4"
+      CF_API_KEY: ${CF_API_KEY}
+      # JVM heap capped at 80% of the container memory limit (MEM_LIMIT in .env)
+      MEMORY: "80%"
+      USE_AIKAR_FLAGS: "true"
+      USE_MEOWICE_FLAGS: "true"
+      ENABLE_WHITELIST: "true"
+      ENFORCE_WHITELIST: "true"
+      MOTD: "Better MC BMC4"
+    networks:
+      - default
+    volumes:
+      - /opt/docker/minecraft/data:/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+
+  mc-router:
+    image: itzg/mc-router:1.46.4@sha256:92766cd72262e4e13569463708af2bb87457ee5b3ba914b72ccbc8b09f8eb384
+    container_name: minecraft-mc-router
+    restart: unless-stopped
+    depends_on:
+      - minecraft
+    environment:
+      # external hostname (as reached through Pangolin) = backend container:port
+      MAPPING: minecraft=minecraft:25565
+      PORT: 25565
+    ports:
+      - 25565:25565
+    networks:
+      - default
+      - edge
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+
+networks:
+  default:
+  edge:
+    name: edge
+    external: true
