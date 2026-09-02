@@ -1,7 +1,7 @@
 services:
   omada-controller:
     container_name: omada-controller
-    image: docker.io/mbentley/omada-controller:6.2.14.11@sha256:d281c115461bd5969e6e1864483e7bf57ca966bddde69d6a3b9a770f3289e273
+    image: docker.io/mbentley/omada-controller:6.3.0.44@sha256:fc0a090dbaa0ffc65a924155b52d837a5090c54667628b61519852a195805efa
     restart: unless-stopped
     stop_grace_period: 60s
     environment:
