@@ -19,6 +19,7 @@ metadata:
   namespace: litellm
 spec:
   interval: 1h
+  timeout: 10m
   install:
     remediation:
       retries: 3
