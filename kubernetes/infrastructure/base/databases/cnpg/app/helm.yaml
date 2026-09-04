@@ -22,7 +22,7 @@ spec:
   chart:
     spec:
       chart: cloudnative-pg
-      version: 0.x.x
+      version: 0.29.0
       interval: 24h
       sourceRef:
         kind: HelmRepository
@@ -63,7 +63,7 @@ spec:
   chart:
     spec:
       chart: plugin-barman-cloud
-      version: 0.x.x
+      version: 0.8.0
       interval: 24h
       sourceRef:
         kind: HelmRepository
