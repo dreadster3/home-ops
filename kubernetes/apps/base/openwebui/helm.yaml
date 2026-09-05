@@ -5,6 +5,7 @@ metadata:
   namespace: openwebui
 spec:
   interval: 1h
+  timeout: 20m
   install:
     remediation:
       retries: 3
@@ -183,8 +184,9 @@ spec:
                   httpGet:
                     path: /health
                     port: http
-                  periodSeconds: 5
+                  periodSeconds: 10
                   failureThreshold: 60
+                  timeoutSeconds: 5
               readiness:
                 enabled: true
                 custom: true
@@ -192,8 +194,9 @@ spec:
                   httpGet:
                     path: /health/db
                     port: http
-                  periodSeconds: 10
-                  failureThreshold: 1
+                  periodSeconds: 30
+                  failureThreshold: 3
+                  timeoutSeconds: 10
               liveness:
                 enabled: true
                 custom: true
@@ -201,12 +204,13 @@ spec:
                   httpGet:
                     path: /health
                     port: http
-                  periodSeconds: 10
-                  failureThreshold: 3
+                  periodSeconds: 30
+                  failureThreshold: 5
+                  timeoutSeconds: 5
             resources:
               requests:
                 cpu: 50m
-                memory: &memory 1Gi
+                memory: &memory 1.5Gi
               limits:
                 memory: *memory
             securityContext:

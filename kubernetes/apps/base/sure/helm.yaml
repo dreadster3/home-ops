@@ -34,6 +34,7 @@ metadata:
   namespace: sure
 spec:
   interval: 1h
+  timeout: 10m
   install:
     remediation:
       retries: 3

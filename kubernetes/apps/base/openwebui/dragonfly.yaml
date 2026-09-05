@@ -14,14 +14,8 @@ spec:
       labelSelector:
         matchLabels:
           app: openwebui-dragonfly
-  env:
-    - name: MAX_MEMORY
-      valueFrom:
-        resourceFieldRef:
-          resource: limits.memory
-          divisor: 1Mi
   args:
-    - --maxmemory=$(MAX_MEMORY)Mi
+    - --maxmemory=850Mi # 80% of the available memory
     - --proactor_threads=2
   authentication:
     passwordFromSecret:
