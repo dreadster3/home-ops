@@ -1,3 +1,8 @@
+---
+# Termit pods are only reached through the KEDA HTTP add-on interceptor (in the
+# keda namespace) for Gateway traffic, and pangolin's newt tunnel for the
+# Pangolin-proxied path. The interceptor holds cold-start requests and forwards
+# once termix is ready.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -28,8 +33,9 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: envoy
-            app.kubernetes.io/name: envoy
+            io.kubernetes.pod.namespace: keda
+            app.kubernetes.io/name: http-add-on
+            app.kubernetes.io/component: interceptor
       toPorts:
         - ports:
             - port: http

@@ -1,0 +1,42 @@
+---
+# Routes termix traffic through the KEDA HTTP add-on interceptor, which counts
+# requests and holds them while the deployment scales up from zero. The
+# HTTPRoute backendRefs point at the interceptor proxy (gateway.networking.k8s.io
+# ReferenceGrant in the keda namespace). The interceptor supports WebSocket
+# upgrades, so the interactive terminal sessions keep working.
+apiVersion: http.keda.sh/v1beta1
+kind: InterceptorRoute
+metadata:
+  name: termix
+  namespace: termix
+spec:
+  target:
+    service: termix
+    port: 80
+  rules:
+    - hosts:
+        - termix.${INTERNAL_DOMAIN}
+  scalingMetric:
+    concurrency:
+      targetValue: 100
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: termix
+  namespace: termix
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: termix
+  minReplicaCount: 0
+  maxReplicaCount: 1
+  cooldownPeriod: 300
+  advanced:
+    restoreToOriginalReplicaCount: false
+  triggers:
+    - type: external-push
+      metadata:
+        scalerAddress: keda-add-ons-http-external-scaler.keda:9090
+        interceptorRoute: termix

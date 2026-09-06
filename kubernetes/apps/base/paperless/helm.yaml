@@ -69,7 +69,7 @@ spec:
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
               # Content extraction: global Tika (shared utility) + in-namespace Gotenberg for Office→PDF conversion.
               PAPERLESS_TIKA_ENABLED: 1
-              PAPERLESS_TIKA_ENDPOINT: http://tika.tika.svc.cluster.local
+              PAPERLESS_TIKA_ENDPOINT: http://tika-proxy.tika.svc.cluster.local:8080
               PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.paperless.svc.cluster.local
               # Paperless AI
               PAPERLESS_AI_ENABLED: true

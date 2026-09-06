@@ -178,4 +178,24 @@ Decisions made throughout the life of this project, with rationale and context.
 
 ---
 
+## 20. Introduce scale-to-zero with KEDA for stateless apps
+
+- **Date:** 2026-08-31
+- **Status:** Accepted
+- **Context:** Every app in the cluster runs fixed replicas (mostly 2), so stateless utility services consume idle compute around the clock. The only existing autoscaling is the immich HPAs (which floor at 2). The goal is to reclaim idle resources by scaling appropriate workloads to zero and have them wake automatically on demand, without kubectl/one-off cluster surgery (GitOps-only change).
+- **Decision:** Install the KEDA operator as a platform infrastructure component (`kubernetes/infrastructure/base/platform/keda/`, chart `kedacore/keda` 2.x) together with the KEDA HTTP add-on (chart `kedacore/keda-add-ons-http` 0.x) in the same component. Enable request-based scale-to-zero via KEDA `external-push` ScaledObjects (`minReplicaCount: 0`) plus `InterceptorRoute`s on three stateless, non-critical apps — `tika`, `searxng`, `termix`. All traffic is routed through the add-on's interceptor proxy, which counts requests, waits out cold starts (~seconds), and forwards to the app once a pod is ready. The ScaledObject/InterceptorRoute pattern is copy-paste extendable to further apps.
+
+### 20a. KEDA operator
+
+- **Decision:** Add KEDA as a `platform` infrastructure component with its own namespace and HelmRelease (chart repo `https://kedacore.github.io/charts`), wired through the standard component `ks.yaml` pattern. Webhooks disabled and single replicas for both operator and metrics server to keep the footprint small.
+- **Rationale:** Stock HPA cannot scale below 1 replica, so true scale-to-zero requires KEDA. KEDA is the de-facto CNCF-graduated solution, works with the existing Flux/Helm workflow, and Renovate will keep the chart updated.
+
+### 20b. Request-based ScaledObjects and app selection
+
+- **Decision:** Use the KEDA HTTP add-on (InterceptorRoute + `external-push` ScaledObject, `keda-add-ons-http-external-scaler.keda:9090` trigger) so apps wake on any request instead of on a schedule. `tika` and `searxng` in-cluster consumers (openwebui, paperless, litellm, toolhive MCP) were re-pointed to `<app>-proxy` ExternalName Services that resolve to the interceptor's proxy pods; searxng and termix HTTPRoutes now use the interceptor as Gateway backend (with ReferenceGrants in the keda namespace). Cilium policies were updated so the interceptor is the allowed in-cluster client of these apps. All three remain stateless: tika is an on-demand content-extraction utility, searxng is a stateless meta-search frontend (SearXNG) whose Dragonfly cache is unaffected, termix is a personal web terminal with litestream-backed SQLite (the interceptor supports WebSocket upgrades, so the terminal keeps working).
+- **Rationale:** Stock HPA cannot scale below 1 replica, and a request-based solution wakes apps exactly when needed — no request goes unserved, unlike a schedule that zeroes apps during active hours. A cron-based pattern (active 07:00–23:00 UTC, zero overnight) was implemented first in PR #629 and superseded by this request-based design after the operator preference was confirmed. A dependency-free cron scaler remains the documented fallback for apps with no route through the interceptor. The add-on's always-on interceptor (1–3 small pods) and one proxy hop per request are accepted trade-offs for on-demand wake-up. Stateful/DB-backed apps are excluded (PGCluster/Dragonfly/PVC data safety); `pangolin` (remote access path), `uptime` (monitoring must always run) and `vault` (secrets) are excluded for availability reasons.
+- **Note:** An initial cron-based implementation was superseded in the same PR (#629) before merge; the request-based design replaces it.
+
+---
+
 *This log is maintained to provide context for architectural decisions and onboarding.*

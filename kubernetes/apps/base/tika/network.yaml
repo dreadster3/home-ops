@@ -1,26 +1,22 @@
+---
+# Tika pods are only reached through the KEDA HTTP add-on interceptor (in the
+# keda namespace), which wakes the zero-scaled deployment and forwards traffic.
+# Direct in-cluster consumers (openwebui, paperless) call the tika-proxy
+# ExternalName Service, which resolves to the interceptor's proxy pods.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: tika
   namespace: tika
 spec:
-  description: "Allow ingress from consuming apps (Open WebUI, Paperless) to Tika"
+  description: "Allow ingress from the KEDA HTTP add-on interceptor to Tika"
   endpointSelector: {}
   ingress:
-    # Open WebUI content extraction
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: openwebui
-            app.kubernetes.io/name: openwebui
-      toPorts:
-        - ports:
-            - port: http
-              protocol: TCP
-    # Paperless (when PAPERLESS_TIKA_ENABLED is set in future)
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: paperless
-            app.kubernetes.io/name: paperless
+            io.kubernetes.pod.namespace: keda
+            app.kubernetes.io/name: http-add-on
+            app.kubernetes.io/component: interceptor
       toPorts:
         - ports:
             - port: http
