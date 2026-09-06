@@ -19,6 +19,7 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1h
+  timeout: 10m
   chartRef:
     kind: OCIRepository
     name: grafana
@@ -193,3 +194,12 @@ spec:
             editable: true
             options:
               path: /var/lib/grafana/dashboards/default
+
+    startupProbe:
+      httpGet:
+        path: /api/health
+        port: grafana
+      initialDelaySeconds: 60
+      timeoutSeconds: 5
+      failureThreshold: 60
+      periodSeconds: 10
