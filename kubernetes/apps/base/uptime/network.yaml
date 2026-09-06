@@ -43,6 +43,15 @@ spec:
         - ports:
             - port: http
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: http
+              protocol: TCP
+
   egress:
     # Truenas and rustfs
     - toFQDNs:
@@ -132,18 +141,3 @@ spec:
         - ports:
             - port: "6379"
               protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: uptime-server-backup
-  namespace: uptime
-spec:
-  description: "Allow traffic from and to uptime server"
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: uptime
-      app.kubernetes.io/component: backup
-  egress:
-    - toEntities:
-        - world

@@ -161,6 +161,11 @@ spec:
           revision: 5
           datasource:
             - { name: DS_PROMETHEUS, value: Prometheus }
+        uptime:
+          gnetId: 25062
+          revision: 4
+          datasource:
+            - { name: DS_MIMIR, value: Prometheus }
 
     plugins:
       - grafana-clock-panel

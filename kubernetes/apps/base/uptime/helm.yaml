@@ -109,6 +109,15 @@ spec:
             port: 80
             targetPort: http
 
+    serviceMonitor:
+      main:
+        enabled: true
+        service:
+          identifier: main
+        endpoints:
+          - port: http
+            scheme: http
+
     route:
       main:
         hostnames:
