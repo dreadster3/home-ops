@@ -651,7 +651,7 @@ search_tools:
   - search_tool_name: searxng-search
     litellm_params:
       search_provider: searxng
-      api_base: http://searxng.searxng.svc.cluster.local
+      api_base: http://searxng-proxy.searxng.svc.cluster.local:8080
 
 mcp_servers:
   github:

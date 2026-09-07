@@ -1,0 +1,38 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: keda
+  namespace: keda
+spec:
+  interval: 24h
+  url: https://kedacore.github.io/charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: keda
+  namespace: keda
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: keda
+      version: 2.*
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: keda
+  values:
+    operator:
+      replicaCount: 1
+    metricsServer:
+      replicaCount: 1
+    webhooks:
+      enabled: false

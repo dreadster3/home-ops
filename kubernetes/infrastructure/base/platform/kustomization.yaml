@@ -7,4 +7,5 @@ labels:
 
 resources:
   - flux
+  - keda
   - reloader

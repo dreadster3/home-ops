@@ -100,9 +100,9 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: searxng
-            app.kubernetes.io/instance: searxng
-            app.kubernetes.io/name: searxng
+            "k8s:io.kubernetes.pod.namespace": keda
+            app.kubernetes.io/name: http-add-on
+            app.kubernetes.io/component: interceptor
       toPorts:
         - ports:
             - port: "8080"
@@ -126,11 +126,12 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: tika
-            app.kubernetes.io/name: tika
+            io.kubernetes.pod.namespace: keda
+            app.kubernetes.io/name: http-add-on
+            app.kubernetes.io/component: interceptor
       toPorts:
         - ports:
-            - port: "9998"
+            - port: "8080"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
