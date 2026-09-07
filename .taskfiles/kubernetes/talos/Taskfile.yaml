@@ -56,6 +56,13 @@ tasks:
     cmds:
       - talosctl --nodes "{{.NODES}}" reboot
 
+  pull:
+    desc: Pull a container image
+    vars:
+      IMAGE: "{{.IMAGE | default .CLI_ARGS}}"
+    cmds:
+      - talosctl --nodes "192.168.30.44,192.168.30.45,192.168.30.46" pull {{.IMAGE}}
+
   hostname-to-node:
     desc: Convert hostname to node
     silent: true
