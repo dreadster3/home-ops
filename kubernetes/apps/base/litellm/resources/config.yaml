@@ -170,152 +170,6 @@ model_list:
       model: openai/gpt-5.6-sol
       api_key: os.environ/OPENAI_API_KEY
 
-  # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
-  - model_name: ollama/deepseek-v4-pro
-    model_info:
-      mode: chat
-      max_input_tokens: 1048576
-      max_output_tokens: 1048576
-      supports_assistant_prefill: true
-      supports_function_calling: true
-      supports_native_streaming: true
-      supports_parallel_function_calling: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_vision: false
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-
-    litellm_params:
-      model: openai/deepseek-v4-pro
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
-  - model_name: ollama/minimax-m3
-    model_info:
-      mode: chat
-      max_input_tokens: 512000
-      max_output_tokens: 131072
-      supports_function_calling: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_vision: true
-    litellm_params:
-      model: openai/minimax-m3
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
-  - model_name: ollama/deepseek-v4-flash
-    model_info:
-      mode: chat
-      max_input_tokens: 1048576
-      max_output_tokens: 384000
-      supports_assistant_prefill: true
-      supports_function_calling: true
-      supports_native_streaming: true
-      supports_parallel_function_calling: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_vision: false
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: openai/deepseek-v4-flash:0731
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
-  - model_name: ollama/glm-5.2
-    model_info:
-      mode: chat
-      max_input_tokens: 976000
-      max_output_tokens: 131072
-      supports_function_calling: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_tool_choice: true
-      supports_none_reasoning_effort: true
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: openai/glm-5.2
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
-  - model_name: ollama/glm-5.3
-    model_info:
-      mode: chat
-      max_input_tokens: 1000000
-      max_output_tokens: 131072
-      supports_vision: false
-      supports_reasoning: true
-      supports_prompt_caching: true
-      supports_function_calling: true
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_medium_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: openai/glm-5.3
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
-  - model_name: ollama/glm-5.3-flash
-    model_info:
-      max_input_tokens: 1000000
-      max_output_tokens: 131072
-      supports_vision: true
-      supports_reasoning: true
-      supports_prompt_caching: true
-      supports_function_calling: true
-      supports_tool_choice: true
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_medium_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: openai/glm-5.3-flash
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
-  # Ollama-only models (no fallback)
-  - model_name: ollama/gemma4
-    model_info:
-      mode: chat
-      max_input_tokens: 262144
-      max_output_tokens: 262144
-      supports_vision: true
-      supports_reasoning: true
-    litellm_params:
-      model: openai/gemma4
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
   - model_name: deepseek/deepseek-v4-flash-vision
     model_info:
       litellm_provider: deepseek
@@ -580,15 +434,13 @@ router_settings:
     gpt-5.6-terra: openai/gpt-5.6-terra
     gpt-5.6-sol: openai/gpt-5.6-sol
 
-    # ollama models
-    minimax-m3: ollama/minimax-m3
+    # deepseek / minimax / zai models
+    minimax-m3: openrouter/minimax/minimax-m3
     deepseek-v4-flash-vision: deepseek/deepseek-v4-flash-vision
-    deepseek-v4-flash: ollama/deepseek-v4-flash
-    deepseek-v4-pro: ollama/deepseek-v4-pro
-    glm-5.2: ollama/glm-5.2
-    gemma4: ollama/gemma4
-    glm-5.3: ollama/glm-5.3
-    glm-5.3-flash: ollama/glm-5.3-flash
+    deepseek-v4-flash: deepseek/deepseek-v4-flash
+    deepseek-v4-pro: deepseek/deepseek-v4-pro
+    glm-5.3: zai/glm-5.3
+    glm-5.3-flash: zai/glm-5.3-flash
 
     # openrouter models
     kimi-k3: openrouter/moonshotai/kimi-k3
@@ -612,20 +464,6 @@ router_settings:
     - "embedding":
         - "openai/text-embedding-3-small"
         - "openai/text-embedding-3-large"
-    - "deepseek-v4-flash":
-        - "openrouter/deepseek/deepseek-v4-flash"
-        - "deepseek/deepseek-v4-flash"
-    - "deepseek-v4-pro":
-        - "openrouter/deepseek/deepseek-v4-pro"
-        - "deepseek/deepseek-v4-pro"
-    - "minimax-m3":
-        - "openrouter/minimax/minimax-m3"
-    - "glm-5.3":
-        - "openrouter/z-ai/glm-5.3"
-        - "zai/glm-5.3"
-    - "glm-5.3-flash":
-        - "openrouter/z-ai/glm-5.3-flash"
-        - "zai/glm-5.3-flash"
     - "kimi-k3":
         - "moonshot/kimi-k3"
 
