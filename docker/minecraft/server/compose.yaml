@@ -6,7 +6,7 @@ name: server
 
 services:
   minecraft:
-    image: itzg/minecraft-server:2026.8.2-java17@sha256:1a6efb48c6f40abaef8b4ee8eb6b5e786dcdb0c5a9bd1199262bee6734f13127
+    image: itzg/minecraft-server:2026.9.1-java17@sha256:38afacde5d0cd46c255d744b582fd4b07524d43989da614f2bc9703c529d0fb9
     container_name: minecraft
     restart: unless-stopped
     stop_grace_period: 2m
