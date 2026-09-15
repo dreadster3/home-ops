@@ -3,7 +3,7 @@ kind: MCPServer
 metadata:
   name: playwright
 spec:
-  image: mcr.microsoft.com/playwright/mcp:v0.0.80@sha256:dda1f7f9b812e22946635c8af7df9288b96d3b9e3f0f1b8576d6823e2031c1de
+  image: mcr.microsoft.com/playwright/mcp:v0.0.81@sha256:76c66ac16cb6703bc13a6c23f925da28f53a4000bd3c7781a21b1da60b4cdbe8
   transport: stdio
   env:
     - name: PLAYWRIGHT_MCP_ISOLATED
