@@ -101,6 +101,58 @@ model_list:
       model: openrouter/qwen/qwen3-embedding-8b
       api_key: os.environ/OPENROUTER_API_KEY
 
+  # ======= Deepseek (direct API) =====
+  - model_name: deepseek/deepseek-v4-flash
+    model_info: &deepseek-v4-flash
+      max_input_tokens: 1000000
+      max_output_tokens: 384000
+      supports_vision: false
+      supports_reasoning: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: deepseek/deepseek-v4-flash
+      api_base: https://api.deepseek.com
+      api_key: os.environ/DEEPSEEK_API_KEY
+
+  - model_name: deepseek/deepseek-v4.1-flash
+    model_info: &deepseek-v41-flash
+      max_input_tokens: 1000000
+      max_output_tokens: 384000
+      supports_vision: true
+      supports_reasoning: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: deepseek/deepseek-flash
+      api_base: https://api.deepseek.com
+      api_key: os.environ/DEEPSEEK_API_KEY
+
+  - model_name: deepseek/deepseek-v4-pro
+    model_info: &deepseek-v4-pro
+      max_input_tokens: 1000000
+      max_output_tokens: 384000
+      supports_vision: false
+      supports_reasoning: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: deepseek/deepseek-v4-pro
+      api_base: https://api.deepseek.com
+      api_key: os.environ/DEEPSEEK_API_KEY
+
   # ===== Anthropic (direct API) =====
   - model_name: anthropic/claude-fable-5
     model_info:
@@ -171,33 +223,6 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 
   # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
-  - model_name: ollama/deepseek-v4-pro
-    model_info:
-      mode: chat
-      max_input_tokens: 1048576
-      max_output_tokens: 1048576
-      supports_assistant_prefill: true
-      supports_function_calling: true
-      supports_native_streaming: true
-      supports_parallel_function_calling: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_response_schema: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_vision: false
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-
-    litellm_params:
-      model: openai/deepseek-v4-pro
-      api_base: https://ollama.com/v1
-      api_key: os.environ/OLLAMA_API_KEY
-
   - model_name: ollama/minimax-m3
     model_info:
       mode: chat
@@ -214,27 +239,51 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
-  - model_name: ollama/deepseek-v4-flash
+  - model_name: ollama/deepseek-v4-pro
     model_info:
       mode: chat
-      max_input_tokens: 1048576
-      max_output_tokens: 384000
       supports_assistant_prefill: true
       supports_function_calling: true
       supports_native_streaming: true
       supports_parallel_function_calling: true
       supports_prompt_caching: true
-      supports_reasoning: true
       supports_response_schema: true
       supports_system_messages: true
       supports_tool_choice: true
-      supports_vision: false
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
+    litellm_params:
+      model: openai/deepseek-v4-pro
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/deepseek-v4-flash
+    model_info:
+      <<: *deepseek-v4-flash
+      mode: chat
+      supports_assistant_prefill: true
+      supports_function_calling: true
+      supports_native_streaming: true
+      supports_parallel_function_calling: true
+      supports_prompt_caching: true
+      supports_response_schema: true
+      supports_system_messages: true
+      supports_tool_choice: true
+    litellm_params:
+      model: openai/deepseek-v4-flash:0731
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/deepseek-v4.1-flash
+    model_info:
+      <<: *deepseek-v41-flash
+      mode: chat
+      supports_assistant_prefill: true
+      supports_function_calling: true
+      supports_native_streaming: true
+      supports_parallel_function_calling: true
+      supports_prompt_caching: true
+      supports_response_schema: true
+      supports_system_messages: true
+      supports_tool_choice: true
     litellm_params:
       model: openai/deepseek-v4-flash:0731
       api_base: https://ollama.com/v1
@@ -315,64 +364,6 @@ model_list:
       model: openai/gemma4
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
-
-  - model_name: deepseek/deepseek-v4-flash-vision
-    model_info:
-      litellm_provider: deepseek
-      mode: chat
-      max_input_tokens: 1000000
-      max_output_tokens: 384000
-      supports_vision: true
-      supports_reasoning: true
-      supports_prompt_caching: true
-      input_cost_per_token: 0.00000044
-      output_cost_per_token: 0.00000132
-      cache_read_input_token_cost: 0.000000014
-      cache_creation_input_token_cost: 0.0
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: openai/deepseek-v4-flash-vision-exp
-      api_base: https://api.deepseek.com
-      api_key: os.environ/DEEPSEEK_API_KEY
-
-  - model_name: deepseek/deepseek-v4-flash
-    model_info: &deepseek-v4-flash
-      max_input_tokens: 1000000
-      max_output_tokens: 384000
-      supports_vision: false
-      supports_reasoning: true
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: deepseek/deepseek-v4-flash
-      api_base: https://api.deepseek.com
-      api_key: os.environ/DEEPSEEK_API_KEY
-
-  - model_name: deepseek/deepseek-v4-pro
-    model_info: &deepseek-v4-pro
-      max_input_tokens: 1000000
-      max_output_tokens: 384000
-      supports_vision: false
-      supports_reasoning: true
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: deepseek/deepseek-v4-pro
-      api_base: https://api.deepseek.com
-      api_key: os.environ/DEEPSEEK_API_KEY
 
   - model_name: zai/glm-5.3
     model_info:
@@ -582,8 +573,8 @@ router_settings:
 
     # ollama models
     minimax-m3: ollama/minimax-m3
-    deepseek-v4-flash-vision: deepseek/deepseek-v4-flash-vision
     deepseek-v4-flash: ollama/deepseek-v4-flash
+    deepseek-v4.1-flash: ollama/deepseek-v4.1-flash
     deepseek-v4-pro: ollama/deepseek-v4-pro
     glm-5.2: ollama/glm-5.2
     gemma4: ollama/gemma4
@@ -615,6 +606,8 @@ router_settings:
     - "deepseek-v4-flash":
         - "openrouter/deepseek/deepseek-v4-flash"
         - "deepseek/deepseek-v4-flash"
+    - "deepseek-v4.1-flash":
+        - "deepseek/deepseek-v4.1-flash"
     - "deepseek-v4-pro":
         - "openrouter/deepseek/deepseek-v4-pro"
         - "deepseek/deepseek-v4-pro"
