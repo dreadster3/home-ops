@@ -402,7 +402,7 @@ model_list:
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: false
     litellm_params:
-      model: openrouter/qwen/qwen3.8-max
+      model: openrouter/qwen/qwen3.8-max-0902
       api_key: os.environ/OPENROUTER_API_KEY
 
   - model_name: openrouter/qwen/qwen3.8-flash
