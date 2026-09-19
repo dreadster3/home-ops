@@ -1,0 +1,19 @@
+---
+# Bridge traffic from tika's in-cluster consumers (openwebui, paperless) to the
+# KEDA HTTP add-on interceptor proxy in the keda namespace. Hitting this Service
+# generates the request counts that wake tika from zero; the interceptor then
+# forwards to the real tika Service. ExternalName is DNS-only, so callers must
+# use the interceptor proxy's port (8080); they send this Service's DNS name as
+# the Host header, which must stay listed in the InterceptorRoute hosts.
+apiVersion: v1
+kind: Service
+metadata:
+  name: tika-proxy
+  namespace: tika
+spec:
+  type: ExternalName
+  externalName: keda-add-ons-http-interceptor-proxy.keda.svc.cluster.local
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
