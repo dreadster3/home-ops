@@ -74,14 +74,25 @@ model_list:
 
   # ======= Deepseek (direct API) =====
   - model_name: deepseek/deepseek-v4.1-flash
-    model_info: &deepseek-v41-flash
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_medium_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
+    model_info:
+      offpeak_pricing:
+        weekday_timezone: Asia/Shanghai
+        windows:
+          - hours_utc: ["10:00-01:00", "04:00-06:00"]
+            weekdays: [mon, tue, wed, thu, fri]
+          - hours_utc: "00:00-00:00"
+            weekdays: [sat, sun]
+        input_cost_per_token: 0.00000015
+        cache_read_input_token_cost: 0.000000003
+        output_cost_per_token: 0.00000060
+      <<: &deepseek-v41-flash
+        supports_none_reasoning_effort: false
+        supports_minimal_reasoning_effort: false
+        supports_low_reasoning_effort: true
+        supports_medium_reasoning_effort: false
+        supports_high_reasoning_effort: true
+        supports_xhigh_reasoning_effort: false
+        supports_max_reasoning_effort: true
     litellm_params:
       model: deepseek/deepseek-flash
       api_base: https://api.deepseek.com
