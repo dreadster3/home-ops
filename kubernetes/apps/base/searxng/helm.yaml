@@ -26,7 +26,7 @@ spec:
       main:
         type: deployment
         strategy: RollingUpdate
-        replicas: 2
+        replicas: 1
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -92,8 +92,11 @@ spec:
             namespace: envoy
         rules:
           - backendRefs:
-              - identifier: main
-                port: http
+              # Wake the zero-scaled searxng via the KEDA HTTP add-on interceptor
+              # (the interceptor forwards to searxng and holds cold-start requests).
+              - name: keda-add-ons-http-interceptor-proxy
+                namespace: keda
+                port: 8080
 
     persistence:
       config:

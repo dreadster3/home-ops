@@ -118,13 +118,13 @@ spec:
               - name: WEB_SEARCH_ENGINE
                 value: searxng
               - name: SEARXNG_QUERY_URL
-                value: http://searxng.searxng.svc.cluster.local/search?q=<query>
+                value: http://searxng-proxy.searxng.svc.cluster.local:8080/search?q=<query>
 
               # Content Extraction
               - name: CONTENT_EXTRACTION_ENGINE
                 value: tika
               - name: TIKA_SERVER_URL
-                value: http://tika.tika.svc.cluster.local
+                value: http://tika-proxy.tika.svc.cluster.local:8080
 
               # RAG
               - name: RAG_EMBEDDING_ENGINE
