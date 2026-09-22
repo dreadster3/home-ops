@@ -375,6 +375,7 @@ model_list:
 
   - model_name: ollama/glm-5.3-flash
     model_info:
+      mode: chat
       max_input_tokens: 1000000
       max_output_tokens: 128000
       supports_vision: true
@@ -390,6 +391,7 @@ model_list:
 
   - model_name: ollama/kimi-k3
     model_info:
+      mode: chat
       max_input_tokens: 1048576
       max_output_tokens: 131072
       supports_vision: true
