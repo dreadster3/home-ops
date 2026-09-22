@@ -1,10 +1,19 @@
 dbs:
-  - path: /data/wg-easy.db
+  - path: /etc/wireguard/wg-easy.db
     replica:
       type: s3
       bucket: wireguard
       endpoint: https://truenas.${INTERNAL_DOMAIN}:30292
       path: wg-easy.db
+      sync-interval: 5m
+
+levels:
+  - interval: 5m
+  - interval: 1h
+  - interval: 6h
+
+l0-retention: 1m
+l0-retention-check-interval: 1m
 
 snapshot:
   interval: 24h

@@ -15,6 +15,7 @@ services:
     volumes:
       - /opt/docker/wireguard:/etc/wireguard
       - /lib/modules:/lib/modules:ro
+      - ./config/litestream.yml:/etc/litestream.yml:ro
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:
@@ -25,6 +26,9 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
+    pre_start:
+      - image: litestream/litestream:0.5.17@sha256:4b02b9859a6b6b4087d8b8944e15f7e984bd7957cba322bbeee38b0e27b9656a
+        command: restore -if-db-not-exists -if-replica-exists /etc/wireguard/wg-easy.db
   litestream:
     image: litestream/litestream:0.5.17@sha256:4b02b9859a6b6b4087d8b8944e15f7e984bd7957cba322bbeee38b0e27b9656a
     restart: unless-stopped
@@ -33,7 +37,7 @@ services:
     env_file:
       - ./litestream.env
     volumes:
-      - /opt/docker/wireguard:/data
+      - /opt/docker/wireguard:/etc/wireguard
       - ./config/litestream.yml:/etc/litestream.yml:ro
     cap_drop:
       - ALL

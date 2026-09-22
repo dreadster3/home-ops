@@ -9,3 +9,15 @@ dbs:
       sync-interval: 5m
       part-size: 50MB
       concurrency: 2
+
+levels:
+  - interval: 5m
+  - interval: 1h
+  - interval: 6h
+
+l0-retention: 1m
+l0-retention-check-interval: 1m
+
+snapshot:
+  interval: 24h
+  retention: 48h
