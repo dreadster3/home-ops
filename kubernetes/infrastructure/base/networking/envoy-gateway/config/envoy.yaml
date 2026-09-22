@@ -76,6 +76,7 @@ spec:
       trustedCIDRs:
         - 10.42.0.0/16
   headers:
+    withUnderscoresAction: Allow
     enableEnvoyHeaders: true
     earlyRequestHeaders:
       set:
