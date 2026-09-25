@@ -114,22 +114,22 @@ model_list:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  - model_name: anthropic/claude-opus-5
+  - model_name: anthropic/claude-opus-5.5
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: false
-      supports_medium_reasoning_effort: false
-      supports_high_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: true
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: true
     litellm_params:
-      model: anthropic/claude-opus-5
+      model: anthropic/claude-opus-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   # ===== OpenAI direct API (fallback targets for copilot, + sol API-only) =====
-  - model_name: openai/gpt-5.6-luna
-    model_info: &openai-gpt-56-luna
+  - model_name: openai/gpt-6-luna
+    model_info: &openai-gpt-6-luna
       supports_none_reasoning_effort: true
       supports_minimal_reasoning_effort: false
       supports_low_reasoning_effort: true
@@ -138,11 +138,18 @@ model_list:
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: true
     litellm_params:
-      model: openai/gpt-5.6-luna
+      model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
+      # GPT-5.6+ supports explicit prompt_cache_breakpoint markers (mapped by LiteLLM);
+      # implicit keeps OpenAI's automatic checkpoint alongside ours for multi-turn chat
+      cache_control_injection_points:
+        - location: message
+          role: system
+      prompt_cache_options:
+        mode: implicit
 
-  - model_name: openai/gpt-5.6-terra
-    model_info: &openai-gpt-56-terra
+  - model_name: openai/gpt-6-sol
+    model_info: &openai-gpt-6-sol
       supports_none_reasoning_effort: true
       supports_minimal_reasoning_effort: false
       supports_low_reasoning_effort: true
@@ -151,21 +158,13 @@ model_list:
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: true
     litellm_params:
-      model: openai/gpt-5.6-terra
+      model: openai/gpt-6-sol
       api_key: os.environ/OPENAI_API_KEY
-
-  - model_name: openai/gpt-5.6-sol
-    model_info: &openai-gpt-56-sol
-      supports_none_reasoning_effort: true
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_medium_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: true
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: openai/gpt-5.6-sol
-      api_key: os.environ/OPENAI_API_KEY
+      cache_control_injection_points:
+        - location: message
+          role: system
+      prompt_cache_options:
+        mode: implicit
 
   - model_name: openai/gpt-6-astra
     model_info: &openai-gpt-6-astra
@@ -179,6 +178,11 @@ model_list:
     litellm_params:
       model: openai/gpt-6-astra
       api_key: os.environ/OPENAI_API_KEY
+      cache_control_injection_points:
+        - location: message
+          role: system
+      prompt_cache_options:
+        mode: implicit
 
   - model_name: zai/glm-5.3
     model_info: &zai-glm-53
@@ -192,6 +196,10 @@ model_list:
     litellm_params:
       model: zai/glm-5.3
       api_key: os.environ/ZAI_API_KEY
+      # Z.ai / GLM supports explicit cache_control checkpoints
+      cache_control_injection_points:
+        - location: message
+          role: system
 
   - model_name: zai/glm-5.3-flash
     model_info: &zai-glm-53-flash
@@ -205,6 +213,9 @@ model_list:
     litellm_params:
       model: zai/glm-5.3-flash
       api_key: os.environ/ZAI_API_KEY
+      cache_control_injection_points:
+        - location: message
+          role: system
 
   - model_name: moonshot/kimi-k3
     model_info: &kimi-k3
@@ -236,11 +247,11 @@ model_list:
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: false
-      supports_medium_reasoning_effort: false
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: false
-      supports_max_reasoning_effort: true
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: false
+      supports_xhigh_reasoning_effort: true
+      supports_max_reasoning_effort: false
     litellm_params:
       model: openrouter/qwen/qwen3.8-flash
       api_key: os.environ/OPENROUTER_API_KEY
@@ -250,12 +261,19 @@ model_list:
     litellm_params:
       model: openrouter/z-ai/glm-5.3
       api_key: os.environ/OPENROUTER_API_KEY
+      # OpenRouter supports cache_control injection on z-ai/GLM routes
+      cache_control_injection_points:
+        - location: message
+          role: system
 
   - model_name: openrouter/z-ai/glm-5.3-flash
     model_info: *zai-glm-53-flash
     litellm_params:
       model: openrouter/z-ai/glm-5.3-flash
       api_key: os.environ/OPENROUTER_API_KEY
+      cache_control_injection_points:
+        - location: message
+          role: system
 
   - model_name: openrouter/moonshotai/kimi-k3
     model_info: *kimi-k3
@@ -267,45 +285,44 @@ model_list:
     litellm_params:
       model: openrouter/minimax/minimax-m3
       api_key: os.environ/OPENROUTER_API_KEY
+      # OpenRouter supports cache_control injection on MiniMax routes
+      cache_control_injection_points:
+        - location: message
+          role: system
 
-  - model_name: openrouter/openai/gpt-5.6-luna:flex
-    model_info: *openai-gpt-56-luna
+  - model_name: openrouter/openai/gpt-6-luna:flex
+    model_info: *openai-gpt-6-luna
     litellm_params:
-      model: openrouter/openai/gpt-5.6-luna
+      model: openrouter/openai/gpt-6-luna
+      api_key: os.environ/OPENROUTER_API_KEY
+      service_tier: flex
+      # OpenAI automatic (implicit) prompt caching applies via OpenRouter;
+      # explicit prompt_cache_breakpoints are NOT supported on openrouter/ openai routes
+      # (LiteLLM only maps injection points for provider=openai, and OpenRouter strips
+      # cache_control from everything except claude/gemini/minimax/glm/z-ai routes)
+
+  - model_name: openrouter/openai/gpt-6-luna
+    model_info: *openai-gpt-6-luna
+    litellm_params:
+      model: openrouter/openai/gpt-6-luna
+      api_key: os.environ/OPENROUTER_API_KEY
+      # OpenAI automatic (implicit) prompt caching applies via OpenRouter
+      # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
+
+  - model_name: openrouter/openai/gpt-6-sol:flex
+    model_info: *openai-gpt-6-sol
+    litellm_params:
+      model: openrouter/openai/gpt-6-sol
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
 
-  - model_name: openrouter/openai/gpt-5.6-luna
-    model_info: *openai-gpt-56-luna
+  - model_name: openrouter/openai/gpt-6-sol
+    model_info: *openai-gpt-6-sol
     litellm_params:
-      model: openrouter/openai/gpt-5.6-luna
+      model: openrouter/openai/gpt-6-sol
       api_key: os.environ/OPENROUTER_API_KEY
-
-  - model_name: openrouter/openai/gpt-5.6-terra:flex
-    model_info: *openai-gpt-56-terra
-    litellm_params:
-      model: openrouter/openai/gpt-5.6-terra
-      api_key: os.environ/OPENROUTER_API_KEY
-      service_tier: flex
-
-  - model_name: openrouter/openai/gpt-5.6-terra
-    model_info: *openai-gpt-56-terra
-    litellm_params:
-      model: openrouter/openai/gpt-5.6-terra
-      api_key: os.environ/OPENROUTER_API_KEY
-
-  - model_name: openrouter/openai/gpt-5.6-sol:flex
-    model_info: *openai-gpt-56-sol
-    litellm_params:
-      model: openrouter/openai/gpt-5.6-sol
-      api_key: os.environ/OPENROUTER_API_KEY
-      service_tier: flex
-
-  - model_name: openrouter/openai/gpt-5.6-sol
-    model_info: *openai-gpt-56-sol
-    litellm_params:
-      model: openrouter/openai/gpt-5.6-sol
-      api_key: os.environ/OPENROUTER_API_KEY
+      # OpenAI automatic (implicit) prompt caching applies via OpenRouter
+      # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
   - model_name: openrouter/openai/gpt-6-astra:flex
     model_info: *openai-gpt-6-astra
@@ -319,6 +336,8 @@ model_list:
     litellm_params:
       model: openrouter/openai/gpt-6-astra
       api_key: os.environ/OPENROUTER_API_KEY
+      # OpenAI automatic (implicit) prompt caching applies via OpenRouter
+      # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
   # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
   - model_name: ollama/minimax-m3
@@ -423,6 +442,7 @@ litellm_settings:
   json_logs: true
   cache: true
   enable_redis_auth_cache: true
+  enable_anthropic_prompt_caching: true
   cache_params:
     type: redis
     host: os.environ/REDIS_HOST
@@ -440,13 +460,12 @@ router_settings:
   model_group_alias:
     # anthropic models
     claude-sonnet-5: anthropic/claude-sonnet-5
-    claude-opus-5: anthropic/claude-opus-5
+    claude-opus-5.5: anthropic/claude-opus-5.5
     claude-fable-5.1: anthropic/claude-fable-5.1
 
     # openai models
-    gpt-5.6-luna: openrouter/openai/gpt-5.6-luna:flex
-    gpt-5.6-terra: openrouter/openai/gpt-5.6-terra:flex
-    gpt-5.6-sol: openrouter/openai/gpt-5.6-sol:flex
+    gpt-6-luna: openrouter/openai/gpt-6-luna:flex
+    gpt-6-sol: openrouter/openai/gpt-6-sol:flex
     gpt-6-astra: openrouter/openai/gpt-6-astra:flex
 
     # ollama models
@@ -464,7 +483,11 @@ router_settings:
     stt: deepgram/nova-3
     imagen: openrouter/black-forest-labs/flux.2-pro
     imagedit: gemini/gemini-3.1-flash-image
-    embedding: openrouter/qwen/qwen3-embedding-8b
+
+    # embedding models
+    text-embedding-3-large: openai/text-embedding-3-large
+    text-embedding-3-small: openai/text-embedding-3-small
+    qwen3-embedding-8b: openrouter/qwen/qwen3-embedding-8b
 
   fallbacks:
     - "stt":
@@ -474,9 +497,6 @@ router_settings:
         - "gemini/gemini-3.1-flash-lite-image"
     - "imagedit":
         - "gemini/gemini-3.1-flash-lite-image"
-    - "embedding":
-        - "openai/text-embedding-3-small"
-        - "openai/text-embedding-3-large"
     - "deepseek-v4.1-flash":
         - "deepseek/deepseek-v4.1-flash"
     - "minimax-m3":
@@ -490,15 +510,12 @@ router_settings:
     - "kimi-k3":
         - "openrouter/moonshotai/kimi-k3"
         - "moonshot/kimi-k3"
-    - "gpt-5.6-luna":
-        - "openrouter/openai/gpt-5.6-luna"
-        - "openai/gpt-5.6-luna"
-    - "gpt-5.6-terra":
-        - "openrouter/openai/gpt-5.6-terra"
-        - "openai/gpt-5.6-terra"
-    - "gpt-5.6-sol":
-        - "openrouter/openai/gpt-5.6-sol"
-        - "openai/gpt-5.6-sol"
+    - "gpt-6-luna":
+        - "openrouter/openai/gpt-6-luna"
+        - "openai/gpt-6-luna"
+    - "gpt-6-sol":
+        - "openrouter/openai/gpt-6-sol"
+        - "openai/gpt-6-sol"
     - "gpt-6-astra":
         - "openrouter/openai/gpt-6-astra"
         - "openai/gpt-6-astra"
