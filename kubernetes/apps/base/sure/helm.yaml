@@ -91,7 +91,7 @@ spec:
         RAILS_FORCE_SSL: "true"
         RAILS_ASSUME_SSL: "true"
         OPENAI_URI_BASE: http://litellm.litellm.svc.cluster.local:4000/v1
-        OPENAI_MODEL: deepseek-v4-flash
+        OPENAI_MODEL: deepseek-v4.1-flash
         # ActiveStorage on RGW S3 (PDFs/statements). generic_s3 service in
         # config/storage.yml; creds come from the OBC-generated secret.
         ACTIVE_STORAGE_SERVICE: generic_s3
