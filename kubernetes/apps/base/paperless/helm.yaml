@@ -74,7 +74,7 @@ spec:
               # Paperless AI
               PAPERLESS_AI_ENABLED: true
               PAPERLESS_AI_LLM_EMBEDDING_BACKEND: openai-like
-              PAPERLESS_AI_LLM_EMBEDDING_MODEL: embedding
+              PAPERLESS_AI_LLM_EMBEDDING_MODEL: qwen3-embedding-8b
               PAPERLESS_AI_LLM_EMBEDDING_ENDPOINT: http://litellm.litellm.svc.cluster.local:4000/v1
               PAPERLESS_AI_LLM_BACKEND: openai-like
               PAPERLESS_AI_LLM_MODEL: glm-5.3-flash
