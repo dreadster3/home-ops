@@ -12,6 +12,7 @@ model_list:
         - seed
     litellm_params:
       model: openrouter/black-forest-labs/flux.2-pro
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
   - model_name: gemini/gemini-3.1-flash-image
@@ -70,6 +71,7 @@ model_list:
       output_vector_size: 4096
     litellm_params:
       model: openrouter/qwen/qwen3-embedding-8b
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
   # ======= Deepseek (direct API) =====
@@ -241,6 +243,7 @@ model_list:
       supports_max_reasoning_effort: false
     litellm_params:
       model: openrouter/qwen/qwen3.8-max-0902
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
   - model_name: openrouter/qwen/qwen3.8-flash
@@ -254,12 +257,14 @@ model_list:
       supports_max_reasoning_effort: false
     litellm_params:
       model: openrouter/qwen/qwen3.8-flash
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
   - model_name: openrouter/z-ai/glm-5.3
     model_info: *zai-glm-53
     litellm_params:
       model: openrouter/z-ai/glm-5.3
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       # OpenRouter supports cache_control injection on z-ai/GLM routes
       cache_control_injection_points:
@@ -270,6 +275,7 @@ model_list:
     model_info: *zai-glm-53-flash
     litellm_params:
       model: openrouter/z-ai/glm-5.3-flash
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       cache_control_injection_points:
         - location: message
@@ -279,11 +285,13 @@ model_list:
     model_info: *kimi-k3
     litellm_params:
       model: openrouter/moonshotai/kimi-k3
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
   - model_name: openrouter/minimax/minimax-m3
     litellm_params:
       model: openrouter/minimax/minimax-m3
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       # OpenRouter supports cache_control injection on MiniMax routes
       cache_control_injection_points:
@@ -294,6 +302,7 @@ model_list:
     model_info: *openai-gpt-6-luna
     litellm_params:
       model: openrouter/openai/gpt-6-luna
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter;
@@ -305,6 +314,7 @@ model_list:
     model_info: *openai-gpt-6-luna
     litellm_params:
       model: openrouter/openai/gpt-6-luna
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
@@ -313,6 +323,7 @@ model_list:
     model_info: *openai-gpt-6-sol
     litellm_params:
       model: openrouter/openai/gpt-6-sol
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
 
@@ -320,6 +331,7 @@ model_list:
     model_info: *openai-gpt-6-sol
     litellm_params:
       model: openrouter/openai/gpt-6-sol
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
@@ -328,6 +340,7 @@ model_list:
     model_info: *openai-gpt-6-astra
     litellm_params:
       model: openrouter/openai/gpt-6-astra
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
 
@@ -335,6 +348,7 @@ model_list:
     model_info: *openai-gpt-6-astra
     litellm_params:
       model: openrouter/openai/gpt-6-astra
+      preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
