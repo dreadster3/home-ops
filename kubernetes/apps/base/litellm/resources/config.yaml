@@ -150,8 +150,8 @@ model_list:
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6-sol
-    model_info: &openai-gpt-6-sol
+  - model_name: openai/gpt-6.1-sol
+    model_info: &openai-gpt-6.1-sol
       supports_none_reasoning_effort: true
       supports_minimal_reasoning_effort: false
       supports_low_reasoning_effort: true
@@ -160,7 +160,7 @@ model_list:
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: true
     litellm_params:
-      model: openai/gpt-6-sol
+      model: openai/gpt-6.1-sol
       api_key: os.environ/OPENAI_API_KEY
       cache_control_injection_points:
         - location: message
@@ -319,18 +319,18 @@ model_list:
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
-  - model_name: openrouter/openai/gpt-6-sol:flex
-    model_info: *openai-gpt-6-sol
+  - model_name: openrouter/openai/gpt-6.1-sol:flex
+    model_info: *openai-gpt-6.1-sol
     litellm_params:
-      model: openrouter/openai/gpt-6-sol
+      model: openrouter/openai/gpt-6.1-sol
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
 
-  - model_name: openrouter/openai/gpt-6-sol
-    model_info: *openai-gpt-6-sol
+  - model_name: openrouter/openai/gpt-6.1-sol
+    model_info: *openai-gpt-6.1-sol
     litellm_params:
-      model: openrouter/openai/gpt-6-sol
+      model: openrouter/openai/gpt-6.1-sol
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
@@ -479,7 +479,7 @@ router_settings:
 
     # openai models
     gpt-6-luna: openrouter/openai/gpt-6-luna:flex
-    gpt-6-sol: openrouter/openai/gpt-6-sol:flex
+    gpt-6.1-sol: openrouter/openai/gpt-6.1-sol:flex
     gpt-6-astra: openrouter/openai/gpt-6-astra:flex
 
     # ollama models
@@ -527,9 +527,9 @@ router_settings:
     - "gpt-6-luna":
         - "openrouter/openai/gpt-6-luna"
         - "openai/gpt-6-luna"
-    - "gpt-6-sol":
-        - "openrouter/openai/gpt-6-sol"
-        - "openai/gpt-6-sol"
+    - "gpt-6.1-sol":
+        - "openrouter/openai/gpt-6.1-sol"
+        - "openai/gpt-6.1-sol"
     - "gpt-6-astra":
         - "openrouter/openai/gpt-6-astra"
         - "openai/gpt-6-astra"
