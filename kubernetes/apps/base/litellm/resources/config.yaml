@@ -103,17 +103,17 @@ model_list:
       model: anthropic/claude-fable-5-1
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  - model_name: anthropic/claude-sonnet-5
+  - model_name: anthropic/claude-sonnet-5.5
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: false
-      supports_medium_reasoning_effort: false
-      supports_high_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: true
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: true
     litellm_params:
-      model: anthropic/claude-sonnet-5
+      model: anthropic/claude-sonnet-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: anthropic/claude-opus-5.5
