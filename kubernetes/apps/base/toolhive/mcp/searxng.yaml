@@ -7,7 +7,7 @@ spec:
   transport: stdio
   env:
     - name: SEARXNG_URL
-      value: http://searxng.searxng.svc.cluster.local
+      value: http://searxng-proxy.searxng.svc.cluster.local:8080
   resources:
     requests:
       cpu: 5m
