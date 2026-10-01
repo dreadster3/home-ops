@@ -589,3 +589,7 @@ mcp_servers:
     url: http://mcp-firecrawl-remote-proxy.toolhive.svc.cluster.local:8080/mcp
     auth_type: none
     allow_all_keys: true
+  youtube:
+    url: http://mcp-youtube-proxy.toolhive.svc.cluster.local:8080/mcp
+    auth_type: none
+    allow_all_keys: true
