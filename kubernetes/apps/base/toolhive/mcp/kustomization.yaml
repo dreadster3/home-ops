@@ -7,4 +7,5 @@ resources:
   - searxng.yaml
   - terraform.yaml
   - firecrawl.yaml
+  - youtube.yaml
   # - playwright.yaml

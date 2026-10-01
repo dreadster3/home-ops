@@ -1,0 +1,43 @@
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPServer
+metadata:
+  name: youtube
+spec:
+  image: ghcr.io/dreadster3/youtube-mcp:v0.1.0@sha256:311fb1dbb7a00f6d1ecb606277440bcc11785e7a7f07ccd91dbc328d8951c20f
+  transport: stdio
+  secrets:
+    - name: youtube-mcp-secret
+      key: YOUTUBE_DATA_API_KEY
+      targetEnvName: YOUTUBE_API_KEY
+  resources:
+    requests:
+      cpu: 5m
+      memory: &memory 200Mi
+    limits:
+      memory: *memory
+  podTemplateSpec:
+    spec:
+      volumes:
+        - name: cache
+          emptyDir: {}
+      containers:
+        - name: mcp
+          volumeMounts:
+            - name: cache
+              mountPath: /data
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: youtube
+spec:
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+  target:
+    name: youtube-mcp-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: YOUTUBE_DATA_API_KEY
+      remoteRef:
+        key: /toolhive/YOUTUBE_DATA_API_KEY
