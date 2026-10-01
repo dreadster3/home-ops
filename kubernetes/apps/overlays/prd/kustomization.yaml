@@ -24,3 +24,9 @@ resources:
   - ../../base/vaultwarden
   - ../../base/sure
   - ../../base/toolhive
+
+patches:
+  - target:
+      kind: Secret
+      name: secrets
+    path: ./secrets.sops.yaml
