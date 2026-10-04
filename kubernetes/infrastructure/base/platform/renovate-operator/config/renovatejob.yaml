@@ -51,3 +51,8 @@ spec:
     requests:
       cpu: 100m
       memory: 256Mi
+  discoveryFilters:
+    - dreadster3/*
+  extraEnv:
+    - name: RENOVATE_LOG_LEVEL
+      value: debug
