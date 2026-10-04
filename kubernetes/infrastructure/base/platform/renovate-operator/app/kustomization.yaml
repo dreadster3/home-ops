@@ -7,4 +7,5 @@ namespace: renovate-operator
 resources:
   - bucket.yaml
   - helm.yaml
+  - secret-store.yaml
   - secrets.yaml
