@@ -1,0 +1,107 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: renovate-operator-helm
+  namespace: renovate-operator
+spec:
+  interval: 24h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 6.4.0
+  url: oci://ghcr.io/mogenius/helm-charts/renovate-operator
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: renovate-operator
+  namespace: renovate-operator
+spec:
+  interval: 1h
+  timeout: 10m
+  chartRef:
+    kind: OCIRepository
+    name: renovate-operator-helm
+    namespace: renovate-operator
+  # UI auth values (authentik OIDC) are merged from a secret rendered by
+  # External Secrets from Infisical — see secrets.yaml. No client IDs or
+  # issuer URLs in git. Required (not optional): a missing Infisical key must
+  # block the operator, not silently deploy an unauthenticated upgrade.
+  valuesFrom:
+    - kind: Secret
+      name: renovate-oidc
+      valuesKey: oidc.yaml
+  values:
+    # Keep resource names short (the chart's default fullname would be
+    # renovate-operator-renovate-operator).
+    fullnameOverride: renovate-operator
+
+    # Render CRDs as plain templates instead of Helm pre-install/upgrade hooks:
+    # helm-controller does not execute hooks, but handles normal templates.
+    crd:
+      install: true
+      mode: template
+
+    # Leader election enables automatically when replicas > 1.
+    # Sessions use encrypted cookies at 1 replica; set valkey.enabled before scaling out.
+    replicaCount: 1
+
+    # Restrict job provider endpoints/images to the chart's platform allowlist
+    # (covers github.com and ghcr.io/renovatebot/renovate out of the box).
+    policy:
+      enabled: true
+
+    logging:
+      format: json
+
+    route:
+      # Chart-rendered HTTPRoute for the UI: internal hostname via envoy-internal.
+      enabled: true
+      hostnames:
+        - renovate.${INTERNAL_DOMAIN}
+      parentRefs:
+        - name: envoy-internal
+          namespace: envoy
+          sectionName: https
+
+    webhook:
+      # Webhook receiver (operator service exposes it on :8082). In-cluster the
+      # service is reached directly by Pangolin's tunnel; the chart must NOT
+      # create its own route exposure (it would derive an internal
+      # WEBHOOK_BASE_URL), so the public delivery base URL is set explicitly.
+      # GitHub delivers via Pangolin at:
+      #   https://renovate-webhook.${EXTERNAL_DOMAIN}/webhook/v1/github
+      # (its own hostname — renovate.${EXTERNAL_DOMAIN} stays free for the UI
+      # in case it is later opened to the outside)
+      # The chart adds this host to policy.allowedHosts automatically.
+      enabled: true
+      baseUrl: "https://renovate-webhook.${EXTERNAL_DOMAIN}"
+
+    # Persistent logs + Renovate repository cache on the rook-ceph object
+    # store: the chart renders every S3_* env, mounts the translated
+    # credentials (secret-store.yaml) onto this pod and hands the secret name
+    # to executor pods for the forwarded repository cache. The bucket is the
+    # OBC-created `renovate` (bucket.yaml); the in-cluster http endpoint and
+    # path-style match the sure/harbor/cnpg-barman pattern.
+    s3:
+      bucket: renovate
+      region: us-east-1
+      endpoint: "http://rook-ceph-rgw-k8s-ceph-objectstore.rook-ceph.svc:80"
+      forcePathStyle: true
+      existingSecret: renovate-s3-credentials
+
+    config:
+      logStorage:
+        mode: s3
+      forwardS3CacheToJobs: true
+
+    # Prometheus metrics (metrics port on the operator service) + ServiceMonitor
+    # (picked up by Grafana Alloy's ServiceMonitor discovery).
+    # the ServiceMonitor keeps the chart convention available if SM-based
+    # discovery is wired back up.
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
