@@ -47,8 +47,6 @@ spec:
     configMapRef:
       name: renovate-config
       key: config.json
-  discoverTopics:
-    - renovate
   resources:
     requests:
       cpu: 100m
