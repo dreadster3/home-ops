@@ -16,6 +16,10 @@
   "automergeStrategy": "squash",
   "onboarding": false,
   "requireConfig": "optional",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["at any time"]
+  },
   "packageRules": [
     {
       "description": "Auto-merge GitHub Actions",
