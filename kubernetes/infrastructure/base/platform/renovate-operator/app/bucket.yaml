@@ -1,0 +1,17 @@
+---
+# Bucket + auto-provisioned RGW user for the operator's S3 log store and
+# Renovate cache (rook object store provisioner). The name is static because
+# the chart's s3.bucket feeds the runtime s3:// cache URL and gates the whole
+# S3 env block — it must be known at deploy time. The OBC-generated secret
+# `renovate-bucket` (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY) is translated
+# into the chart's expected keys by secret-store.yaml.
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: renovate-bucket
+  namespace: renovate-operator
+spec:
+  bucketName: renovate
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 10G

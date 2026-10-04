@@ -1,0 +1,55 @@
+---
+# Platform-wide Renovate job using topic-based (self-service) discovery:
+# a repository opts in by adding the `renovate` topic on GitHub. Repositories
+# without the topic are untouched, which avoids conflicting with the
+# Mend-hosted Renovate GitHub App still managing this repository.
+#
+# Authentication runs as the GitHub App (spec.githubAppReference): the operator
+# generates short-lived installation tokens into renovate-github-app-<hash> and
+# injects them as RENOVATE_TOKEN — secretRef is therefore not needed.
+apiVersion: renovate-operator.mogenius.com/v1alpha1
+kind: RenovateJob
+metadata:
+  name: renovate
+  namespace: renovate-operator
+spec:
+  schedule: "0 * * * *" # hourly; discovery + per-project executor runs
+  provider:
+    name: github
+  githubAppReference:
+    secretName: github-app-credentials
+    appIdSecretKey: APP_ID
+    installationIdSecretKey: INSTALL_ID
+    pemSecretKey: PEM
+  image: ghcr.io/renovatebot/renovate:44.132.5
+  parallelism: 3
+  webhook:
+    enabled: true
+    # Delivery host: https://renovate-webhook.${EXTERNAL_DOMAIN}/webhook/v1/github,
+    # routed through Pangolin. GitHub delivers with an X-Hub-Signature-256
+    # HMAC of the first token in this secret (sync writes it as the hook
+    # secret); manual /schedule calls use it as a bearer token.
+    authentication:
+      enabled: true
+      secretRef:
+        name: renovate-webhook-token
+        key: token
+    # Auto-manage the operator webhook on every discovered repository, created
+    # with the GitHub App's installation token (the App carries the
+    # "Repository webhooks: Read and write" permission). no sync.secretRef:
+    # installation tokens are short-lived and permission-scoped already.
+    sync:
+      enabled: true
+  # Shared config file (see renovate-config.yaml): disables onboarding and
+  # requires no per-repo renovate.json, so every topic-onboarded repo runs with
+  # the fleet-wide behavior from .renovaterc.json's shared defaults.
+  renovateConfig:
+    configMapRef:
+      name: renovate-config
+      key: config.json
+  discoverTopics:
+    - renovate
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
