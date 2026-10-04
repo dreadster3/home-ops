@@ -105,3 +105,9 @@ spec:
       enabled: true
       serviceMonitor:
         enabled: true
+
+    authorization:
+      enabled: true
+      defaults:
+        adminGroups:
+          - AuthentikAdmins
