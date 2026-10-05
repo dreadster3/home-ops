@@ -1,10 +1,14 @@
 apiVersion: dragonflydb.io/v1alpha1
 kind: Dragonfly
 metadata:
-  name: sure-dragonfly
+  name: dragonfly
   annotations:
     reloader.stakater.com/auto: "true"
 spec:
+  # Consumers use dedicated logical DB indexes (Dragonfly supports 16 by default),
+  # all set explicitly:
+  # harbor 0/1/2/3, openwebui 4+5, immich 6, litellm 7, netbox 8+9,
+  # paperless 10, searxng 11, sure 12
   image: ghcr.io/dragonflydb/dragonfly:v2.0.0@sha256:7426fdb31ddcf7bd9499b4205f36ebaa83b26149ba1609a0d5f8f474b3631233
   replicas: 2
   topologySpreadConstraints:
@@ -13,7 +17,7 @@ spec:
       whenUnsatisfiable: DoNotSchedule
       labelSelector:
         matchLabels:
-          app: sure-dragonfly
+          app: dragonfly
   env:
     - name: MAX_MEMORY
       valueFrom:
@@ -22,22 +26,30 @@ spec:
           divisor: 1Mi
   args:
     - --maxmemory=$(MAX_MEMORY)Mi
-    - --proactor_threads=2
+    - --proactor_threads=4
+    # Required by BullMQ-based apps (immich, paperless, sure, openwebui) that
+    # run Lua scripts with undeclared keys
+    - --default_lua_flags=allow-undeclared-keys
+  # One shared password for all consumers, per app namespaces sync this via
+  # their own ExternalSecret from /dragonfly/DRAGONFLY_PASSWORD
   authentication:
     passwordFromSecret:
-      name: sure-dragonfly-credentials
+      name: dragonfly-credentials
       key: DRAGONFLY_PASSWORD
   resources:
+    # Aggregated footprint of the previous per-app instances; memory pinned
+    # at 2Gi with requests == limits so MAX_MEMORY (derived from limits)
+    # has a stable size
     requests:
-      cpu: 15m
-      memory: 32Mi
+      cpu: 50m
+      memory: 2Gi
     limits:
-      memory: 512Mi
+      memory: 2Gi
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: &app sure-dragonfly
+  name: &app dragonfly
   labels:
     group: dragonfly
     app: *app

@@ -96,13 +96,19 @@ spec:
     valkey:
       enabled: false
 
-    tasksDatabase: &redis
-      host: netbox-dragonfly
+    tasksDatabase:
+      host: dragonfly.dragonfly.svc.cluster.local
       port: 6379
+      database: 8
       existingSecretName: netbox-dragonfly-credentials
       existingSecretKey: DRAGONFLY_PASSWORD
 
-    cachingDatabase: *redis
+    cachingDatabase:
+      host: dragonfly.dragonfly.svc.cluster.local
+      port: 6379
+      database: 9
+      existingSecretName: netbox-dragonfly-credentials
+      existingSecretKey: DRAGONFLY_PASSWORD
 
     email:
       server: maddy.maddy.svc.cluster.local

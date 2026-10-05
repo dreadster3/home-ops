@@ -24,3 +24,30 @@ spec:
       namespace: monitoring
   interval: 1h
   timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: dragonfly-cluster
+  namespace: &namespace dragonfly
+spec:
+  targetNamespace: *namespace
+  commonMetadata:
+    labels:
+      app.kubernetes.io/module: *namespace
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: StatefulSet
+      name: dragonfly
+      namespace: *namespace
+  path: ./kubernetes/infrastructure/base/databases/dragonfly/cluster
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  dependsOn:
+    - name: dragonfly-operator
+      namespace: *namespace
+  interval: 1h
+  timeout: 5m

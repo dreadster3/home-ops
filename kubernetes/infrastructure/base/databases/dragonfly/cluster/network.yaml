@@ -1,0 +1,74 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dragonfly
+  namespace: dragonfly
+spec:
+  # Previously a cluster-wide policy (instances lived in every app
+  # namespace); the instance is centralized here now, so a namespaced
+  # policy suffices.
+  description: "Allow access to the centralized Dragonfly instance"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: dragonfly
+  ingress:
+    # Intra-instance replication (replica → master pods)
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    # Dragonfly operator management
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dragonfly-operator
+      toPorts:
+        - ports:
+            - port: redis
+              protocol: TCP
+            - port: admin
+              protocol: TCP
+    # Metrics scraping
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+            app.kubernetes.io/name: alloy
+      toPorts:
+        - ports:
+            - port: admin
+              protocol: TCP
+    # Application namespaces consuming the instance
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: harbor
+        - matchLabels:
+            io.kubernetes.pod.namespace: immich
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+        - matchLabels:
+            io.kubernetes.pod.namespace: netbox
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+        - matchLabels:
+            io.kubernetes.pod.namespace: paperless
+        - matchLabels:
+            io.kubernetes.pod.namespace: searxng
+        - matchLabels:
+            io.kubernetes.pod.namespace: sure
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+  egress:
+    # Intra-instance replication (replica → master pods)
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP

@@ -38,19 +38,18 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: dragonfly
+  name: dragonfly-egress
   namespace: paperless
 spec:
-  description: "Allow Dragonfly pods access"
+  description: "Allow egress to centralized Dragonfly (dragonfly namespace)"
   endpointSelector:
     matchLabels:
-      app: paperless-dragonfly
-  ingress:
-    - fromEndpoints:
+      app.kubernetes.io/name: paperless
+  egress:
+    - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: paperless
-            app.kubernetes.io/instance: paperless
-            app.kubernetes.io/name: paperless
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly
       toPorts:
         - ports:
             - port: "6379"

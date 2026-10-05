@@ -23,7 +23,6 @@ resources:
   - pgcluster.yaml
   - database.yaml
   - secrets.yaml
-  - dragonfly.yaml
   # - ollama.yaml
   - cronjob.yaml
   - helm.yaml

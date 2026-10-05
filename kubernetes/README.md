@@ -65,7 +65,7 @@ GitOps-managed Kubernetes cluster using [Flux](https://fluxcd.io/).
 | Component                                   | Description                                                                                             |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | [CloudNativePG](https://cloudnative-pg.io/) | PostgreSQL operator — each app gets its own managed cluster                                             |
-| [DragonflyDB](https://dragonflydb.io/)      | High-performance Redis-compatible cache (used by Immich, OpenWebUI, Harbor, Netbox, Paperless, Searxng) |
+| [DragonflyDB](https://dragonflydb.io/)      | High-performance Redis-compatible cache — a single centralized 2-replica instance in the `dragonfly` namespace, shared by Harbor, Immich, LiteLLM, Netbox, OpenWebUI, Paperless, Searxng and Sure |
 
 ### Observability
 
