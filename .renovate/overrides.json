@@ -9,6 +9,14 @@
       "pinDigests": false
     },
     {
+      "description": [
+        "doco-cd is deployed and updated manually — ignore its container image entirely"
+      ],
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/kimdre/doco-cd"],
+      "enabled": false
+    },
+    {
       "description": ["Custom versioning for termix"],
       "matchDatasources": ["docker"],
       "versioning": "regex:^(?:release\\-)?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(\\-tag)?$",
