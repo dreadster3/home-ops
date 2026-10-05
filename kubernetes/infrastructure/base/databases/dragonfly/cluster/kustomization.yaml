@@ -3,9 +3,6 @@ kind: Kustomization
 
 namespace: dragonfly
 
-components:
-  - ../../../../../components/substitute
-
 resources:
   - secrets.yaml
   - dragonfly.yaml
