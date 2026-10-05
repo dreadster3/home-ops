@@ -9,6 +9,7 @@ spec:
     operation: copy
   ref:
     tag: 0.51.4
+    digest: sha256:0088a0dc7cbc86a7eeae85e73216760083f5ef7619f801e6fff732eea68dc0a3
   url: oci://ghcr.io/stacklok/toolhive/toolhive-operator
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
