@@ -11,13 +11,16 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/part-of: dragonfly
-  # Same additive semantics as the former cluster-wide policy: no default
-  # deny is imposed here — enforcement happens on the consumers' egress
-  # side (their namespaces run deny-all policies).
-  enableDefaultDeny:
-    ingress: false
-    egress: false
   ingress:
+    # Intra-instance replication (replica → master pods)
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
     # Dragonfly operator management
     - fromEndpoints:
         - matchLabels:
@@ -55,6 +58,16 @@ spec:
             io.kubernetes.pod.namespace: searxng
         - matchLabels:
             io.kubernetes.pod.namespace: sure
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+  egress:
+    # Intra-instance replication (replica → master pods)
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly
       toPorts:
         - ports:
             - port: "6379"
