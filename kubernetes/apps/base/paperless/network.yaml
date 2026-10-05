@@ -107,14 +107,16 @@ spec:
         - ports:
             - port: smtp
               protocol: TCP
-    # Global Tika content-extraction service (cross-namespace shared utility)
+    # Global Tika content-extraction via the KEDA HTTP add-on interceptor
+    # (tika-proxy ExternalName resolves to the interceptor proxy in the keda ns)
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: tika
-            app.kubernetes.io/name: tika
+            io.kubernetes.pod.namespace: keda
+            app.kubernetes.io/name: http-add-on
+            app.kubernetes.io/component: interceptor
       toPorts:
         - ports:
-            - port: "80"
+            - port: "8080"
               protocol: TCP
     - toEndpoints:
         - matchLabels:

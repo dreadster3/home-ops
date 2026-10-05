@@ -7,5 +7,6 @@ labels:
 
 resources:
   - flux
+  - keda
   - reloader
   - renovate-operator
