@@ -52,12 +52,30 @@ spec:
 
     kubelet:
       enabled: true
+      serviceMonitor:
+        authorization:
+          type: Bearer
+          credentials:
+            name: prometheus-scrape-token
+            key: token
 
     kubeControllerManager:
       enabled: true
+      serviceMonitor:
+        authorization:
+          type: Bearer
+          credentials:
+            name: prometheus-scrape-token
+            key: token
 
     coreDns:
       enabled: true
+      serviceMonitor:
+        authorization:
+          type: Bearer
+          credentials:
+            name: prometheus-scrape-token
+            key: token
 
     kubeEtcd:
       enabled: true
@@ -69,6 +87,11 @@ spec:
           enabled: false
       serviceMonitor:
         enabled: true
+        authorization:
+          type: Bearer
+          credentials:
+            name: prometheus-scrape-token
+            key: token
         relabelings: # Add nodename label
           - sourceLabels: [__meta_kubernetes_pod_node_name]
             separator: ;
@@ -82,9 +105,21 @@ spec:
 
     kubeScheduler:
       enabled: true
+      serviceMonitor:
+        authorization:
+          type: Bearer
+          credentials:
+            name: prometheus-scrape-token
+            key: token
 
     kubeProxy:
       enabled: true
+      serviceMonitor:
+        authorization:
+          type: Bearer
+          credentials:
+            name: prometheus-scrape-token
+            key: token
 
     kubeStateMetrics:
       enabled: true

@@ -5,3 +5,5 @@ namespace: monitoring
 
 resources:
   - helm.yaml
+  - scrape-rbac.yaml
+  - secrets.yaml
