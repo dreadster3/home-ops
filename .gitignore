@@ -3,3 +3,6 @@
 .envrc
 .infisical.json
 .codegraph/
+
+.pi/
+!.pi/skills/
