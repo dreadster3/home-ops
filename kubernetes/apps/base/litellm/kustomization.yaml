@@ -21,7 +21,6 @@ resources:
   - network.yaml
   - secrets.yaml
   - dragonfly.yaml
-  - pvc.yaml
   - httproute.yaml
   - helm.yaml
   - servicemonitor.yaml

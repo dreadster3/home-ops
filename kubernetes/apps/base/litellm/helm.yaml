@@ -106,15 +106,6 @@ spec:
       name: litellm-proxy-config
       key: config.yaml
 
-    # Persistent storage for GitHub Copilot OAuth tokens
-    volumes:
-      - name: github-copilot-tokens
-        persistentVolumeClaim:
-          claimName: litellm-github-copilot-tokens
-    volumeMounts:
-      - name: github-copilot-tokens
-        mountPath: /data/github_copilot
-
     resources:
       requests:
         cpu: 300m
