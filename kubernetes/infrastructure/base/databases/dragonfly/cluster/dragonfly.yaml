@@ -5,6 +5,9 @@ metadata:
   annotations:
     reloader.stakater.com/auto: "true"
 spec:
+  # Consumers use dedicated logical DB indexes (Dragonfly supports 16 by default):
+  # harbor 0/1/2/5 (chart defaults), openwebui 3+4, immich 6, litellm 7,
+  # netbox 8+9, paperless 10, searxng 11, sure 12
   image: ghcr.io/dragonflydb/dragonfly:v2.0.0@sha256:7426fdb31ddcf7bd9499b4205f36ebaa83b26149ba1609a0d5f8f474b3631233
   replicas: 2
   topologySpreadConstraints:

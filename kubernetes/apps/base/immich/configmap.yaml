@@ -11,4 +11,4 @@ data:
   DB_DATABASE_NAME: immich
   DB_HOSTNAME: immich-cluster-rw
   REDIS_HOSTNAME: dragonfly.dragonfly.svc.cluster.local
-  REDIS_DBINDEX: "0"
+  REDIS_DBINDEX: "6"
