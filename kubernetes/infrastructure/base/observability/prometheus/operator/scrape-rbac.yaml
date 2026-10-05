@@ -1,0 +1,48 @@
+# Dedicated ServiceAccount whose long-lived token authenticates control-plane metric
+# scrapes (kubelet, kube-controller-manager, kube-scheduler).
+# kube-prometheus-stack v90+ renders the control-plane ServiceMonitors with secret-based
+# authorization instead of bearerTokenFile. The chart's own token secret is only created
+# when the chart's Prometheus is enabled, which we don't use (Alloy + VictoriaMetrics
+# scrape instead), so we manage the credential ourselves.
+# See PR: https://github.com/prometheus-community/helm-charts/pull/7238
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-scrape
+  labels:
+    app.kubernetes.io/module: prometheus-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-scrape
+  labels:
+    app.kubernetes.io/module: prometheus-operator
+rules:
+  # kubelet /metrics and /metrics/cadvisor (webhook-authorized via nodes/metrics since v1.32)
+  - apiGroups: [""]
+    resources:
+      - nodes/metrics
+      - nodes/proxy
+    verbs: [get]
+  # kube-controller-manager & kube-scheduler (and apiserver-style endpoints)
+  - nonResourceURLs:
+      - /metrics
+      - /metrics/cadvisor
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-scrape
+  labels:
+    app.kubernetes.io/module: prometheus-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-scrape
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-scrape
+    namespace: monitoring
