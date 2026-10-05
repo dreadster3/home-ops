@@ -25,7 +25,8 @@
     "**/.archive/**",
     "**/talos/**",
     "**/*.env",
-    "**/*.sops.*"
+    "**/*.sops.*",
+    "**/.taskfiles/**"
   ],
   "automergeType": "pr",
   "automergeStrategy": "squash"
