@@ -6,3 +6,4 @@ namespace: dragonfly
 resources:
   - secrets.yaml
   - dragonfly.yaml
+  - network.yaml

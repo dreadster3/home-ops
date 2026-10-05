@@ -37,10 +37,12 @@ spec:
       name: dragonfly-credentials
       key: DRAGONFLY_PASSWORD
   resources:
-    # Aggregated footprint of the previous per-app instances
+    # Aggregated footprint of the previous per-app instances; memory pinned
+    # at 2Gi with requests == limits so MAX_MEMORY (derived from limits)
+    # has a stable size
     requests:
       cpu: 50m
-      memory: 512Mi
+      memory: 2Gi
     limits:
       memory: 2Gi
 ---
