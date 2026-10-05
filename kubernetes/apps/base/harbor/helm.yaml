@@ -150,7 +150,8 @@ spec:
     redis:
       type: external
       external:
-        addr: harbor-dragonfly:6379
+        addr: dragonfly.dragonfly.svc.cluster.local:6379
+        secretName: harbor-dragonfly-credentials
 
     metrics:
       enabled: true

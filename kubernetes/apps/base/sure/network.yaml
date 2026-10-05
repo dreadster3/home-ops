@@ -47,18 +47,18 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: dragonfly
+  name: dragonfly-egress
   namespace: sure
 spec:
-  description: "Allow Dragonfly pods access"
+  description: "Allow egress to centralized Dragonfly (dragonfly namespace)"
   endpointSelector:
     matchLabels:
-      app: sure-dragonfly
-  ingress:
-    - fromEndpoints:
+      app.kubernetes.io/name: sure
+  egress:
+    - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: sure
-            app.kubernetes.io/name: sure
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly
       toPorts:
         - ports:
             - port: "6379"

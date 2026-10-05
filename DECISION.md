@@ -188,3 +188,13 @@ Decisions made throughout the life of this project, with rationale and context.
 ---
 
 *This log is maintained to provide context for architectural decisions and onboarding.*
+
+## 21. Centralize DragonflyDB into one shared instance
+
+- **Date:** 2026-07-23
+- **Status:** Accepted
+- **Context:** Every app (Harbor, Immich, LiteLLM, Netbox, OpenWebUI, Paperless, Searxng, Sure) ran its own Dragonfly CR with `replicas: 2` and `proactor_threads=2`, totaling ~16 pods. The data held is ephemeral (cache, job queues, sessions) and each instance's actual memory usage was a small fraction of its reserved limits, making the per-app footprint mostly idle overhead.
+- **Decision:** Replace the eight per-app Dragonfly instances with a single centralized instance (2 replicas, topology-spread, `proactor_threads=4`, 2Gi memory limit) deployed via the Dragonfly Operator in the `dragonfly` namespace at `kubernetes/infrastructure/base/databases/dragonfly/cluster/`, exposed as `dragonfly.dragonfly.svc.cluster.local:6379`. All consumers are repointed to it, with one shared password (`/dragonfly/DRAGONFLY_PASSWORD` via Infisical; the instance's auth secret, plus per-app ExternalSecrets for Harbor and Netbox whose charts require a same-namespace secret). Cilium policies were flipped accordingly: cluster-wide ingress allowlist on the instance, per-app egress rules, and per-instance ingress policies removed. Per-app dragonfly PodMonitors were replaced by one PodMonitor for the shared instance. The instance runs with `--default_lua_flags=allow-undeclared-keys` since BullMQ-based consumers (Immich, Paperless, Sure, OpenWebUI) need it.
+- **Rationale:** A single shared instance follows the same shared-utility pattern as Tika (#18) and fits Dragonfly's multi-tenant design; the trade-offs are accepted deliberately: cache data is ephemeral so no migration was needed, key collisions between consumers are the real risk and are mitigated by each app using its own key prefixes/DB indexes as they already did, and a single HA instance removes ~14 pods plus their schedulable request overhead. The operator's `authentication` field supports only one password per instance, so per-app secrets are no longer possible without ACLs; a single shared password across namespace boundaries is acceptable in this trusted cluster behind Cilium policies.
+
+---

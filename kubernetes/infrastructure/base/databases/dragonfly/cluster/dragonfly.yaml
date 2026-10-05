@@ -1,7 +1,7 @@
 apiVersion: dragonflydb.io/v1alpha1
 kind: Dragonfly
 metadata:
-  name: sure-dragonfly
+  name: dragonfly
   annotations:
     reloader.stakater.com/auto: "true"
 spec:
@@ -13,7 +13,7 @@ spec:
       whenUnsatisfiable: DoNotSchedule
       labelSelector:
         matchLabels:
-          app: sure-dragonfly
+          app: dragonfly
   env:
     - name: MAX_MEMORY
       valueFrom:
@@ -22,22 +22,28 @@ spec:
           divisor: 1Mi
   args:
     - --maxmemory=$(MAX_MEMORY)Mi
-    - --proactor_threads=2
+    - --proactor_threads=4
+    # Required by BullMQ-based apps (immich, paperless, sure, openwebui) that
+    # run Lua scripts with undeclared keys
+    - --default_lua_flags=allow-undeclared-keys
+  # One shared password for all consumers, per app namespaces sync this via
+  # their own ExternalSecret from /dragonfly/DRAGONFLY_PASSWORD
   authentication:
     passwordFromSecret:
-      name: sure-dragonfly-credentials
+      name: dragonfly-credentials
       key: DRAGONFLY_PASSWORD
   resources:
+    # Aggregated footprint of the previous per-app instances
     requests:
-      cpu: 15m
-      memory: 32Mi
-    limits:
+      cpu: 50m
       memory: 512Mi
+    limits:
+      memory: 2Gi
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: &app sure-dragonfly
+  name: &app dragonfly
   labels:
     group: dragonfly
     app: *app

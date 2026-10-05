@@ -96,6 +96,28 @@ spec:
         - ports:
             - port: admin
               protocol: TCP
+    # Application namespaces consuming the centralized Dragonfly instance
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: harbor
+        - matchLabels:
+            io.kubernetes.pod.namespace: immich
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+        - matchLabels:
+            io.kubernetes.pod.namespace: netbox
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+        - matchLabels:
+            io.kubernetes.pod.namespace: paperless
+        - matchLabels:
+            io.kubernetes.pod.namespace: searxng
+        - matchLabels:
+            io.kubernetes.pod.namespace: sure
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy

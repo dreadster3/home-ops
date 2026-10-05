@@ -12,7 +12,6 @@ resources:
   - bucket.yaml
   - store.yaml
   - pgcluster.yaml
-  - dragonfly.yaml
   - secrets.yaml
   - network.yaml
   - httproute.yaml

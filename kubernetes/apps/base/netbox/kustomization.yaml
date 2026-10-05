@@ -31,6 +31,5 @@ resources:
   - helm.yaml
   - namespace.yaml
   - pgcluster.yaml
-  - dragonfly.yaml
   - store.yaml
   - secrets.yaml

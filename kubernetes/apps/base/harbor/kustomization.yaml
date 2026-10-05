@@ -27,5 +27,4 @@ resources:
   - secret-store.yaml
   - store.yaml
   - pgcluster.yaml
-  - dragonfly.yaml
   - helm.yaml

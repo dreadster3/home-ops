@@ -20,7 +20,6 @@ resources:
   - pgcluster.yaml
   - network.yaml
   - secrets.yaml
-  - dragonfly.yaml
   - httproute.yaml
   - helm.yaml
   - servicemonitor.yaml
