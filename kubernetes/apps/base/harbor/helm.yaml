@@ -152,8 +152,11 @@ spec:
       external:
         addr: dragonfly.dragonfly.svc.cluster.local:6379
         secretName: harbor-dragonfly-credentials
-        # Keep the per-component indexes compact and incremental:
-        # core is fixed at 0 upstream, jobservice/registry keep chart defaults
+        # Per-component logical DB indexes, explicit to keep the shared-instance
+        # allocation visible here; coreDatabaseIndex must stay 0 upstream
+        coreDatabaseIndex: "0"
+        jobserviceDatabaseIndex: "1"
+        registryDatabaseIndex: "2"
         trivyAdapterIndex: "3"
 
     metrics:
