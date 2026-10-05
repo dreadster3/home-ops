@@ -152,6 +152,9 @@ spec:
       external:
         addr: dragonfly.dragonfly.svc.cluster.local:6379
         secretName: harbor-dragonfly-credentials
+        # Keep the per-component indexes compact and incremental:
+        # core is fixed at 0 upstream, jobservice/registry keep chart defaults
+        trivyAdapterIndex: "3"
 
     metrics:
       enabled: true
