@@ -151,7 +151,9 @@ spec:
       type: external
       external:
         addr: dragonfly.dragonfly.svc.cluster.local:6379
-        secretName: harbor-dragonfly-credentials
+        # Embedded into the redis URLs at render time via helm lookup;
+        # chart looks up REDIS_PASSWORD (REDIS_USERNAME empty -> default user)
+        existingSecret: harbor-dragonfly-credentials
         # Per-component logical DB indexes, explicit to keep the shared-instance
         # allocation visible here; coreDatabaseIndex must stay 0 upstream
         coreDatabaseIndex: "0"
