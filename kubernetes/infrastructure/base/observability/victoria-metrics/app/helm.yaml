@@ -8,6 +8,7 @@ spec:
   url: oci://ghcr.io/victoriametrics/helm-charts/victoria-metrics-single
   ref:
     tag: "0.48.0"
+    digest: sha256:c4b4eceaeaae4032d8b42d39e6d021fca3bce53aa7354ba0797d2845a03236ee
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
