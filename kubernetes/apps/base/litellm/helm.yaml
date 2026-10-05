@@ -10,6 +10,7 @@ spec:
     operation: copy
   ref:
     tag: 1.104.0
+    digest: sha256:724a88a585f1cc2285b0d94aeff51b477cd85501d48ebebaacb6d2a01c023c46
   url: oci://ghcr.io/berriai/litellm-helm
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
