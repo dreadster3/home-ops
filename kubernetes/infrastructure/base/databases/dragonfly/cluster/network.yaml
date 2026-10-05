@@ -19,12 +19,17 @@ spec:
             app.kubernetes.io/part-of: dragonfly
       toPorts:
         - ports:
-            - port: "6379"
+            - port: redis
               protocol: TCP
-    # Dragonfly operator management
+            - port: admin
+              protocol: TCP
+    # Dragonfly operator management — the operator runs in this same
+    # namespace (NOT a separate dragonfly-operator namespace) and carries
+    # the dragonfly-operator app labels
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: dragonfly-operator
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly-operator
       toPorts:
         - ports:
             - port: redis
@@ -70,5 +75,7 @@ spec:
             app.kubernetes.io/part-of: dragonfly
       toPorts:
         - ports:
-            - port: "6379"
+            - port: redis
+              protocol: TCP
+            - port: admin
               protocol: TCP
