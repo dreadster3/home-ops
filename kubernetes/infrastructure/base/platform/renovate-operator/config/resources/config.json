@@ -1,25 +1,21 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-global-schema.json",
   "extends": [
-    "config:recommended",
+    "config:best-practices",
     "docker:enableMajor",
-    "helpers:pinGitHubActionDigests",
     ":disableRateLimiting",
-    ":dependencyDashboard",
     ":semanticCommits",
-    ":automergeDigest",
-    ":automergeBranch",
+    ":semanticPrefixChore",
+    ":automergePr",
+    ":automergeRequireAllStatusChecks",
+    ":preserveSemverRanges",
     ":timezone(Europe/Lisbon)"
   ],
+  "ignorePresets": [":semanticPrefixFixDepsChoreOthers"],
   "ignorePaths": ["**/*.env"],
-  "automergeType": "pr",
   "automergeStrategy": "squash",
   "onboarding": false,
   "requireConfig": "optional",
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["at any time"]
-  },
   "packageRules": [
     {
       "description": "Auto-merge GitHub Actions",
