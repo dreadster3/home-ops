@@ -13,7 +13,7 @@ metadata:
   name: renovate
   namespace: renovate-operator
 spec:
-  schedule: "0 * * * *" # hourly; discovery + per-project executor runs
+  schedule: "0 */6 * * *" # every 6 hours
   provider:
     name: github
   githubAppReference:
