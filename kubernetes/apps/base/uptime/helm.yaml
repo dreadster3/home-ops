@@ -82,12 +82,12 @@ spec:
             envFrom:
               - secretRef:
                   name: litestream-backup-credentials
-            resources:
-              requests:
-                cpu: 15m
-                memory: &memory 100Mi
-              limits:
-                memory: *memory
+            # resources:
+            #   requests:
+            #     cpu: 15m
+            #     memory: &memory 200Mi
+            #   limits:
+            #     memory: *memory
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
