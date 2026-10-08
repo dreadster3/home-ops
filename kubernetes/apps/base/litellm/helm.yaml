@@ -9,8 +9,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 1.104.0
-    digest: sha256:724a88a585f1cc2285b0d94aeff51b477cd85501d48ebebaacb6d2a01c023c46
+    tag: 1.104.2
+    digest: sha256:960e35a803da0d20efeb991a5f34847edcc21b1e8c645b749d84c8b664b42e4e
   url: oci://ghcr.io/berriai/litellm-helm
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -41,7 +41,7 @@ spec:
 
     image:
       repository: ghcr.io/berriai/litellm-database
-      tag: v1.104.0@sha256:fbe28229d2d02181c0a7d9df9599de614b491f3d897d2d7da18404f088310218
+      tag: v1.104.2@sha256:5a9ff0fd7177372f2ccd8949cb121f67e281f4d13d026af51f9c096c0626f50a
 
     # Use external CloudNativePG — disable the bundled Bitnami postgres subchart
     db:
