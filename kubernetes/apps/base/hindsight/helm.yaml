@@ -1,0 +1,120 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: hindsight-helm
+  namespace: hindsight
+spec:
+  interval: 24h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 0.10.3
+    digest: sha256:a9da3196ad3ee58605768eb1db7ac862484751cb1932f822dd3afdb311a2b30d
+  url: oci://ghcr.io/vectorize-io/charts/hindsight
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hindsight
+  namespace: hindsight
+spec:
+  interval: 1h
+  timeout: 20m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chartRef:
+    kind: OCIRepository
+    name: hindsight-helm
+    namespace: hindsight
+  values:
+    podAnnotations:
+      reloader.stakater.com/auto: "true"
+
+    api:
+      replicaCount: 2
+      image: &image
+        repository: ghcr.io/dreadster3/hindsight-hybrid-authentication
+        tag: v0.1.0@sha256:54702c8599aaa26ff1345f1b3ca0a321e5dfd21384cc68980a96193d34cd5819
+      env:
+        HINDSIGHT_API_TENANT_OAUTH_ENABLED: true
+        HINDSIGHT_API_TENANT_OAUTH_ISSUER: https://authentik.${EXTERNAL_DOMAIN}/application/o/hindsight/
+        HINDSIGHT_API_MCP_STATELESS: true
+        HINDSIGHT_API_LLM_OUTPUT_LANGUAGE: english
+
+        HINDSIGHT_API_LLM_PROVIDER: litellm
+        HINDSIGHT_API_LLM_MODEL: gpt-6-luna
+        HINDSIGHT_API_LLM_REASONING_EFFORT: low
+        # Auth: shared bearer key guarding the API + MCP endpoints (from
+        # Infisical via hindsight-secret-env).
+        HINDSIGHT_API_TENANT_EXTENSION: hindsight_ext_hybrid_tenant:HybridTenantExtension
+        HINDSIGHT_API_LLM_BASE_URL: http://litellm.litellm.svc.cluster.local:4000/v1
+        # Vector index on VectorChord — qwen3-embedding-8b is 4096 dims, past
+        # pgvector's 2000-dim HNSW limit (see pgcluster.yaml extension image).
+        HINDSIGHT_API_VECTOR_EXTENSION: vchord
+
+        # Embeddings: qwen3-embedding-8b via litellm's dedicated proxy provider
+        # (EMBEDDINGS_LITELLM_API_BASE is the proxy root, no /v1 suffix)
+        HINDSIGHT_API_EMBEDDINGS_PROVIDER: litellm
+        HINDSIGHT_API_EMBEDDINGS_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
+        HINDSIGHT_API_EMBEDDINGS_LITELLM_MODEL: qwen3-embedding-8b
+        # Rerank via litellm (cohere-compatible /rerank against the proxy;
+        # model 'rerank-2.5-lite' passthroughs to OpenRouter's voyage model)
+        HINDSIGHT_API_RERANKER_PROVIDER: litellm
+        HINDSIGHT_API_RERANKER_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
+        HINDSIGHT_API_RERANKER_LITELLM_MODEL: rerank-2.5-lite
+      # No resource requests/limits — krr will measure usage and fill in later
+      resources: null
+      # Chart-managed PVC for the Hugging Face model cache (embedder + reranker)
+      persistence:
+        modelCache:
+          enabled: true
+          size: 3Gi
+          accessModes:
+            - ReadWriteMany
+          storageClass: ceph-filesystem
+
+    # Dedicated workers (StatefulSet): HINDSIGHT_API_WORKER_ID comes from the
+    # stable pod name; the api container's in-process worker is disabled by
+    # the chart. api.env above is inherited by workers. Each worker holds a
+    # PVC because it loads the same embedder/reranker models as the api.
+    worker:
+      enabled: true
+      replicaCount: 2
+      image: *image
+      # No resource requests/limits — krr will measure usage and fill in later
+      resources: null
+      persistence:
+        modelCache:
+          enabled: true
+          size: 3Gi
+          storageClass: ceph-block
+
+    controlPlane:
+      replicaCount: 2
+      image:
+        repository: ghcr.io/vectorize-io/hindsight-control-plane
+        tag: 0.10.2@sha256:f6e3802e558a0c57feff84d52dfc276d0a841bc21de114629a90444eadc5a3f3
+      # No resource requests/limits — krr will measure usage and fill in later
+      resources: null
+
+    # All keys of this secret are injected as env into the api container
+    # (existingSecret contract: postgres-password is required, others pass through)
+    existingSecret: hindsight-secret-env
+
+    # Use the external CloudNativePG cluster instead of bundled PostgreSQL
+    postgresql:
+      enabled: false
+      external:
+        host: hindsight-cluster-rw
+        port: 5432
+        database: hindsight
+        username: hindsight
+
+    ingress:
+      enabled: false

@@ -74,6 +74,18 @@ model_list:
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
+  # ===== Rerank (for Hindsight) =====
+  # LiteLLM has no openrouter rerank provider; hosted_vllm is its generic
+  # OpenAI-compatible rerank passthrough (top_n/results shape) and works
+  # against OpenRouter's /rerank endpoint via api_base.
+  - model_name: openrouter/voyageai/rerank-2.5-lite
+    model_info:
+      mode: rerank
+    litellm_params:
+      model: hosted_vllm/voyageai/rerank-2.5-lite
+      api_base: https://openrouter.ai/api/v1
+      api_key: os.environ/OPENROUTER_API_KEY
+
   # ======= Deepseek (direct API) =====
   - model_name: deepseek/deepseek-v4.1-flash
     model_info: &deepseek-v41-flash
@@ -505,6 +517,9 @@ router_settings:
     text-embedding-3-small: openai/text-embedding-3-small
     qwen3-embedding-8b: openrouter/qwen/qwen3-embedding-8b
 
+    # rerank models
+    rerank-2.5-lite: openrouter/voyageai/rerank-2.5-lite
+
   fallbacks:
     - "stt":
         - "openai/whisper-1"
@@ -594,4 +609,14 @@ mcp_servers:
   youtube:
     url: http://mcp-youtube-proxy.toolhive.svc.cluster.local:8080/mcp
     auth_type: none
+    allow_all_keys: true
+  hindsight:
+    url: http://hindsight-api.hindsight.svc.cluster.local:8888/mcp
+    auth_type: oauth2
+    oauth2_flow: authorization_code
+    client_id: os.environ/HINDSIGHT_OAUTH_CLIENT_ID
+    client_secret: os.environ/HINDSIGHT_OAUTH_CLIENT_SECRET
+    transport: http
+    authorization_url: https://authentik.dreadster3.com/application/o/authorize/
+    token_url: https://authentik.dreadster3.com/application/o/token/
     allow_all_keys: true

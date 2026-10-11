@@ -142,6 +142,26 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  name: openwebui-hindsight
+  namespace: openwebui
+spec:
+  description: "Allow egress to Hindsight MCP (hindsight namespace)"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: openwebui
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hindsight
+            app.kubernetes.io/name: hindsight
+      toPorts:
+        - ports:
+            - port: "8888"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
   name: openwebui-ollama
   namespace: openwebui
 spec:

@@ -1,0 +1,42 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hindsight
+  namespace: hindsight
+spec:
+  parentRefs:
+    - name: envoy-internal
+      namespace: envoy
+  hostnames:
+    - hindsight.${INTERNAL_DOMAIN}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /mcp
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            remove:
+              - X-Bank-Id
+              - X-authentik-uid
+              - X-authentik-username
+              - X-authentik-email
+              - X-authentik-groups
+              - X-authentik-entitlements
+      backendRefs:
+        - name: hindsight-api
+          port: 8888
+    # Same path split as the chart's ingress rules: the control plane (Next.js
+    # UI + its own /api handlers) takes everything except the data API, which
+    # serves /v1/* and must not be shadowed by the control plane.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1
+      backendRefs:
+        - name: hindsight-api
+          port: 8888
+    - backendRefs:
+        - name: hindsight-control-plane
+          port: 3000

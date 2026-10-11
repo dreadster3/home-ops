@@ -101,6 +101,14 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
+            io.kubernetes.pod.namespace: hindsight
+            app.kubernetes.io/name: hindsight
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
             io.kubernetes.pod.namespace: n8n
             app.kubernetes.io/instance: n8n
             app.kubernetes.io/name: n8n
@@ -136,6 +144,7 @@ spec:
   egress:
     - toEntities:
         - world
+    # Hindsight MCP gateway (agent memory)
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: searxng
@@ -161,3 +170,12 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: toolhive
             app: mcpremoteproxy
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hindsight
+            app.kubernetes.io/name: hindsight
+            app.kubernetes.io/component: api
+      toPorts:
+        - ports:
+            - port: "8888"
+              protocol: TCP

@@ -1,0 +1,83 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: hindsight
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": hindsight
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: hindsight
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: hindsight-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: hindsight
+            app.kubernetes.io/instance: hindsight
+            app.kubernetes.io/name: hindsight
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: hindsight-server
+  namespace: hindsight
+spec:
+  description: "Allow traffic from and to hindsight server"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: hindsight
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: openwebui
+            app.kubernetes.io/name: openwebui
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+            app.kubernetes.io/name: litellm
+      toPorts:
+        - ports:
+            - port: "8888"
+              protocol: TCP
+    # Envoy Gateway for the internal HTTPRoute (control plane UI + /v1 data API)
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: "8888"
+              protocol: TCP
+            - port: "3000"
+              protocol: TCP
+  egress:
+    # Hugging Face (model downloads) and OpenAI direct if ever used
+    - toEntities:
+        - world
+    # LLM + embeddings via the LiteLLM proxy
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: litellm
+            app.kubernetes.io/name: litellm
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP

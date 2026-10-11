@@ -9,6 +9,7 @@ labels:
 resources:
   - authentik
   - ../../base/harbor
+  - ../../base/hindsight
   - ../../base/immich
   - ../../base/joplin
   - ../../base/litellm

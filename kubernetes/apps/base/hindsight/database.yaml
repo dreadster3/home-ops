@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: hindsight-cluster-pgvector
+spec:
+  name: hindsight
+  owner: hindsight
+  cluster:
+    name: hindsight-cluster
+  extensions:
+    - name: vector
+      ensure: present
+    - name: vchord
+      ensure: present
