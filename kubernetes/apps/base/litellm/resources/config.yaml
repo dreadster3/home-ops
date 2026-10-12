@@ -501,7 +501,7 @@ router_settings:
   # Routing aliases — clean model_name → primary provider/model_name
   model_group_alias:
     # anthropic models
-    claude-sonnet-5: anthropic/claude-sonnet-5
+    claude-sonnet-5.5: anthropic/claude-sonnet-5.5
     claude-opus-5.5: anthropic/claude-opus-5.5
     claude-fable-5.1: anthropic/claude-fable-5.1
 
