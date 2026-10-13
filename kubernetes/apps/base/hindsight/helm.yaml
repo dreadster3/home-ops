@@ -9,8 +9,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.10.3
-    digest: sha256:a9da3196ad3ee58605768eb1db7ac862484751cb1932f822dd3afdb311a2b30d
+    tag: 1.0.0
+    digest: sha256:615fb00ab32f33d4715676416206d94f090b3b82ca04cbe75281e13cbdd2dc37
   url: oci://ghcr.io/vectorize-io/charts/hindsight
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
