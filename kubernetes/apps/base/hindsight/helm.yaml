@@ -9,8 +9,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.10.3
-    digest: sha256:a9da3196ad3ee58605768eb1db7ac862484751cb1932f822dd3afdb311a2b30d
+    tag: 1.0.0
+    digest: sha256:615fb00ab32f33d4715676416206d94f090b3b82ca04cbe75281e13cbdd2dc37
   url: oci://ghcr.io/vectorize-io/charts/hindsight
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -40,7 +40,7 @@ spec:
       replicaCount: 2
       image: &image
         repository: ghcr.io/dreadster3/hindsight-hybrid-authentication
-        tag: v0.1.0@sha256:54702c8599aaa26ff1345f1b3ca0a321e5dfd21384cc68980a96193d34cd5819
+        tag: v0.2.0@sha256:e9ac3cd0672f3ff9dd7d42ea944bd8cf4a457e77a3c22d967138fe6b657c5f79
       env:
         HINDSIGHT_API_TENANT_OAUTH_ENABLED: true
         HINDSIGHT_API_TENANT_OAUTH_ISSUER: https://authentik.${EXTERNAL_DOMAIN}/application/o/hindsight/
@@ -99,7 +99,7 @@ spec:
       replicaCount: 2
       image:
         repository: ghcr.io/vectorize-io/hindsight-control-plane
-        tag: 0.10.3@sha256:bf436b78e85b0438afda8d2e4b1fce01b9d12f135a742d1cc276b741766f212d
+        tag: 1.0.0@sha256:ad5257866e1a0a0198da55e14a1c373e260e4faa945c9a64d3a3926cb3498cd6
       # No resource requests/limits — krr will measure usage and fill in later
       resources: null
 
