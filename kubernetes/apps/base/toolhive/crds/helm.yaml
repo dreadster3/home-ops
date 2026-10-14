@@ -8,8 +8,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.52.0
-    digest: sha256:a6f2810b2977341ae08bf630907da416912d4250c4d0ba98c37b6b2e2134dc44
+    tag: 0.53.0
+    digest: sha256:6a2f4960f79f15d458378534faf9ae6d22e56991d64f9e84a5d56d60c740d4a5
   url: oci://ghcr.io/stacklok/toolhive/toolhive-operator-crds
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2

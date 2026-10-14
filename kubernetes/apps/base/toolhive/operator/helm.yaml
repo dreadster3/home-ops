@@ -8,8 +8,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.52.0
-    digest: sha256:e43f2a3448ee07093260749f914d2143cf93218f5204cf0e1d3e4179f172940a
+    tag: 0.53.0
+    digest: sha256:7dbf09ffe0d10764fec713430c3cd43cd564dab97a702974dcfa116c865a5ffe
   url: oci://ghcr.io/stacklok/toolhive/toolhive-operator
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
