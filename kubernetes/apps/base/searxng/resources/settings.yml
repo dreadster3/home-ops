@@ -12,6 +12,16 @@ general:
   donation_url: false
   contact_url: false
   enable_metrics: false
+engines:
+  - name: qwant
+    disabled: false
+  - name: qwant news
+    disabled: false
+  - name: qwant images
+    disabled: false
+  - name: qwant videos
+    disabled: false
+
 search:
   safe_search: 0
   autocomplete: duckduckgo
