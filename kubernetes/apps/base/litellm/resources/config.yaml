@@ -2,7 +2,7 @@ model_list:
   # ==== Decisions ====
   - model_name: typesafe/jev-1.13
     litellm_params:
-      model: typesafe/jev-1.13
+      model: typesafe/jev-latest
       api_key: os.environ/TYPESAFE_API_KEY
 
   # ===== Image Generation =====
@@ -542,6 +542,9 @@ router_settings:
 
     # rerank models
     rerank-2.5-lite: openrouter/voyageai/rerank-2.5-lite
+
+    # decision models
+    jev-1.13: typesafe/jev-1.13
 
   fallbacks:
     - "stt":
