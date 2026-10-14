@@ -1,4 +1,10 @@
 model_list:
+  # ==== Decisions ====
+  - model_name: typesafe/jev-1.13
+    litellm_params:
+      model: typesafe/jev-1.13
+      api_key: os.environ/TYPESAFE_API_KEY
+
   # ===== Image Generation =====
   - model_name: openrouter/black-forest-labs/flux.2-pro
     model_info:
