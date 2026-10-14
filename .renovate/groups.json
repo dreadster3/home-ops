@@ -87,6 +87,16 @@
         "commitMessageTopic": "{{{groupName}}} group"
       },
       "minimumGroupSize": 2
+    },
+    {
+      "description": "Hindsight Group",
+      "groupName": "Hindsight",
+      "matchDatasources": ["docker", "helm"],
+      "matchPackageNames": ["/hindsight/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 3
     }
   ]
 }
