@@ -93,9 +93,16 @@ spec:
       forcePathStyle: true
       existingSecret: renovate-s3-credentials
 
+    externalKeyValueStore:
+      host: dragonfly.dragonfly.svc.cluster.local
+      existingSecret:
+        name: renovate-redis
+        urlKey: redis-url
+
     config:
       logStorage:
         mode: s3
+      forwardCacheToJobs: true
       forwardS3CacheToJobs: true
 
     # Prometheus metrics (metrics port on the operator service) + ServiceMonitor

@@ -63,6 +63,8 @@ spec:
             io.kubernetes.pod.namespace: searxng
         - matchLabels:
             io.kubernetes.pod.namespace: sure
+        - matchLabels:
+            io.kubernetes.pod.namespace: renovate-operator
       toPorts:
         - ports:
             - port: "6379"
