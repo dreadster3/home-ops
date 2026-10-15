@@ -69,7 +69,12 @@ spec:
         HINDSIGHT_API_RERANKER_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
         HINDSIGHT_API_RERANKER_LITELLM_MODEL: rerank-2.5-lite
       # No resource requests/limits — krr will measure usage and fill in later
-      resources: null
+      resources:
+        requests:
+          cpu: 1.2
+          memory: &memory 1Gi
+        limits:
+          memory: *memory
       # Chart-managed PVC for the Hugging Face model cache (embedder + reranker)
       persistence:
         modelCache:
@@ -85,10 +90,15 @@ spec:
     # PVC because it loads the same embedder/reranker models as the api.
     worker:
       enabled: true
-      replicaCount: 2
+      replicaCount: 1
       image: *image
       # No resource requests/limits — krr will measure usage and fill in later
-      resources: null
+      resources:
+        requests:
+          cpu: 10m
+          memory: &memory 1Gi
+        limits:
+          memory: *memory
       persistence:
         modelCache:
           enabled: true
@@ -96,12 +106,17 @@ spec:
           storageClass: ceph-block
 
     controlPlane:
-      replicaCount: 2
+      replicaCount: 1
       image:
         repository: ghcr.io/vectorize-io/hindsight-control-plane
         tag: 1.0.0@sha256:ad5257866e1a0a0198da55e14a1c373e260e4faa945c9a64d3a3926cb3498cd6
       # No resource requests/limits — krr will measure usage and fill in later
-      resources: null
+      resources:
+        requests:
+          cpu: 100m
+          memory: &memory 256Mi
+        limits:
+          memory: *memory
 
     # All keys of this secret are injected as env into the api container
     # (existingSecret contract: postgres-password is required, others pass through)
