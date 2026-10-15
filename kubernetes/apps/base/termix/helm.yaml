@@ -26,31 +26,6 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          litestream-restore:
-            image:
-              repository: litestream/litestream
-              tag: 0.5.17@sha256:4b02b9859a6b6b4087d8b8944e15f7e984bd7957cba322bbeee38b0e27b9656a
-            args:
-              - restore
-              - -if-db-not-exists
-              - -if-replica-exists
-              - /app/data/db.sqlite
-            env:
-              TZ: ${TIMEZONE}
-            envFrom:
-              - secretRef:
-                  name: litestream-backup-credentials
-            resources:
-              requests:
-                cpu: 15m
-                memory: &memory 50Mi
-              limits:
-                memory: *memory
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
         containers:
           main:
             image:
@@ -63,8 +38,7 @@ spec:
               DATA_DIR: /app/data
 
               # Database configuration
-              # INFO: litestream does not support encrypted SQLite databases
-              DB_FILE_ENCRYPTION: false
+              DATABASE_DIALECT: postgres
 
               # Guacamole configuration
               GUACD_HOST: localhost
@@ -136,26 +110,6 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
-          litestream:
-            image:
-              repository: litestream/litestream
-              tag: 0.5.17@sha256:4b02b9859a6b6b4087d8b8944e15f7e984bd7957cba322bbeee38b0e27b9656a
-            args: [replicate]
-            env:
-              TZ: ${TIMEZONE}
-            envFrom:
-              - secretRef:
-                  name: litestream-backup-credentials
-            resources:
-              requests:
-                cpu: 15m
-                memory: &memory 50Mi
-              limits:
-                memory: *memory
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
         pod:
           securityContext:
             runAsNonRoot: true
@@ -194,17 +148,3 @@ spec:
         size: 5Gi
         globalMounts:
           - path: /app/data
-      litestream:
-        enabled: true
-        type: configMap
-        name: litestream-config
-        advancedMounts:
-          main:
-            litestream-restore:
-              - path: /etc/litestream.yml
-                readOnly: true
-                subPath: litestream.yml
-            litestream:
-              - path: /etc/litestream.yml
-                readOnly: true
-                subPath: litestream.yml

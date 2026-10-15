@@ -46,3 +46,23 @@ spec:
   egress:
     - toEntities:
         - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: termix
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: termix-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: termix
+            cnpg.io/cluster: termix-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
