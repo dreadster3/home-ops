@@ -419,7 +419,7 @@ model_list:
       supports_vision: true
       <<: *deepseek-v41-flash
     litellm_params:
-      model: openai/deepseek-v4.1-flash
+      model: openai/deepseek-v4.1-flash:1017-cloud
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
