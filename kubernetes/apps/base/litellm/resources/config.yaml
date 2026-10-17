@@ -371,20 +371,6 @@ model_list:
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
-  - model_name: openrouter/inclusionai/ling-3.1-flash
-    model_info:
-      max_input_tokens: 262144
-      max_output_tokens: 32768
-      max_tokens: 32768
-      supports_function_calling: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_tool_choice: true
-      supports_vision: false
-    litellm_params:
-      model: openrouter/inclusionai/ling-3.1-flash
-      api_key: os.environ/OPENROUTER_API_KEY
-
   # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
   - model_name: ollama/minimax-m3
     model_info:
@@ -527,9 +513,6 @@ router_settings:
     qwen3.8-max: openrouter/qwen/qwen3.8-max
     qwen3.8-flash: openrouter/qwen/qwen3.8-flash
 
-    # inclusionai models
-    ling-3.1-flash: openrouter/inclusionai/ling-3.1-flash
-
     tts: openai/tts-1
     stt: deepgram/nova-3
     imagen: openrouter/black-forest-labs/flux.2-pro
@@ -568,14 +551,14 @@ router_settings:
         - "openrouter/moonshotai/kimi-k3"
         - "moonshot/kimi-k3"
     - "gpt-6-luna":
-        - "openrouter/openai/gpt-6-luna"
         - "openai/gpt-6-luna"
+        - "openrouter/openai/gpt-6-luna"
     - "gpt-6.1-sol":
-        - "openrouter/openai/gpt-6.1-sol"
         - "openai/gpt-6.1-sol"
+        - "openrouter/openai/gpt-6.1-sol"
     - "gpt-6-astra":
-        - "openrouter/openai/gpt-6-astra"
         - "openai/gpt-6-astra"
+        - "openrouter/openai/gpt-6-astra"
 
 general_settings:
   user_api_key_cache_ttl: 300
