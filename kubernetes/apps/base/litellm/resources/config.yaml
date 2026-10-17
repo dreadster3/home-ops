@@ -181,6 +181,18 @@ model_list:
       prompt_cache_options:
         mode: implicit
 
+  - model_name: openai/gpt-6-luna:flex
+    model_info: *openai-gpt-6-luna
+    litellm_params:
+      model: openai/gpt-6-luna
+      api_key: os.environ/OPENAI_API_KEY
+      service_tier: flex
+      cache_control_injection_points:
+        - location: message
+          role: system
+      prompt_cache_options:
+        mode: implicit
+
   - model_name: openai/gpt-6.1-sol
     model_info: &openai-gpt-6-1-sol
       supports_none_reasoning_effort: true
@@ -199,6 +211,18 @@ model_list:
       prompt_cache_options:
         mode: implicit
 
+  - model_name: openai/gpt-6.1-sol:flex
+    model_info: *openai-gpt-6-1-sol
+    litellm_params:
+      model: openai/gpt-6.1-sol
+      api_key: os.environ/OPENAI_API_KEY
+      service_tier: flex
+      cache_control_injection_points:
+        - location: message
+          role: system
+      prompt_cache_options:
+        mode: implicit
+
   - model_name: openai/gpt-6-astra
     model_info: &openai-gpt-6-astra
       supports_none_reasoning_effort: false
@@ -211,6 +235,18 @@ model_list:
     litellm_params:
       model: openai/gpt-6-astra
       api_key: os.environ/OPENAI_API_KEY
+      cache_control_injection_points:
+        - location: message
+          role: system
+      prompt_cache_options:
+        mode: implicit
+
+  - model_name: openai/gpt-6-astra:flex
+    model_info: *openai-gpt-6-astra
+    litellm_params:
+      model: openai/gpt-6-astra
+      api_key: os.environ/OPENAI_API_KEY
+      service_tier: flex
       cache_control_injection_points:
         - location: message
           role: system
@@ -512,9 +548,9 @@ router_settings:
     claude-fable-5.1: anthropic/claude-fable-5.1
 
     # openai models
-    gpt-6-luna: openrouter/openai/gpt-6-luna:flex
-    gpt-6.1-sol: openrouter/openai/gpt-6.1-sol:flex
-    gpt-6-astra: openrouter/openai/gpt-6-astra:flex
+    gpt-6-luna: openai/gpt-6-luna:flex
+    gpt-6.1-sol: openai/gpt-6.1-sol:flex
+    gpt-6-astra: openai/gpt-6-astra:flex
 
     # ollama models
     minimax-m3: ollama/minimax-m3
@@ -544,35 +580,38 @@ router_settings:
     jev-1.13: typesafe/jev-1.13
 
   fallbacks:
-    - "stt":
-        - "openai/whisper-1"
-    - "imagen":
-        - "gemini/gemini-3.1-flash-image"
-        - "gemini/gemini-3.1-flash-lite-image"
-    - "imagedit":
-        - "gemini/gemini-3.1-flash-lite-image"
-    - "deepseek-v4.1-flash":
-        - "deepseek/deepseek-v4.1-flash"
-    - "minimax-m3":
-        - "openrouter/minimax/minimax-m3"
-    - "glm-5.3":
-        - "openrouter/z-ai/glm-5.3"
-        - "zai/glm-5.3"
-    - "glm-5.3-flash":
-        - "openrouter/z-ai/glm-5.3-flash"
-        - "zai/glm-5.3-flash"
-    - "kimi-k3":
-        - "openrouter/moonshotai/kimi-k3"
-        - "moonshot/kimi-k3"
-    - "gpt-6-luna":
-        - "openai/gpt-6-luna"
-        - "openrouter/openai/gpt-6-luna"
-    - "gpt-6.1-sol":
-        - "openai/gpt-6.1-sol"
-        - "openrouter/openai/gpt-6.1-sol"
-    - "gpt-6-astra":
-        - "openai/gpt-6-astra"
-        - "openrouter/openai/gpt-6-astra"
+    - stt:
+        - openai/whisper-1
+    - imagen:
+        - gemini/gemini-3.1-flash-image
+        - gemini/gemini-3.1-flash-lite-image
+    - imagedit:
+        - gemini/gemini-3.1-flash-lite-image
+    - deepseek-v4.1-flash:
+        - deepseek/deepseek-v4.1-flash
+    - minimax-m3:
+        - openrouter/minimax/minimax-m3
+    - glm-5.3:
+        - openrouter/z-ai/glm-5.3
+        - zai/glm-5.3
+    - glm-5.3-flash:
+        - openrouter/z-ai/glm-5.3-flash
+        - zai/glm-5.3-flash
+    - kimi-k3:
+        - openrouter/moonshotai/kimi-k3
+        - moonshot/kimi-k3
+    - gpt-6-luna:
+        - openrouter/openai/gpt-6-luna:flex
+        - openai/gpt-6-luna
+        - openrouter/openai/gpt-6-luna
+    - gpt-6.1-sol:
+        - openrouter/openai/gpt-6.1-sol:flex
+        - openai/gpt-6.1-sol
+        - openrouter/openai/gpt-6.1-sol
+    - gpt-6-astra:
+        - openrouter/openai/gpt-6-astra:flex
+        - openai/gpt-6-astra
+        - openrouter/openai/gpt-6-astra
 
 general_settings:
   user_api_key_cache_ttl: 300
