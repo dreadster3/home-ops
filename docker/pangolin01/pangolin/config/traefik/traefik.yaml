@@ -21,7 +21,7 @@ experimental:
     bouncer:
       moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
       # renovate: datasource=github-releases depName=maxlerebourg/crowdsec-bouncer-traefik-plugin
-      version: v1.7.1
+      version: v1.8.1
     geoblock:
       moduleName: github.com/PascalMinder/geoblock
       # renovate: datasource=github-releases depName=PascalMinder/geoblock
