@@ -2,7 +2,12 @@ model_list:
   # ==== Decisions ====
   - model_name: typesafe/jev-1.13
     litellm_params:
-      model: typesafe/jev-latest
+      model: typesafe/jev-1.13.0
+      api_key: os.environ/TYPESAFE_API_KEY
+
+  - model_name: typesafe/jev-1.14
+    litellm_params:
+      model: typesafe/jev-1.14.0
       api_key: os.environ/TYPESAFE_API_KEY
 
   # ===== Image Generation =====
@@ -420,6 +425,28 @@ model_list:
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
+  - model_name: openrouter/minimax/minimax-m3.1-flash
+    model_info: &minimax-m31-flash
+      max_input_tokens: 1000000
+      max_output_tokens: 512000
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_system_messages: true
+      supports_tool_choice: true
+      supports_vision: true
+      supports_video_input: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: true
+      supports_max_reasoning_effort: true
+    litellm_params:
+      model: openrouter/minimax/minimax-m3.1-flash:free
+      api_key: os.environ/OPENROUTER_API_KEY
+
   # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
   - model_name: ollama/minimax-m3
     model_info:
@@ -434,6 +461,15 @@ model_list:
       supports_vision: true
     litellm_params:
       model: openai/minimax-m3
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/minimax-m3.1-flash
+    model_info:
+      mode: chat
+      <<: *minimax-m31-flash
+    litellm_params:
+      model: openai/minimax-m3.1-flash
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
@@ -554,6 +590,7 @@ router_settings:
 
     # ollama models
     minimax-m3: ollama/minimax-m3
+    minimax-m3.1-flash: ollama/minimax-m3.1-flash
     deepseek-v4.1-flash: ollama/deepseek-v4.1-flash
     glm-5.3: ollama/glm-5.3
     glm-5.3-flash: ollama/glm-5.3-flash
@@ -578,6 +615,7 @@ router_settings:
 
     # decision models
     jev-1.13: typesafe/jev-1.13
+    jev-1.14: typesafe/jev-1.14
 
   fallbacks:
     - stt:
@@ -591,6 +629,8 @@ router_settings:
         - deepseek/deepseek-v4.1-flash
     - minimax-m3:
         - openrouter/minimax/minimax-m3
+    - minimax-m3.1-flash:
+        - openrouter/minimax/minimax-m3.1-flash
     - glm-5.3:
         - openrouter/z-ai/glm-5.3
         - zai/glm-5.3

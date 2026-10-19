@@ -12,6 +12,7 @@ general:
   donation_url: false
   contact_url: false
   enable_metrics: false
+
 engines:
   - name: qwant
     disabled: false
@@ -36,11 +37,14 @@ search:
     - html
     - json
   max_page: 0
+
 ui:
   default_theme: simple
   query_in_title: true
   theme_args:
     simple_style: auto
+  static_use_hash: true
+  infinite_scroll: true
 
 plugins:
   searx.plugins.calculator.SXNGPlugin:
