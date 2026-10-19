@@ -112,7 +112,7 @@ spec:
                 - /bin/sh
                 - -c
                 - "python krr.py simple --max-workers 3 --width 2048 --history-duration 336 -v --mem-min 10 --cpu-min 5 --use-oomkill-data"
-              image: robustadev/krr:v1.31.0@sha256:ce666bf65215ec3cbe4366df5e935ffb0c10a9aaaccaeeb879e289a0f4d67da1
+              image: robustadev/krr:v1.31.1@sha256:835bf3b6fec4d8f27d96d236a36542bd87bfcb4f12f3537f8dce7f886916ed9c
               imagePullPolicy: Always
               name: krr
               resources:
