@@ -722,3 +722,15 @@ mcp_servers:
     authorization_url: https://authentik.dreadster3.com/application/o/authorize/
     token_url: https://authentik.dreadster3.com/application/o/token/
     allow_all_keys: true
+  siderolabs:
+    url: http://mcp-siderolabs-remote-proxy.toolhive.svc.cluster.local:8080/mcp
+    auth_type: none
+    allow_all_keys: true
+  victoria_logs:
+    url: http://mcp-victoria-logs-proxy.toolhive.svc.cluster.local:8080/mcp
+    auth_type: none
+    allow_all_keys: false
+  victoria_metrics:
+    url: http://mcp-victoria-metrics-proxy.toolhive.svc.cluster.local:8080/mcp
+    auth_type: none
+    allow_all_keys: false

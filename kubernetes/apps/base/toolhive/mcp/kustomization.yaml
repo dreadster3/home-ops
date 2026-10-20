@@ -8,4 +8,6 @@ resources:
   - terraform.yaml
   - firecrawl.yaml
   - youtube.yaml
+  - siderolabs.yaml
+  - victoria.yaml
   # - playwright.yaml

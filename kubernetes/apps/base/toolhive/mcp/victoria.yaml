@@ -1,0 +1,41 @@
+apiVersion: toolhive.stacklok.dev/v1alpha1
+kind: MCPServer
+metadata:
+  name: victoria-logs
+spec:
+  image: ghcr.io/victoriametrics/mcp-victorialogs:v1.9.0@sha256:753bb4fbe402ca1a782842f44636830f9895736f11d7fe783b924f8a0daf083d
+  transport: streamable-http
+  mcpPort: 8081
+  env:
+    - name: MCP_SERVER_MODE
+      value: http
+    - name: MCP_LISTEN_ADDR
+      value: :8081
+    - name: MCP_LOG_FORMAT
+      value: json
+    - name: MCP_LOG_LEVEL
+      value: info
+    - name: VL_INSTANCE_ENTRYPOINT
+      value: http://victoria-logs.monitoring.svc.cluster.local:9428
+---
+apiVersion: toolhive.stacklok.dev/v1alpha1
+kind: MCPServer
+metadata:
+  name: victoria-metrics
+spec:
+  image: ghcr.io/victoriametrics/mcp-victoriametrics:v1.20.2@sha256:bcbf84f945d6efb03fb8b2d2ccc3294420dccdc0b445752dce96f02619416dfe
+  transport: streamable-http
+  mcpPort: 8081
+  env:
+    - name: MCP_SERVER_MODE
+      value: http
+    - name: MCP_LISTEN_ADDR
+      value: :8081
+    - name: MCP_LOG_FORMAT
+      value: json
+    - name: MCP_LOG_LEVEL
+      value: info
+    - name: VM_INSTANCE_TYPE
+      value: single
+    - name: VM_INSTANCE_ENTRYPOINT
+      value: http://victoria-metrics.monitoring.svc.cluster.local:8428
