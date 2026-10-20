@@ -10,7 +10,17 @@ spec:
       value: http://searxng.searxng.svc.cluster.local
   resources:
     requests:
-      cpu: 5m
-      memory: &memory 65Mi
+      cpu: 85m
+      memory: &memory 74Mi
     limits:
       memory: *memory
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: mcp
+          resources:
+            requests:
+              cpu: 5m
+              memory: &memory 450Mi
+            limits:
+              memory: *memory

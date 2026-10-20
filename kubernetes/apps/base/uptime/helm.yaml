@@ -65,10 +65,10 @@ spec:
                 protocol: TCP
             resources:
               requests:
-                cpu: 70m
-                memory: 256Mi
+                cpu: 35m
+                memory: &memory 200Mi
               limits:
-                memory: 256Mi
+                memory: *memory
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
@@ -82,12 +82,12 @@ spec:
             envFrom:
               - secretRef:
                   name: litestream-backup-credentials
-            # resources:
-            #   requests:
-            #     cpu: 15m
-            #     memory: &memory 200Mi
-            #   limits:
-            #     memory: *memory
+            resources:
+              requests:
+                cpu: 100m
+                memory: &memory 400Mi
+              limits:
+                memory: *memory
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:

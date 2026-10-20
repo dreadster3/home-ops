@@ -11,3 +11,13 @@ spec:
       memory: &memory 86Mi
     limits:
       memory: *memory
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: mcp
+          resources:
+            requests:
+              cpu: 5m
+              memory: &memory 40Mi
+            limits:
+              memory: *memory
