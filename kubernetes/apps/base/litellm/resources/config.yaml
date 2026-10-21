@@ -547,8 +547,9 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 131072
+      max_output_tokens: 32768
       supports_function_calling: true
+      supports_vision: false
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
       supports_low_reasoning_effort: true

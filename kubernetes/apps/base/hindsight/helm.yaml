@@ -48,7 +48,7 @@ spec:
         HINDSIGHT_API_LLM_OUTPUT_LANGUAGE: english
 
         HINDSIGHT_API_LLM_PROVIDER: litellm
-        HINDSIGHT_API_LLM_MODEL: gpt-6-luna
+        HINDSIGHT_API_LLM_MODEL: gpt-oss:20b
         HINDSIGHT_API_LLM_REASONING_EFFORT: low
         # Auth: shared bearer key guarding the API + MCP endpoints (from
         # Infisical via hindsight-secret-env).
