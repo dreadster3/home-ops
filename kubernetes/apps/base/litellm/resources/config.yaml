@@ -543,6 +543,24 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
+  - model_name: ollama/gpt-oss:20b
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+      max_output_tokens: 131072
+      supports_function_calling: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: false
+    litellm_params:
+      model: openai/gpt-oss:20b-cloud
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
 litellm_settings:
   callbacks:
     - prometheus
@@ -595,6 +613,7 @@ router_settings:
     glm-5.3: ollama/glm-5.3
     glm-5.3-flash: ollama/glm-5.3-flash
     kimi-k3: ollama/kimi-k3
+    gpt-oss:20b: ollama/gpt-oss:20b
 
     # qwen models
     qwen3.8-max: openrouter/qwen/qwen3.8-max
