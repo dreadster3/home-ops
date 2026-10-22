@@ -9,8 +9,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 1.0.0
-    digest: sha256:615fb00ab32f33d4715676416206d94f090b3b82ca04cbe75281e13cbdd2dc37
+    tag: 1.1.0
+    digest: sha256:aadefbe8e10d6872ca7a229cf36461df03ae97ee6ac879b5f532ad4bac13b3a9
   url: oci://ghcr.io/vectorize-io/charts/hindsight
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -109,7 +109,7 @@ spec:
       replicaCount: 1
       image:
         repository: ghcr.io/vectorize-io/hindsight-control-plane
-        tag: 1.0.0@sha256:ad5257866e1a0a0198da55e14a1c373e260e4faa945c9a64d3a3926cb3498cd6
+        tag: 1.1.0@sha256:373f86848649a8dadc9b2d9ecf1d18b4c446162ca7b556fc4152e92ef433e983
       # No resource requests/limits — krr will measure usage and fill in later
       resources:
         requests:
