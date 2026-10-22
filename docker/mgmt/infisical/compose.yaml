@@ -71,7 +71,7 @@ services:
 
   db:
     container_name: infisical-db
-    image: postgres:18.6-alpine@sha256:1d22739c0a64fae400b80b9b7bc66c793915541c6a65977bbe9b8c88d22b3569
+    image: postgres:18.6-alpine@sha256:7c64281cc5c73e4010ccd5623a6171076c3d7994ee9ba780dc27efaf89aa1ab8
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
