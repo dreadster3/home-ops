@@ -444,7 +444,7 @@ model_list:
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: true
     litellm_params:
-      model: openrouter/minimax/minimax-m3.1-flash:free
+      model: openrouter/minimax/minimax-m3.1-flash
       api_key: os.environ/OPENROUTER_API_KEY
 
   # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
