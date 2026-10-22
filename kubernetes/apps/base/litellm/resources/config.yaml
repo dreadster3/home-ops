@@ -447,6 +447,60 @@ model_list:
       model: openrouter/minimax/minimax-m3.1-flash
       api_key: os.environ/OPENROUTER_API_KEY
 
+  - model_name: openrouter/xiaomi/mimo-v2.6-flash
+    model_info:
+      mode: chat
+      max_input_tokens: 1048576
+      max_output_tokens: 131072
+      max_tokens: 131072
+      supports_audio_input: true
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_response_schema: true
+      supports_system_messages: true
+      supports_tool_choice: true
+      supports_video_input: true
+      supports_vision: true
+
+      supports_none_reasoning_effort: true
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: false
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: false
+    litellm_params:
+      model: openrouter/xiaomi/mimo-v2.6-flash
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: openrouter/xiaomi/mimo-v2.6-pro
+    model_info:
+      mode: chat
+      max_input_tokens: 1048576
+      max_output_tokens: 131072
+      max_tokens: 131072
+      supports_audio_input: true
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_response_schema: true
+      supports_system_messages: true
+      supports_tool_choice: true
+      supports_video_input: true
+      supports_vision: true
+
+      supports_none_reasoning_effort: true
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: false
+      supports_medium_reasoning_effort: false
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: false
+      supports_max_reasoning_effort: false
+    litellm_params:
+      model: openrouter/xiaomi/mimo-v2.6-pro
+      api_key: os.environ/OPENROUTER_API_KEY
+
   # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
   - model_name: ollama/minimax-m3
     model_info:
@@ -619,6 +673,10 @@ router_settings:
     # qwen models
     qwen3.8-max: openrouter/qwen/qwen3.8-max
     qwen3.8-flash: openrouter/qwen/qwen3.8-flash
+
+    # xiaomi models
+    mimo-v2.6-flash: openrouter/xiaomi/mimo-v2.6-flash
+    mimo-v2.6-pro: openrouter/xiaomi/mimo-v2.6-pro
 
     tts: openai/tts-1
     stt: deepgram/nova-3
