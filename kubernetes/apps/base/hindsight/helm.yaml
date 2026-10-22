@@ -40,7 +40,7 @@ spec:
       replicaCount: 2
       image: &image
         repository: ghcr.io/dreadster3/hindsight-hybrid-authentication
-        tag: v0.2.0@sha256:e9ac3cd0672f3ff9dd7d42ea944bd8cf4a457e77a3c22d967138fe6b657c5f79
+        tag: v0.3.0@sha256:0e1f8242240c3006c4ed395d00405cc7e25a653625b12330d236e115db6f8086
       env:
         HINDSIGHT_API_TENANT_OAUTH_ENABLED: true
         HINDSIGHT_API_TENANT_OAUTH_ISSUER: https://authentik.${EXTERNAL_DOMAIN}/application/o/hindsight/
