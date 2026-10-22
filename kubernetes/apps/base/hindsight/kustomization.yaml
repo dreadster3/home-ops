@@ -14,5 +14,4 @@ resources:
   - database.yaml
   - secrets.yaml
   - helm.yaml
-  - httproute.yaml
   - network.yaml
