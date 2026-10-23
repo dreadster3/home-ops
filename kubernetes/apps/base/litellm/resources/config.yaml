@@ -446,6 +446,10 @@ model_list:
     litellm_params:
       model: openrouter/minimax/minimax-m3.1-flash
       api_key: os.environ/OPENROUTER_API_KEY
+      # OpenRouter supports cache_control injection on MiniMax routes
+      cache_control_injection_points:
+        - location: message
+          role: system
 
   - model_name: openrouter/xiaomi/mimo-v2.6-flash
     model_info:
