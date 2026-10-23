@@ -1,6 +1,6 @@
 services:
   pangolin:
-    image: fosrl/pangolin:1.24.0@sha256:17774ddbb4bf13f4a2b9e813cc2dfc3ca8ded1c5745823624af632bab0376488
+    image: fosrl/pangolin:1.25.3@sha256:5039d0e64a2e57ac52c4833a838f8c015c153f8ab4234c2b3efe95ab4db0b90a
     container_name: pangolin
     restart: unless-stopped
     env_file: pangolin.env
