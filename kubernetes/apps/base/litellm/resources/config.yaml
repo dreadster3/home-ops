@@ -10,6 +10,16 @@ model_list:
       model: typesafe/jev-1.14.0
       api_key: os.environ/TYPESAFE_API_KEY
 
+  - model_name: openrouter/typesafe/jev-1.13
+    litellm_params:
+      model: openrouter/typesafe/jev-1.13
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: openrouter/typesafe/jev-1.14
+    litellm_params:
+      model: openrouter/typesafe/jev-1.14
+      api_key: os.environ/OPENROUTER_API_KEY
+
   # ===== Image Generation =====
   - model_name: openrouter/black-forest-labs/flux.2-pro
     model_info:
@@ -734,6 +744,10 @@ router_settings:
         - openrouter/openai/gpt-6-astra:flex
         - openai/gpt-6-astra
         - openrouter/openai/gpt-6-astra
+    - jev-1.13:
+        - openrouter/typesafe/jev-1.13
+    - jev-1.14:
+        - openrouter/typesafe/jev-1.14
 
 general_settings:
   user_api_key_cache_ttl: 300
