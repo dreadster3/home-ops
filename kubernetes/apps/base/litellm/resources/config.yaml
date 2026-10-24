@@ -515,6 +515,24 @@ model_list:
       model: openrouter/xiaomi/mimo-v2.6-pro
       api_key: os.environ/OPENROUTER_API_KEY
 
+  - model_name: openrouter/cloudflare/clef-flash
+    model_info:
+      mode: evaluation
+      max_input_tokens: 24576
+      supports_vision: true
+    litellm_params:
+      model: openrouter/cloudflare/clef-flash
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: openrouter/cloudflare/clef
+    model_info:
+      mode: evaluation
+      max_input_tokens: 65537
+      supports_vision: true
+    litellm_params:
+      model: openrouter/cloudflare/clef
+      api_key: os.environ/OPENROUTER_API_KEY
+
   # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
   - model_name: ollama/minimax-m3
     model_info:
@@ -759,6 +777,9 @@ router_settings:
         - openrouter/typesafe/jev-1.13
     - jev-1.14:
         - openrouter/typesafe/jev-1.14
+    - clef:
+        - openrouter/cloudflare/clef-flash
+        - openrouter/cloudflare/clef
 
 general_settings:
   user_api_key_cache_ttl: 300
