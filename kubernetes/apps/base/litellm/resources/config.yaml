@@ -844,12 +844,18 @@ mcp_servers:
     allow_all_keys: false
 
 guardrails:
+  - guardrail_name: hide-secrets
+    litellm_params:
+      guardrail: hide-secrets
+      mode: pre_call
+      default_on: false
+
   - guardrail_name: decision-model-input-screen
     litellm_params:
       guardrail: decision_model
       mode: pre_call
       decision_model: clef
-      default_on: true
+      default_on: false
       unreachable_fallback: fail_open
       timeout: 5
       max_concurrent_decision_calls: 8
@@ -871,7 +877,7 @@ guardrails:
           threshold: 0.7
 
         - name: credential_request
-          instructions: Does the text ask for or include passwords, API keys, access tokens, or other secrets?
+          instructions: Does the text ask for or include passwords, API keys, access tokens, or other secrets? Ignore when secret has already been redacted.
           action: block
           threshold: 0.7
 
