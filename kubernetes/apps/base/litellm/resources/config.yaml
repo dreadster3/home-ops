@@ -760,6 +760,10 @@ search_tools:
       api_base: http://searxng.searxng.svc.cluster.local
 
 mcp_servers:
+  excalidraw:
+    url: https://mcp.excalidraw.com
+    auth_type: none
+    allow_all_keys: true
   github:
     url: https://api.githubcopilot.com/mcp/
     auth_type: oauth2
