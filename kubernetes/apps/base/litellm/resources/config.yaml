@@ -753,12 +753,6 @@ general_settings:
   database_connection_pool_limit: 10
   disable_error_logs: true
 
-search_tools:
-  - search_tool_name: searxng-search
-    litellm_params:
-      search_provider: searxng
-      api_base: http://searxng.searxng.svc.cluster.local
-
 mcp_servers:
   excalidraw:
     url: https://mcp.excalidraw.com
@@ -771,6 +765,9 @@ mcp_servers:
     client_id: os.environ/GITHUB_OAUTH_CLIENT_ID
     client_secret: os.environ/GITHUB_OAUTH_CLIENT_SECRET
     transport: http
+    authorization_url: https://github.com/login/oauth/authorize
+    token_url: https://github.com/login/oauth/access_token
+    issuer: https://github.com/login/oauth
     scopes:
       - repo
       - read:packages
