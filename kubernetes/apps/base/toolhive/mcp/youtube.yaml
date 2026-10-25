@@ -3,7 +3,7 @@ kind: MCPServer
 metadata:
   name: youtube
 spec:
-  image: ghcr.io/dreadster3/youtube-mcp:v0.4.0@sha256:28ff0876ecf5de4fec63c912c6dcb0f8c455fd38df83faba69107bd4247de8cd
+  image: ghcr.io/dreadster3/youtube-mcp:v0.5.0@sha256:77ed8ab542246cc790771ccb223237ea6927d9d3e767f64f28edf30329a72d3c
   transport: stdio
   secrets:
     - name: youtube-mcp-secret
