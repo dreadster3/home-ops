@@ -878,8 +878,8 @@ guardrails:
       decision_model: clef
       default_on: false
       unreachable_fallback: fail_open
-      timeout: 5
-      max_concurrent_decision_calls: 5
+      timeout: 30
+      max_concurrent_decision_calls: 10
       streaming_end_of_stream_only: true
       checks:
         - name: prompt_injection
