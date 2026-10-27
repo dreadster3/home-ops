@@ -799,6 +799,11 @@ general_settings:
   database_connection_pool_limit: 10
   disable_error_logs: true
 
+  # reverse-proxy best practices
+  use_x_forwarded_for: true
+  mcp_trusted_proxy_ranges:
+    - "10.0.0.0/8"
+
 mcp_servers:
   excalidraw:
     url: https://mcp.excalidraw.com
