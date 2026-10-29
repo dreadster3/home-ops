@@ -24,7 +24,7 @@ spec:
         name: *app
   values:
     managementURL: https://netbird.${EXTERNAL_DOMAIN}
-    routingClientImage: ghcr.io/netbirdio/netbird:0.81.5-rootless@sha256:31686f0326732641702a6dc9e6fdc08820a2873f477c58f9f17c8883dad01597
+    routingClientImage: ghcr.io/netbirdio/netbird:0.82.0-rootless@sha256:0549219a011305cfdad65d779e37fd2e5f1ac0d1378d3be344ee350efa31663e
 
     clusterSecretsPermissions:
       allowAllSecrets: false
