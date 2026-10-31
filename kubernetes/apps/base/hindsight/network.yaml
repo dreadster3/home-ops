@@ -57,6 +57,17 @@ spec:
         - ports:
             - port: "8888"
               protocol: TCP
+    # Envoy Gateway for the internal HTTPRoute (control plane UI + /v1 data API)
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: "8888"
+              protocol: TCP
+            - port: "3000"
+              protocol: TCP
   egress:
     # Hugging Face (model downloads) and OpenAI direct if ever used
     - toEntities:
