@@ -9,8 +9,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: "14.3.0"
-    digest: sha256:b070af29d4e840b79409d8668f9860eb4dd29990f401b5b8929134e44164d774
+    tag: "14.3.1"
+    digest: sha256:e02e36d50bfebed3c7eb240bb50586fd52dfdb0b6dbebac6a23f1f131be8d544
   url: oci://ghcr.io/grafana-community/helm-charts/grafana
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
