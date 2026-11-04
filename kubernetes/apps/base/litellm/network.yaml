@@ -142,8 +142,27 @@ spec:
             - port: "4000"
               protocol: TCP
   egress:
-    - toEntities:
-        - world
+    - toFQDNs:
+        # AI models
+        - matchName: api.openai.com
+        - matchName: api.deepseek.com
+        - matchName: api.anthropic.com
+        - matchName: api.typesafe.ai
+        - matchName: api.deepgram.com
+        - matchName: codestral.mistral.ai
+        - matchName: api.z.ai
+        - matchName: api.moonshot.ai
+        - matchName: openrouter.ai
+        - matchName: ollama.com
+        - matchName: generativelanguage.googleapis.com
+        # MCP Servers
+        - matchName: api.githubcopilot.com
+        - matchName: mcp.context7.com
+        - matchName: mcp.excalidraw.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
     # Hindsight MCP gateway (agent memory)
     - toEndpoints:
         - matchLabels:
