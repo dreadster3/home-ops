@@ -23,5 +23,4 @@ resources:
   - ../../base/termix
   - ../../base/uptime
   - ../../base/vaultwarden
-  - ../../base/sure
   - ../../base/toolhive

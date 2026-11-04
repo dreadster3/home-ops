@@ -85,7 +85,7 @@ spec:
     # credentials (secret-store.yaml) onto this pod and hands the secret name
     # to executor pods for the forwarded repository cache. The bucket is the
     # OBC-created `renovate` (bucket.yaml); the in-cluster http endpoint and
-    # path-style match the sure/harbor/cnpg-barman pattern.
+    # path-style match the harbor/cnpg-barman pattern.
     s3:
       bucket: renovate
       region: us-east-1
