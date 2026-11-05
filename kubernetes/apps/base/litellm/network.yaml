@@ -153,6 +153,8 @@ spec:
         - matchName: mcp.excalidraw.com
         # Update Model prices
         - matchName: raw.githubusercontent.com
+        # SSO authentication
+        - matchName: authentik.${EXTERNAL_DOMAIN}
       toPorts:
         - ports:
             - port: "443"
