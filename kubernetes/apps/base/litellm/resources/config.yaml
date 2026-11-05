@@ -337,8 +337,8 @@ model_list:
         - location: message
           role: system
 
-  - model_name: moonshot/kimi-k3
-    model_info: &kimi-k3
+  - model_name: moonshot/kimi-k3.1-pro
+    model_info: &kimi-k31-pro
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
       supports_low_reasoning_effort: true
@@ -347,7 +347,7 @@ model_list:
       supports_xhigh_reasoning_effort: false
       supports_max_reasoning_effort: true
     litellm_params:
-      model: moonshot/kimi-k3
+      model: moonshot/kimi-k3.1-pro
       api_key: os.environ/MOONSHOT_API_KEY
 
   - model_name: openrouter/qwen/qwen3.8-max
@@ -399,10 +399,10 @@ model_list:
         - location: message
           role: system
 
-  - model_name: openrouter/moonshotai/kimi-k3
-    model_info: *kimi-k3
+  - model_name: openrouter/moonshotai/kimi-k3.1-pro
+    model_info: *kimi-k31-pro
     litellm_params:
-      model: openrouter/moonshotai/kimi-k3
+      model: openrouter/moonshotai/kimi-k3.1-pro
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
@@ -664,7 +664,7 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
-  - model_name: ollama/kimi-k3
+  - model_name: ollama/kimi-k3.1-pro
     model_info:
       mode: chat
       max_input_tokens: 1048576
@@ -676,9 +676,9 @@ model_list:
       supports_tool_choice: true
       supports_video_input: true
       supports_response_schema: true
-      <<: *kimi-k3
+      <<: *kimi-k31-pro
     litellm_params:
-      model: openai/kimi-k3
+      model: openai/kimi-k3.1-pro
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
@@ -763,7 +763,7 @@ router_settings:
     deepseek-v4.1-flash: ollama/deepseek-v4.1-flash
     glm-5.3: ollama/glm-5.3
     glm-5.3-flash: ollama/glm-5.3-flash
-    kimi-k3: ollama/kimi-k3
+    kimi-k3.1-pro: ollama/kimi-k3.1-pro
     gpt-oss:20b: ollama/gpt-oss:20b
 
     # qwen models
@@ -815,9 +815,9 @@ router_settings:
     - glm-5.3-flash:
         - openrouter/z-ai/glm-5.3-flash
         - zai/glm-5.3-flash
-    - kimi-k3:
-        - openrouter/moonshotai/kimi-k3
-        - moonshot/kimi-k3
+    - kimi-k3.1-pro:
+        - openrouter/moonshotai/kimi-k3.1-pro
+        - moonshot/kimi-k3.1-pro
     - gpt-6-luna:
         - openrouter/openai/gpt-6-luna:flex
         - openai/gpt-6-luna
