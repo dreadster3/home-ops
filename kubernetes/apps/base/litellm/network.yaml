@@ -151,6 +151,8 @@ spec:
         - matchName: api.githubcopilot.com
         - matchName: mcp.context7.com
         - matchName: mcp.excalidraw.com
+        # Update Model prices
+        - matchName: raw.githubusercontent.com
       toPorts:
         - ports:
             - port: "443"
