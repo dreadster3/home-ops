@@ -895,8 +895,8 @@ mcp_servers:
     allow_all_keys: true
   context7:
     url: https://mcp.context7.com/mcp/oauth
-    auth_type: oauth2
-    oauth2_flow: authorization_code
+    auth_type: bearer_token
+    auth_value: os.environ/CONTEXT7_API_KEY
     transport: http
     allow_all_keys: true
   firecrawl:
