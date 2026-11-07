@@ -48,7 +48,7 @@ spec:
         HINDSIGHT_API_LLM_OUTPUT_LANGUAGE: english
 
         HINDSIGHT_API_LLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000/v1
-        HINDSIGHT_API_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
+        HINDSIGHT_API_LITELLM_API_BASE: &url http://litellm.litellm.svc.cluster.local:4000
 
         # Models are Hindsight LANE names, sent to the litellm proxy. Hindsight runs the
         # litellm SDK in-process, so the prefix must resolve to a backend that honors
@@ -66,6 +66,9 @@ spec:
         HINDSIGHT_API_REFLECT_LLM_MODEL: openai/glm-5.3-flash
         HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_PROVIDER: *provider
         HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_MODEL: openai/gpt-6-luna
+        HINDSIGHT_API_DECISION_MODEL_PROVIDER: typesafe
+        HINDSIGHT_API_DECISION_MODEL_MODEL: clef
+        HINDSIGHT_API_DECISION_MODEL_BASE_URL: *url
 
         # Auth: shared bearer key guarding the API + MCP endpoints (from
         # Infisical via hindsight-secret-env).
@@ -76,13 +79,13 @@ spec:
 
         # Embeddings: qwen3-embedding-8b via litellm's dedicated proxy provider
         # (EMBEDDINGS_LITELLM_API_BASE is the proxy root, no /v1 suffix)
-        HINDSIGHT_API_EMBEDDINGS_PROVIDER: litellm
-        HINDSIGHT_API_EMBEDDINGS_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
+        HINDSIGHT_API_EMBEDDINGS_PROVIDER: *provider
+        HINDSIGHT_API_EMBEDDINGS_LITELLM_API_BASE: *url
         HINDSIGHT_API_EMBEDDINGS_LITELLM_MODEL: qwen3-embedding-8b
         # Rerank via litellm (cohere-compatible /rerank against the proxy;
         # model 'rerank-2.5-lite' passthroughs to OpenRouter's voyage model)
-        HINDSIGHT_API_RERANKER_PROVIDER: litellm
-        HINDSIGHT_API_RERANKER_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
+        HINDSIGHT_API_RERANKER_PROVIDER: *provider
+        HINDSIGHT_API_RERANKER_LITELLM_API_BASE: *url
         HINDSIGHT_API_RERANKER_LITELLM_MODEL: rerank-2.5-lite
       # No resource requests/limits — krr will measure usage and fill in later
       resources:
