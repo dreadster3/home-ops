@@ -9,3 +9,4 @@ resources:
   - flux
   - reloader
   - renovate-operator
+  - ai-debugger

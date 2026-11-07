@@ -198,3 +198,12 @@ Decisions made throughout the life of this project, with rationale and context.
 - **Rationale:** A single shared instance follows the same shared-utility pattern as Tika (#18) and fits Dragonfly's multi-tenant design; the trade-offs are accepted deliberately: cache data is ephemeral so no migration was needed, key collisions between consumers are the real risk — each consumer is assigned compact, incremental logical DB indexes (Dragonfly supports 16 by default), all set explicitly in the app configs: harbor 0/1/2/3 (core pinned at 0 upstream, trivy adapter moved off the default 5), openwebui 4+5, immich 6, litellm 7, netbox 8+9, paperless 10, searxng 11, sure 12. A single HA instance removes ~14 pods plus their schedulable request overhead. The operator's `authentication` field supports only one password per instance, so per-app secrets are no longer possible without ACLs; a single shared password across namespace boundaries is acceptable in this trusted cluster behind Cilium policies.
 
 ---
+## 22. Grant read-only AI-debugger access for cluster debugging
+
+- **Date:** 2026-11-07
+- **Status:** Accepted
+- **Context:** Cluster debugging requires running kubectl diagnostics (pods, logs, events, workloads, storage, network state, metrics). The AI coding agent was doing this under ambient admin credentials, which violates least privilege for what is fundamentally read-only work, and leaves no auditable identity for agent-originated API calls.
+- **Decision:** Deploy an `ai-debugger` ServiceAccount (default namespace) bound via the `ai-debugger-readonly` ClusterRole under `kubernetes/infrastructure/base/platform/ai-debugger/`, managed by Flux like the rest of the platform. The role grants only `get`/`list`/`watch` on non-secret resources (core workloads/nodes/PVs/configmaps, apps, batch, autoscaling, networking, storage APIs), `get`/`list` on `metrics.k8s.io`, and discovery of `/version`, `/healthz`, `/readyz`. No secrets access and no write verbs anywhere.
+- **Rationale:** A dedicated scoped identity is auditable (audit logs keyed to the ServiceAccount), prunable via GitOps, and read-only so the agent cannot modify cluster state; alternatives (reusing an admin kubeconfig, or a bound token with broader rights) were rejected as violating least privilege. ConfigMaps are exposed read-only, a known trade-off worth being aware of.
+
+---
