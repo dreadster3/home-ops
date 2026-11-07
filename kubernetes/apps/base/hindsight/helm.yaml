@@ -47,13 +47,23 @@ spec:
         HINDSIGHT_API_MCP_STATELESS: true
         HINDSIGHT_API_LLM_OUTPUT_LANGUAGE: english
 
-        HINDSIGHT_API_LLM_PROVIDER: litellm
-        HINDSIGHT_API_LLM_MODEL: openai/gpt-oss:20b
-        HINDSIGHT_API_LLM_REASONING_EFFORT: low
+        HINDSIGHT_API_LLM_PROVIDER: &provider litellm
+        HINDSIGHT_API_LLM_BASE_URL: http://litellm.litellm.svc.cluster.local:4000/v1
+        HINDSIGHT_API_LLM_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
+        HINDSIGHT_API_LLM_MODEL: ollama/minimax-m3.1-flash
+
+        HINDSIGHT_API_RETAIN_LLM_PROVIDER: *provider
+        HINDSIGHT_API_RETAIN_LLM_MODEL: ollama/minimax-m3.1-flash
+        HINDSIGHT_API_CONSOLIDATION_LLM_PROVIDER: *provider
+        HINDSIGHT_API_CONSOLIDATION_LLM_MODEL: ollama/minimax-m3.1-flash
+        HINDSIGHT_API_REFLECT_LLM_PROVIDER: *provider
+        HINDSIGHT_API_REFLECT_LLM_MODEL: ollama/glm-5.3-flash
+        HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_PROVIDER: *provider
+        HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_MODEL: litellm/gpt-6-luna
+
         # Auth: shared bearer key guarding the API + MCP endpoints (from
         # Infisical via hindsight-secret-env).
         HINDSIGHT_API_TENANT_EXTENSION: hindsight_ext_hybrid_tenant:HybridTenantExtension
-        HINDSIGHT_API_LLM_BASE_URL: http://litellm.litellm.svc.cluster.local:4000/v1
         # Vector index on VectorChord — qwen3-embedding-8b is 4096 dims, past
         # pgvector's 2000-dim HNSW limit (see pgcluster.yaml extension image).
         HINDSIGHT_API_VECTOR_EXTENSION: vchord
