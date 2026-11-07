@@ -56,3 +56,13 @@ subjects:
   - kind: ServiceAccount
     name: ai-debugger
     namespace: default
+---
+# Explicit long-lived token on the SA so a kubeconfig can be crafted from it
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ai-debugger-token
+  namespace: default
+  annotations:
+    kubernetes.io/service-account.name: ai-debugger
+type: kubernetes.io/service-account-token
