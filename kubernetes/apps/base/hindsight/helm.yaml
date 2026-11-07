@@ -47,7 +47,7 @@ spec:
         HINDSIGHT_API_MCP_STATELESS: true
         HINDSIGHT_API_LLM_OUTPUT_LANGUAGE: english
 
-        HINDSIGHT_API_LLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000/v1
+        HINDSIGHT_API_LLM_BASE_URL: &api http://litellm.litellm.svc.cluster.local:4000/v1
         HINDSIGHT_API_LITELLM_API_BASE: &url http://litellm.litellm.svc.cluster.local:4000
 
         # Models are Hindsight LANE names, sent to the litellm proxy. Hindsight runs the
@@ -65,6 +65,7 @@ spec:
         HINDSIGHT_API_REFLECT_LLM_PROVIDER: *provider
         HINDSIGHT_API_REFLECT_LLM_MODEL: openai/glm-5.3-flash
         HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_PROVIDER: *provider
+        HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_BASE_URL: *api
         HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_MODEL: openai/gpt-6-luna
         HINDSIGHT_API_DECISION_MODEL_PROVIDER: typesafe
         HINDSIGHT_API_DECISION_MODEL_MODEL: clef
