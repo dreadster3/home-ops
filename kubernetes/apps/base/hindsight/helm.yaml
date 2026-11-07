@@ -47,13 +47,29 @@ spec:
         HINDSIGHT_API_MCP_STATELESS: true
         HINDSIGHT_API_LLM_OUTPUT_LANGUAGE: english
 
-        HINDSIGHT_API_LLM_PROVIDER: litellm
-        HINDSIGHT_API_LLM_MODEL: openai/gpt-oss:20b
-        HINDSIGHT_API_LLM_REASONING_EFFORT: low
+        HINDSIGHT_API_LLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000/v1
+        HINDSIGHT_API_LITELLM_API_BASE: http://litellm.litellm.svc.cluster.local:4000
+
+        # Models are Hindsight LANE names, sent to the litellm proxy. Hindsight runs the
+        # litellm SDK in-process, so the prefix must resolve to a backend that honors
+        # api_base/api_key — 'openai' does (plain POST to the proxy); native backends
+        # like 'minimax/' bypass api_base and hit api.minimax.io with the proxy token
+        # (401). The 'openai/<name>' strings are mapped to the bare model groups by
+        # team aliases inside litellm (openai/<name> -> <name> -> model_group_alias).
+        HINDSIGHT_API_LLM_PROVIDER: &provider litellm
+        HINDSIGHT_API_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_RETAIN_LLM_PROVIDER: *provider
+        HINDSIGHT_API_RETAIN_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_CONSOLIDATION_LLM_PROVIDER: *provider
+        HINDSIGHT_API_CONSOLIDATION_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_REFLECT_LLM_PROVIDER: *provider
+        HINDSIGHT_API_REFLECT_LLM_MODEL: openai/glm-5.3-flash
+        HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_PROVIDER: *provider
+        HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_MODEL: openai/gpt-6-luna
+
         # Auth: shared bearer key guarding the API + MCP endpoints (from
         # Infisical via hindsight-secret-env).
         HINDSIGHT_API_TENANT_EXTENSION: hindsight_ext_hybrid_tenant:HybridTenantExtension
-        HINDSIGHT_API_LLM_BASE_URL: http://litellm.litellm.svc.cluster.local:4000/v1
         # Vector index on VectorChord — qwen3-embedding-8b is 4096 dims, past
         # pgvector's 2000-dim HNSW limit (see pgcluster.yaml extension image).
         HINDSIGHT_API_VECTOR_EXTENSION: vchord
