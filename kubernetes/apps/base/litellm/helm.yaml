@@ -100,6 +100,7 @@ spec:
       SMTP_PORT: 25
       SMTP_TLS: "False"
       SMTP_SENDER_EMAIL: no-reply@${EXTERNAL_DOMAIN}
+      CHECKPOINT_DISABLE: 1
 
     proxyConfigMap:
       create: false
