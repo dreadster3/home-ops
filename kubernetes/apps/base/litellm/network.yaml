@@ -142,6 +142,7 @@ spec:
         - matchName: api.typesafe.ai
         - matchName: api.deepgram.com
         - matchName: codestral.mistral.ai
+        - matchName: huggingface.co
         - matchName: api.z.ai
         - matchName: api.moonshot.ai
         - matchName: openrouter.ai
