@@ -2,6 +2,8 @@ services:
   databasus:
     container_name: databasus
     image: databasus/databasus:v3.66.0@sha256:0aa051025b0ff86d8f86e23a0cfbf639dec1c8932ed351c356c31435d7ce99e2
+    environment:
+      IS_DISABLE_ANONYMOUS_TELEMETRY: true
     volumes:
       - /opt/docker/databasus/data:/databasus-data
     restart: unless-stopped
@@ -12,6 +14,7 @@ services:
       - "traefik.http.routers.databasus.tls.certresolver=letsencrypt"
       - "traefik.http.services.databasus.loadbalancer.server.port=4005"
     networks:
+      - default
       - proxy
       - database
     security_opt:
@@ -24,8 +27,41 @@ services:
       - CHOWN
       - DAC_OVERRIDE
       - FOWNER
+  databasus-agent:
+    container_name: databasus-agent
+    image: databasus/databasus:v3.66.0@sha256:0aa051025b0ff86d8f86e23a0cfbf639dec1c8932ed351c356c31435d7ce99e2
+    entrypoint:
+      - /app/agent-binaries/databasus-verification-agent-linux-amd64
+    command:
+      - run
+      - --databasus-host=https://databasus.${INTERNAL_DOMAIN}
+      - --agent-id=${AGENT_ID}
+      - --token=${AGENT_TOKEN}
+      - --max-cpu=2
+      - --max-ram-mb=1024
+      - --max-disk-gb=10
+      - --max-concurrent-jobs=2
+    environment:
+      IS_DISABLE_ANONYMOUS_TELEMETRY: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    network_mode: host
+    deploy:
+      resources:
+        reservations:
+          cpus: 1
+          memory: &memory 1G
+        limits:
+          cpus: 2
+          memory: *memory
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
 
 networks:
+  default:
   database:
     name: database
     driver: bridge
