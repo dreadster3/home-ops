@@ -63,6 +63,7 @@ services:
       GLIBC_TUNABLES: glibc.pthread.rseq=1
     networks:
       - default
+      - database
     volumes:
       - db_data:/data/db
       - db_init:/docker-entrypoint-initdb.d/
@@ -123,5 +124,7 @@ volumes:
 
 networks:
   default:
+  database:
+    external: true
   proxy:
     external: true
