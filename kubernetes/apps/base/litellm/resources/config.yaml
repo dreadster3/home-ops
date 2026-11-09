@@ -843,6 +843,7 @@ router_settings:
         - openrouter/cloudflare/clef
 
 general_settings:
+  disable_env_credential_login: true
   user_api_key_cache_ttl: 300
   alerting:
     - email
