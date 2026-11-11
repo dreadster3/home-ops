@@ -25,6 +25,9 @@ services:
         condition: service_completed_successfully
     environment:
       TZ: Europe/Lisbon
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
     volumes:
       - /opt/docker/home-assistant/config:/config
       - /opt/docker/home-assistant/backups:/config/backups
