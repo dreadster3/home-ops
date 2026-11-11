@@ -156,6 +156,10 @@ spec:
         - matchName: raw.githubusercontent.com
         # SSO authentication
         - matchName: authentik.${EXTERNAL_DOMAIN}
+        # Pawned passwords
+        - matchName: api.pwnedpasswords.com
+        # Docs
+        - matchName: docs.litellm.ai
       toPorts:
         - ports:
             - port: "443"
