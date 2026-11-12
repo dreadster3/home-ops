@@ -350,6 +350,103 @@ model_list:
       model: moonshot/kimi-k3.1-pro
       api_key: os.environ/MOONSHOT_API_KEY
 
+  # ==== Openrouter Models ====
+  - model_name: qwen/qwen4-max-preview
+    model_info:
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_response_schema: true
+      supports_tool_choice: true
+      supports_vision: true
+      max_input_tokens: 991808
+      max_output_tokens: 131072
+
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: false
+      supports_xhigh_reasoning_effort: true
+      supports_max_reasoning_effort: false
+    litellm_params:
+      model: openai/qwen4-max-preview
+      api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
+  - model_name: qwen/qwen3.8-max
+    model_info:
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_response_schema: true
+      supports_tool_choice: true
+      supports_vision: true
+      max_input_tokens: 991808
+      max_output_tokens: 131072
+
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: false
+      supports_xhigh_reasoning_effort: true
+      supports_max_reasoning_effort: false
+    litellm_params:
+      model: openai/qwen3.8-max
+      api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
+  - model_name: qwen/qwen3.8-flash
+    model_info:
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_response_schema: true
+      supports_tool_choice: true
+      supports_vision: true
+      supports_web_search: true
+      supports_video_input: true
+      max_input_tokens: 991808
+      max_output_tokens: 131072
+
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: false
+      supports_xhigh_reasoning_effort: true
+      supports_max_reasoning_effort: false
+    litellm_params:
+      model: openai/qwen3.8-flash
+      api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
+  - model_name: qwen/qwen-audio-3.0-tts-plus
+    model_info:
+      mode: audio_speech
+    litellm_params:
+      model: dashscope/qwen-audio-3.0-tts-plus
+      api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
+  - model_name: qwen/qwen-image-3.0-pro
+    model_info:
+      mode: image_generation
+    litellm_params:
+      model: dashscope/qwen-image-3.0-pro
+      api_base: https://token-plan.maas.qwencloudapi.com/api/v1/services/aigc/multimodal-generation/generation
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
+  - model_name: qwen/deepseek-v4.1-flash
+    model_info:
+      mode: image_generation
+    litellm_params:
+      model: openai/deepseek-v4.1-flash-1017
+      api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
+  # ==== Openrouter Models ====
   - model_name: openrouter/qwen/qwen3.8-max
     model_info:
       supports_none_reasoning_effort: false
@@ -767,8 +864,11 @@ router_settings:
     gpt-oss:20b: ollama/gpt-oss:20b
 
     # qwen models
-    qwen3.8-max: openrouter/qwen/qwen3.8-max
-    qwen3.8-flash: openrouter/qwen/qwen3.8-flash
+    qwen4-max-preview: qwen/qwen4-max-preview
+    qwen3.8-max: qwen/qwen3.8-max
+    qwen3.8-flash: qwen/qwen3.8-flash
+    qwen-audio-3.0-tts-plus: qwen/qwen-audio-3.0-tts-plus
+    qwen-image-3.0-pro: qwen/qwen-image-3.0-pro
 
     # xiaomi models
     mimo-v2.6-flash: openrouter/xiaomi/mimo-v2.6-flash
@@ -776,8 +876,8 @@ router_settings:
 
     tts: openai/tts-1
     stt: deepgram/nova-3
-    imagen: openrouter/black-forest-labs/flux.2-pro
-    imagedit: gemini/gemini-3.1-flash-image
+    imagen: qwen/qwen-image-3.0-pro
+    imagedit: qwen/qwen-image-3.0-pro
 
     # embedding models
     text-embedding-3-large: openai/text-embedding-3-large
@@ -802,8 +902,10 @@ router_settings:
         - gemini/gemini-3.1-flash-image
         - gemini/gemini-3.1-flash-lite-image
     - imagedit:
+        - gemini/gemini-3.1-flash-image
         - gemini/gemini-3.1-flash-lite-image
     - deepseek-v4.1-flash:
+        - qwen/deepseek-v4.1-flash
         - deepseek/deepseek-v4.1-flash
     - minimax-m3:
         - openrouter/minimax/minimax-m3

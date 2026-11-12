@@ -148,6 +148,8 @@ spec:
         - matchName: openrouter.ai
         - matchName: ollama.com
         - matchName: generativelanguage.googleapis.com
+        - matchName: token-plan.maas.qwencloudapi.com
+        - matchPattern: "*.oss-ap-southeast-1.aliyuncs.com"
         # MCP Servers
         - matchName: api.githubcopilot.com
         - matchName: mcp.context7.com
