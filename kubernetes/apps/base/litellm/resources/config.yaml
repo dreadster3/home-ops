@@ -438,6 +438,14 @@ model_list:
       api_base: https://token-plan.maas.qwencloudapi.com/api/v1/services/aigc/multimodal-generation/generation
       api_key: os.environ/QWEN_CLOUD_API_KEY
 
+  - model_name: qwen/wan3.0-video
+    model_info:
+      mode: video_generation
+    litellm_params:
+      model: qwencloud/wan3.0-video
+      api_base: https://token-plan.maas.qwencloudapi.com
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
   - model_name: qwen/deepseek-v4.1-flash
     model_info:
       mode: chat
@@ -897,6 +905,7 @@ router_settings:
     qwen3.8-flash: qwen/qwen3.8-flash
     qwen-audio-3.0-tts-plus: qwen/qwen-audio-3.0-tts-plus
     qwen-image-3.0-pro: qwen/qwen-image-3.0-pro
+    wan3.0-video: qwen/wan3.0-video
 
     # xiaomi models
     mimo-v2.6-flash: openrouter/xiaomi/mimo-v2.6-flash
