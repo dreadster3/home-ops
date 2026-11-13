@@ -1,7 +1,7 @@
 services:
   databasus:
     container_name: databasus
-    image: databasus/databasus:v3.68.0@sha256:3f02c45e8e0b11892f1d1256807d1fcbd0206caebe29e45a0d0781c8d6e44e50
+    image: databasus/databasus:v3.70.0@sha256:62e8b0cf649fd30127690831b85387075dfc5b42fc5898f546bf01c3fda440d8
     environment:
       IS_DISABLE_ANONYMOUS_TELEMETRY: true
     volumes:
@@ -29,7 +29,7 @@ services:
       - FOWNER
   databasus-agent:
     container_name: databasus-agent
-    image: databasus/databasus:v3.68.0@sha256:3f02c45e8e0b11892f1d1256807d1fcbd0206caebe29e45a0d0781c8d6e44e50
+    image: databasus/databasus:v3.70.0@sha256:62e8b0cf649fd30127690831b85387075dfc5b42fc5898f546bf01c3fda440d8
     entrypoint:
       - /app/agent-binaries/databasus-verification-agent-linux-amd64
     command:
