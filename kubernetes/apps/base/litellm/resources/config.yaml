@@ -440,9 +440,37 @@ model_list:
 
   - model_name: qwen/deepseek-v4.1-flash
     model_info:
-      mode: image_generation
+      mode: chat
+      max_input_tokens: 1000000
+      max_output_tokens: 393216
+      supports_assistant_prefill: true
+      supports_function_calling: true
+      supports_native_streaming: true
+      supports_parallel_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_response_schema: true
+      supports_system_messages: true
+      supports_tool_choice: true
+      supports_vision: true
+      <<: *deepseek-v41-flash
     litellm_params:
       model: openai/deepseek-v4.1-flash-1017
+      api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
+      api_key: os.environ/QWEN_CLOUD_API_KEY
+
+  - model_name: qwen/glm-5.3
+    model_info:
+      mode: chat
+      max_input_tokens: 1000000
+      max_output_tokens: 128000
+      supports_vision: false
+      supports_reasoning: true
+      supports_prompt_caching: true
+      supports_function_calling: true
+      <<: *zai-glm-53
+    litellm_params:
+      model: openai/glm-5.3
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
 
@@ -912,6 +940,7 @@ router_settings:
     - minimax-m3.1-flash:
         - openrouter/minimax/minimax-m3.1-flash
     - glm-5.3:
+        - qwen/glm-5.3
         - openrouter/z-ai/glm-5.3
         - zai/glm-5.3
     - glm-5.3-flash:
