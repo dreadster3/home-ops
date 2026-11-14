@@ -1001,6 +1001,9 @@ general_settings:
   database_connection_pool_limit: 10
   disable_error_logs: true
 
+  # Disables having to give access to every fallback
+  enforce_fallback_model_access: false
+
   # reverse-proxy best practices
   use_x_forwarded_for: true
   mcp_trusted_proxy_ranges:
