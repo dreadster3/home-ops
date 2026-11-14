@@ -13,6 +13,7 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - resources/config.yaml
+      - resources/video_poll_headers.py
 
 resources:
   - namespace.yaml

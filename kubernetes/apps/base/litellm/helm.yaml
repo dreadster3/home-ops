@@ -113,6 +113,20 @@ spec:
       name: litellm-proxy-config
       key: config.yaml
 
+    # Mount the video poll header callback next to config.yaml so
+    # litellm_settings.callbacks can resolve it (resources/video_poll_headers.py)
+    volumes:
+      - name: litellm-callbacks
+        configMap:
+          name: litellm-proxy-config
+          items:
+            - key: video_poll_headers.py
+              path: video_poll_headers.py
+    volumeMounts:
+      - name: litellm-callbacks
+        mountPath: /etc/litellm/video_poll_headers.py
+        subPath: video_poll_headers.py
+
     resources:
       requests:
         cpu: 300m
