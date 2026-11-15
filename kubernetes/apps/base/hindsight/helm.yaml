@@ -58,18 +58,25 @@ spec:
         # team aliases inside litellm (openai/<name> -> <name> -> model_group_alias).
         HINDSIGHT_API_LLM_PROVIDER: &provider litellm
         HINDSIGHT_API_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_LLM_MAX_CONCURRENT: 8
         HINDSIGHT_API_RETAIN_LLM_PROVIDER: *provider
         HINDSIGHT_API_RETAIN_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_RETAIN_LLM_MAX_CONCURRENT: 8
         HINDSIGHT_API_CONSOLIDATION_LLM_PROVIDER: *provider
         HINDSIGHT_API_CONSOLIDATION_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_CONSOLIDATION_LLM_MAX_CONCURRENT: 8
         HINDSIGHT_API_REFLECT_LLM_PROVIDER: *provider
         HINDSIGHT_API_REFLECT_LLM_MODEL: openai/glm-5.3-flash
+        HINDSIGHT_API_REFLECT_LLM_MAX_CONCURRENT: 8
         HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_PROVIDER: *provider
         HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_BASE_URL: *api
         HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_MODEL: openai/gpt-6-luna
+        HINDSIGHT_API_MENTAL_MODEL_REFRESH_LLM_MAX_CONCURRENT: 8
         HINDSIGHT_API_DECISION_MODEL_PROVIDER: typesafe
         HINDSIGHT_API_DECISION_MODEL_MODEL: clef
+        HINDSIGHT_API_DECISION_MODEL_MAX_CONCURRENT: 8
         HINDSIGHT_API_DECISION_MODEL_BASE_URL: *url
+        HINDSIGHT_API_DECISION_MODEL_MAX_REQUEST_TOKENS: 25000
 
         # Auth: shared bearer key guarding the API + MCP endpoints (from
         # Infisical via hindsight-secret-env).
