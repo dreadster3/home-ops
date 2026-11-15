@@ -37,3 +37,6 @@ spec:
       backendRefs:
         - name: hindsight-api
           port: 8888
+    - backendRefs:
+        - name: hindsight-control-plane
+          port: 3000

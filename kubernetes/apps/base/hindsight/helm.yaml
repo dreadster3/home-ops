@@ -43,7 +43,7 @@ spec:
         tag: v1.2.1@sha256:55c028f9f3074a16f93361444f0674677994ca0508aaad78b4f0fcf7c6ad24f3
       env:
         HINDSIGHT_API_TENANT_OAUTH_ENABLED: true
-        HINDSIGHT_API_TENANT_OAUTH_ISSUER: https://authentik.${EXTERNAL_DOMAIN}/application/o/hindsight/
+        HINDSIGHT_API_TENANT_OAUTH_ISSUER: &issuer https://authentik.${EXTERNAL_DOMAIN}/application/o/hindsight/
         HINDSIGHT_API_MCP_STATELESS: true
         HINDSIGHT_API_LLM_OUTPUT_LANGUAGE: english
 
@@ -128,9 +128,13 @@ spec:
     controlPlane:
       replicaCount: 1
       image:
-        repository: ghcr.io/vectorize-io/hindsight-control-plane
-        tag: 1.2.1@sha256:74a113e1f02ace9e8feed954e6b42282e9e3d33b7e0b6d528158d05902552a9a
+        repository: ghcr.io/dreadster3/hindsight-control-plane
+        tag: v0.1.0@sha256:47829c2feebfb13c75c202ecb6c41a169c0beff3d216fe5c03147dd33e7214bf
       # No resource requests/limits — krr will measure usage and fill in later
+      env:
+        AUTH_URL: https://hindsight.${INTERNAL_DOMAIN}
+        AUTH_AUTHENTIK_ISSUER: *issuer
+        PORT: 3000
       resources:
         requests:
           cpu: 100m
