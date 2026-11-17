@@ -21,7 +21,7 @@ spec:
     appIdSecretKey: APP_ID
     installationIdSecretKey: INSTALL_ID
     pemSecretKey: PEM
-  image: ghcr.io/renovatebot/renovate:44.239.0@sha256:56c9cd93b1baf92ebcc121cdd5cffa46daeeb09e23460cf1c363627a6e5334a6
+  image: ghcr.io/renovatebot/renovate:44.247.2@sha256:5b777fc44b9736e4bd656ba7c54dc54fb76290b2701983c0bb06f16df0c54ad5
   parallelism: 3
   webhook:
     enabled: true
