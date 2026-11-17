@@ -42,7 +42,7 @@ services:
       - /run
 
   arcane:
-    image: ghcr.io/getarcaneapp/manager:v2.17.3@sha256:2e0dc9f5ef03599181a49baf6470055d82e24d9cb15bbc62498ea642c0f882a7
+    image: ghcr.io/getarcaneapp/manager:v3.0.1@sha256:80a2f71c60bc1bff3e618e6e71efec98ad365ba4f0395aa76e234d8ba75e5a99
     container_name: arcane
     volumes:
       - data:/app/data
