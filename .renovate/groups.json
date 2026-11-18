@@ -93,10 +93,11 @@
       "groupName": "Hindsight",
       "matchDatasources": ["docker", "helm"],
       "matchPackageNames": ["/hindsight/"],
+      "excludePackageNames": ["ghcr.io/dreadster3/hindsight-control-plane"],
       "group": {
         "commitMessageTopic": "{{{groupName}}} group"
       },
-      "minimumGroupSize": 3
+      "minimumGroupSize": 2
     }
   ]
 }
