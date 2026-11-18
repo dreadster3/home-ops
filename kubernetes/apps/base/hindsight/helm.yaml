@@ -76,7 +76,14 @@ spec:
         HINDSIGHT_API_DECISION_MODEL_MODEL: clef
         HINDSIGHT_API_DECISION_MODEL_MAX_CONCURRENT: *concurrent
         HINDSIGHT_API_DECISION_MODEL_BASE_URL: *url
-        HINDSIGHT_API_DECISION_MODEL_MAX_REQUEST_TOKENS: 25000
+        HINDSIGHT_API_DECISION_MODEL_MAX_REQUEST_TOKENS: 16000
+
+        # optimizations
+        HINDSIGHT_API_ENABLE_AUTO_CONSOLIDATION: false
+        HINDSIGHT_API_CONSOLIDATION_LLM_BATCH_SIZE: 20
+        HINDSIGHT_API_CONSOLIDATION_LLM_PARALLELISM: 1
+        HINDSIGHT_API_MENTAL_MODEL_MIN_REFRESH_INTERVAL_SECONDS: 3600
+        HINDSIGHT_API_PAGE_DEFAULT_TRIGGER: '{"refresh_after_consolidation": false, "refresh_cron": "0 3 * * *"}'
 
         # Auth: shared bearer key guarding the API + MCP endpoints (from
         # Infisical via hindsight-secret-env).
