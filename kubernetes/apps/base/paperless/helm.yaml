@@ -146,7 +146,7 @@ spec:
           gotenberg:
             image:
               repository: docker.io/gotenberg/gotenberg
-              tag: 8.40@sha256:53073e798c8ef39ea2187e44cb67bab77894ea2509100b94c4fe3b461f7b2996
+              tag: 9.9@sha256:2f4945f698c3d02f691a27d56bb8e7ba4585e6ab50bd233329a36eb0423ae587
             # Hardened chromium per upstream paperless compose: disable JS and restrict to local
             # file:// URLs so .eml conversion can't fetch tracking pixels or run external scripts.
             args:
