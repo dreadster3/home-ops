@@ -649,7 +649,7 @@ model_list:
           role: system
 
   - model_name: openrouter/xiaomi/mimo-v2.6-flash
-    model_info:
+    model_info: &mimo-v26-flash
       mode: chat
       max_input_tokens: 1048576
       max_output_tokens: 131072
@@ -677,7 +677,7 @@ model_list:
       preset: "@preset/default"
 
   - model_name: openrouter/xiaomi/mimo-v2.6-pro
-    model_info:
+    model_info: &mimo-v26-pro
       mode: chat
       max_input_tokens: 1048576
       max_output_tokens: 131072
@@ -846,6 +846,20 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
+  - model_name: ollama/mimo-v2.6-flash
+    model_info: *mimo-v26-flash
+    litellm_params:
+      model: openai/mimo-v2.6-flash
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
+  - model_name: ollama/mimo-v2.6-pro
+    model_info: *mimo-v26-pro
+    litellm_params:
+      model: openai/mimo-v2.6-pro
+      api_base: https://ollama.com/v1
+      api_key: os.environ/OLLAMA_API_KEY
+
 litellm_settings:
   callbacks:
     - prometheus
@@ -910,8 +924,8 @@ router_settings:
     wan3.0-video: qwen/wan3.0-video
 
     # xiaomi models
-    mimo-v2.6-flash: openrouter/xiaomi/mimo-v2.6-flash
-    mimo-v2.6-pro: openrouter/xiaomi/mimo-v2.6-pro
+    mimo-v2.6-flash: ollama/mimo-v2.6-flash
+    mimo-v2.6-pro: ollama/mimo-v2.6-pro
 
     tts: openai/tts-1
     stt: deepgram/nova-3
@@ -983,6 +997,10 @@ router_settings:
     - clef:
         - openrouter/cloudflare/clef-flash
         - openrouter/cloudflare/clef
+    - mimo-v2.6-flash:
+        - openrouter/xiaomi/mimo-v2.6-flash
+    - mimo-v2.6-pro:
+        - openrouter/xiaomi/mimo-v2.6-pro
 
 general_settings:
   disable_env_credential_login: true
