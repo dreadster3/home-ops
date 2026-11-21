@@ -973,8 +973,6 @@ router_settings:
     - deepseek-v4.1-flash:
         - qwen/deepseek-v4.1-flash
         - deepseek/deepseek-v4.1-flash
-    - minimax-m3.1-flash:
-        - deepseek-v4.1-flash
     - glm-5.3:
         - qwen/glm-5.3
         - openrouter/z-ai/glm-5.3
