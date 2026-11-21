@@ -1,27 +1,34 @@
 model_list:
+  # Same model across providers shares one model_name; litellm_params.order sets
+  # attempt priority (1 = first, each order gets its own retries before escalating).
+  # fallbacks are reserved for genuinely different models.
   # ==== Decisions ====
-  - model_name: typesafe/jev-1.13
+  - model_name: jev-1.13
     litellm_params:
       model: typesafe/jev-1.13.0
       api_key: os.environ/TYPESAFE_API_KEY
+      order: 1
 
-  - model_name: typesafe/jev-1.14
+  - model_name: jev-1.14
     litellm_params:
       model: typesafe/jev-1.14.0
       api_key: os.environ/TYPESAFE_API_KEY
+      order: 1
 
-  - model_name: openrouter/typesafe/jev-1.13
+  - model_name: jev-1.13
     litellm_params:
       model: openrouter/typesafe/jev-1.13
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
 
-  - model_name: openrouter/typesafe/jev-1.14
+  - model_name: jev-1.14
     litellm_params:
       model: openrouter/typesafe/jev-1.14
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
 
   # ===== Image Generation =====
-  - model_name: openrouter/black-forest-labs/flux.2-pro
+  - model_name: flux.2-pro
     model_info:
       mode: chat
       supports_vision: true
@@ -36,7 +43,7 @@ model_list:
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
-  - model_name: gemini/gemini-3.1-flash-image
+  - model_name: gemini-3.1-flash-image
     model_info:
       mode: image_generation
       max_input_tokens: 131072
@@ -47,7 +54,7 @@ model_list:
       model: gemini/gemini-3.1-flash-image
       api_key: os.environ/GEMINI_API_KEY
 
-  - model_name: gemini/gemini-3.1-flash-lite-image
+  - model_name: gemini-3.1-flash-lite-image
     model_info:
       mode: image_generation
       max_input_tokens: 131072
@@ -58,33 +65,33 @@ model_list:
       api_key: os.environ/GEMINI_API_KEY
 
   # ===== Audio (TTS / STT) =====
-  - model_name: openai/tts-1
+  - model_name: tts-1
     litellm_params:
       model: openai/tts-1
       api_key: os.environ/OPENAI_API_KEY
 
-  - model_name: openai/whisper-1
+  - model_name: whisper-1
     litellm_params:
       model: openai/whisper-1
       api_key: os.environ/OPENAI_API_KEY
 
-  - model_name: deepgram/nova-3
+  - model_name: nova-3
     litellm_params:
       model: deepgram/nova-3
       api_key: os.environ/DEEPGRAM_API_KEY
 
   # ===== Embeddings =====
-  - model_name: openai/text-embedding-3-large
+  - model_name: text-embedding-3-large
     litellm_params:
       model: openai/text-embedding-3-large
       api_key: os.environ/OPENAI_API_KEY
 
-  - model_name: openai/text-embedding-3-small
+  - model_name: text-embedding-3-small
     litellm_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
-  - model_name: openrouter/qwen/qwen3-embedding-8b
+  - model_name: qwen3-embedding-8b
     model_info:
       mode: embedding
       max_input_tokens: 32000
@@ -99,7 +106,7 @@ model_list:
   # LiteLLM has no openrouter rerank provider; hosted_vllm is its generic
   # OpenAI-compatible rerank passthrough (top_n/results shape) and works
   # against OpenRouter's /rerank endpoint via api_base.
-  - model_name: openrouter/voyageai/rerank-2.5-lite
+  - model_name: rerank-2.5-lite
     model_info:
       mode: rerank
     litellm_params:
@@ -108,13 +115,13 @@ model_list:
       api_key: os.environ/OPENROUTER_API_KEY
 
   # ===== Text Completions =====
-  - model_name: codestral/codestral-latest
+  - model_name: codestral-latest
     litellm_params:
       model: text-completion-codestral/codestral-latest
       api_key: os.environ/CODESTRAL_API_KEY
 
   # ======= Deepseek (direct API) =====
-  - model_name: deepseek/deepseek-v4.1-flash
+  - model_name: deepseek-v4.1-flash
     model_info: &deepseek-v41-flash
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -127,9 +134,10 @@ model_list:
       model: deepseek/deepseek-flash
       api_base: https://api.deepseek.com
       api_key: os.environ/DEEPSEEK_API_KEY
+      order: 3
 
   # ===== Anthropic (direct API) =====
-  - model_name: anthropic/claude-fable-5.2
+  - model_name: claude-fable-5.2
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -142,7 +150,7 @@ model_list:
       model: anthropic/claude-fable-5-2
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  - model_name: anthropic/claude-haiku-5.5
+  - model_name: claude-haiku-5.5
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -155,7 +163,7 @@ model_list:
       model: anthropic/claude-haiku-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  - model_name: anthropic/claude-sonnet-5.5
+  - model_name: claude-sonnet-5.5
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -168,7 +176,7 @@ model_list:
       model: anthropic/claude-sonnet-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  - model_name: anthropic/claude-opus-5.5
+  - model_name: claude-opus-5.5
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -181,8 +189,8 @@ model_list:
       model: anthropic/claude-opus-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
-  # ===== OpenAI direct API (fallback targets for copilot, + sol API-only) =====
-  - model_name: openai/gpt-6-luna
+  # ===== OpenAI direct API (order 1 flex / order 3 standard in the gpt-6 groups) =====
+  - model_name: gpt-6-luna
     model_info: &openai-gpt-6-luna
       supports_none_reasoning_effort: true
       supports_minimal_reasoning_effort: false
@@ -194,6 +202,7 @@ model_list:
     litellm_params:
       model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
+      order: 3
       # GPT-5.6+ supports explicit prompt_cache_breakpoint markers (mapped by LiteLLM);
       # implicit keeps OpenAI's automatic checkpoint alongside ours for multi-turn chat
       cache_control_injection_points:
@@ -202,19 +211,20 @@ model_list:
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6-luna:flex
+  - model_name: gpt-6-luna
     model_info: *openai-gpt-6-luna
     litellm_params:
       model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
       service_tier: flex
+      order: 1
       cache_control_injection_points:
         - location: message
           role: system
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6.1-sol
+  - model_name: gpt-6.1-sol
     model_info: &openai-gpt-6-1-sol
       supports_none_reasoning_effort: true
       supports_minimal_reasoning_effort: false
@@ -226,25 +236,27 @@ model_list:
     litellm_params:
       model: openai/gpt-6.1-sol
       api_key: os.environ/OPENAI_API_KEY
+      order: 3
       cache_control_injection_points:
         - location: message
           role: system
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6.1-sol:flex
+  - model_name: gpt-6.1-sol
     model_info: *openai-gpt-6-1-sol
     litellm_params:
       model: openai/gpt-6.1-sol
       api_key: os.environ/OPENAI_API_KEY
       service_tier: flex
+      order: 1
       cache_control_injection_points:
         - location: message
           role: system
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6.1-terra
+  - model_name: gpt-6.1-terra
     model_info: &openai-gpt-6-1-terra
       supports_none_reasoning_effort: true
       supports_minimal_reasoning_effort: false
@@ -256,25 +268,27 @@ model_list:
     litellm_params:
       model: openai/gpt-6.1-terra
       api_key: os.environ/OPENAI_API_KEY
+      order: 3
       cache_control_injection_points:
         - location: message
           role: system
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6.1-terra:flex
+  - model_name: gpt-6.1-terra
     model_info: *openai-gpt-6-1-terra
     litellm_params:
       model: openai/gpt-6.1-terra
       api_key: os.environ/OPENAI_API_KEY
       service_tier: flex
+      order: 1
       cache_control_injection_points:
         - location: message
           role: system
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6-astra
+  - model_name: gpt-6-astra
     model_info: &openai-gpt-6-astra
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -286,25 +300,27 @@ model_list:
     litellm_params:
       model: openai/gpt-6-astra
       api_key: os.environ/OPENAI_API_KEY
+      order: 3
       cache_control_injection_points:
         - location: message
           role: system
       prompt_cache_options:
         mode: implicit
 
-  - model_name: openai/gpt-6-astra:flex
+  - model_name: gpt-6-astra
     model_info: *openai-gpt-6-astra
     litellm_params:
       model: openai/gpt-6-astra
       api_key: os.environ/OPENAI_API_KEY
       service_tier: flex
+      order: 1
       cache_control_injection_points:
         - location: message
           role: system
       prompt_cache_options:
         mode: implicit
 
-  - model_name: zai/glm-5.3
+  - model_name: glm-5.3
     model_info: &zai-glm-53
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -316,12 +332,13 @@ model_list:
     litellm_params:
       model: zai/glm-5.3
       api_key: os.environ/ZAI_API_KEY
+      order: 4
       # Z.ai / GLM supports explicit cache_control checkpoints
       cache_control_injection_points:
         - location: message
           role: system
 
-  - model_name: zai/glm-5.3-flash
+  - model_name: glm-5.3-flash
     model_info: &zai-glm-53-flash
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -333,11 +350,12 @@ model_list:
     litellm_params:
       model: zai/glm-5.3-flash
       api_key: os.environ/ZAI_API_KEY
+      order: 3
       cache_control_injection_points:
         - location: message
           role: system
 
-  - model_name: moonshot/kimi-k3.1-pro
+  - model_name: kimi-k3.1-pro
     model_info: &kimi-k31-pro
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -349,9 +367,10 @@ model_list:
     litellm_params:
       model: moonshot/kimi-k3.1-pro
       api_key: os.environ/MOONSHOT_API_KEY
+      order: 3
 
   # ==== Openrouter Models ====
-  - model_name: qwen/qwen4-max-preview
+  - model_name: qwen4-max-preview
     model_info:
       supports_function_calling: true
       supports_prompt_caching: true
@@ -374,7 +393,7 @@ model_list:
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
 
-  - model_name: qwen/qwen3.8-max
+  - model_name: qwen3.8-max
     model_info:
       supports_function_calling: true
       supports_prompt_caching: true
@@ -396,8 +415,9 @@ model_list:
       model: openai/qwen3.8-max
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
+      order: 1
 
-  - model_name: qwen/qwen3.8-flash
+  - model_name: qwen3.8-flash
     model_info:
       supports_function_calling: true
       supports_prompt_caching: true
@@ -421,8 +441,9 @@ model_list:
       model: openai/qwen3.8-flash
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
+      order: 1
 
-  - model_name: qwen/qwen-audio-3.0-tts-plus
+  - model_name: qwen-audio-3.0-tts-plus
     model_info:
       mode: audio_speech
     litellm_params:
@@ -430,7 +451,7 @@ model_list:
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
 
-  - model_name: qwen/qwen-image-3.0-pro
+  - model_name: qwen-image-3.0-pro
     model_info:
       mode: image_generation
     litellm_params:
@@ -438,7 +459,7 @@ model_list:
       api_base: https://token-plan.maas.qwencloudapi.com/api/v1/services/aigc/multimodal-generation/generation
       api_key: os.environ/QWEN_CLOUD_API_KEY
 
-  - model_name: qwen/wan3.0-video
+  - model_name: wan3.0-video
     model_info:
       mode: video_generation
     litellm_params:
@@ -446,7 +467,7 @@ model_list:
       api_base: https://token-plan.maas.qwencloudapi.com
       api_key: os.environ/QWEN_CLOUD_API_KEY
 
-  - model_name: qwen/deepseek-v4.1-flash
+  - model_name: deepseek-v4.1-flash
     model_info:
       mode: chat
       max_input_tokens: 1000000
@@ -466,8 +487,9 @@ model_list:
       model: openai/deepseek-v4.1-flash-1017
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
+      order: 2
 
-  - model_name: qwen/glm-5.3
+  - model_name: glm-5.3
     model_info:
       mode: chat
       max_input_tokens: 1000000
@@ -481,8 +503,9 @@ model_list:
       model: openai/glm-5.3
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
+      order: 2
 
-  - model_name: qwen/decision-model-preview
+  - model_name: decision-model-preview
     model_info:
       mode: decisions
     litellm_params:
@@ -491,7 +514,7 @@ model_list:
       api_key: os.environ/QWEN_CLOUD_PAYG_API_KEY
 
   # ==== Openrouter Models ====
-  - model_name: openrouter/qwen/qwen3.8-max
+  - model_name: qwen3.8-max
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -504,8 +527,9 @@ model_list:
       model: openrouter/qwen/qwen3.8-max-0902
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
 
-  - model_name: openrouter/qwen/qwen3.8-flash
+  - model_name: qwen3.8-flash
     model_info:
       supports_none_reasoning_effort: false
       supports_minimal_reasoning_effort: false
@@ -518,104 +542,116 @@ model_list:
       model: openrouter/qwen/qwen3.8-flash
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
 
-  - model_name: openrouter/z-ai/glm-5.3
+  - model_name: glm-5.3
     model_info: *zai-glm-53
     litellm_params:
       model: openrouter/z-ai/glm-5.3
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 3
       # OpenRouter supports cache_control injection on z-ai/GLM routes
       cache_control_injection_points:
         - location: message
           role: system
 
-  - model_name: openrouter/z-ai/glm-5.3-flash
+  - model_name: glm-5.3-flash
     model_info: *zai-glm-53-flash
     litellm_params:
       model: openrouter/z-ai/glm-5.3-flash
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
       cache_control_injection_points:
         - location: message
           role: system
 
-  - model_name: openrouter/moonshotai/kimi-k3.1-pro
+  - model_name: kimi-k3.1-pro
     model_info: *kimi-k31-pro
     litellm_params:
       model: openrouter/moonshotai/kimi-k3.1-pro
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
 
-  - model_name: openrouter/openai/gpt-6-luna:flex
+  - model_name: gpt-6-luna
     model_info: *openai-gpt-6-luna
     litellm_params:
       model: openrouter/openai/gpt-6-luna
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
+      order: 2
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter;
       # explicit prompt_cache_breakpoints are NOT supported on openrouter/ openai routes
       # (LiteLLM only maps injection points for provider=openai, and OpenRouter strips
       # cache_control from everything except claude/gemini/minimax/glm/z-ai routes)
 
-  - model_name: openrouter/openai/gpt-6-luna
+  - model_name: gpt-6-luna
     model_info: *openai-gpt-6-luna
     litellm_params:
       model: openrouter/openai/gpt-6-luna
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 4
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
-  - model_name: openrouter/openai/gpt-6.1-sol:flex
+  - model_name: gpt-6.1-sol
     model_info: *openai-gpt-6-1-sol
     litellm_params:
       model: openrouter/openai/gpt-6.1-sol
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
+      order: 2
 
-  - model_name: openrouter/openai/gpt-6.1-sol
+  - model_name: gpt-6.1-sol
     model_info: *openai-gpt-6-1-sol
     litellm_params:
       model: openrouter/openai/gpt-6.1-sol
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 4
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
   #
-  - model_name: openrouter/openai/gpt-6.1-terra:flex
-    model_info: *openai-gpt-6-1-sol
+  - model_name: gpt-6.1-terra
+    model_info: *openai-gpt-6-1-terra
     litellm_params:
       model: openrouter/openai/gpt-6.1-terra
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
+      order: 2
 
-  - model_name: openrouter/openai/gpt-6.1-terra
-    model_info: *openai-gpt-6-1-sol
+  - model_name: gpt-6.1-terra
+    model_info: *openai-gpt-6-1-terra
     litellm_params:
       model: openrouter/openai/gpt-6.1-terra
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 4
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
-  - model_name: openrouter/openai/gpt-6-astra:flex
+  - model_name: gpt-6-astra
     model_info: *openai-gpt-6-astra
     litellm_params:
       model: openrouter/openai/gpt-6-astra
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
       service_tier: flex
+      order: 2
 
-  - model_name: openrouter/openai/gpt-6-astra
+  - model_name: gpt-6-astra
     model_info: *openai-gpt-6-astra
     litellm_params:
       model: openrouter/openai/gpt-6-astra
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 4
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
@@ -646,7 +682,7 @@ model_list:
   #       - location: message
   #         role: system
 
-  - model_name: openrouter/xiaomi/mimo-v2.6-flash
+  - model_name: mimo-v2.6-flash
     model_info: &mimo-v26-flash
       mode: chat
       max_input_tokens: 1048576
@@ -673,8 +709,9 @@ model_list:
       model: openrouter/xiaomi/mimo-v2.6-flash
       api_key: os.environ/OPENROUTER_API_KEY
       preset: "@preset/default"
+      order: 2
 
-  - model_name: openrouter/xiaomi/mimo-v2.6-pro
+  - model_name: mimo-v2.6-pro
     model_info: &mimo-v26-pro
       mode: chat
       max_input_tokens: 1048576
@@ -700,8 +737,9 @@ model_list:
     litellm_params:
       model: openrouter/xiaomi/mimo-v2.6-pro
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
 
-  - model_name: openrouter/cloudflare/clef-flash
+  - model_name: clef-flash
     model_info:
       mode: evaluation
       max_input_tokens: 24576
@@ -710,7 +748,7 @@ model_list:
       model: openrouter/cloudflare/clef-flash
       api_key: os.environ/OPENROUTER_API_KEY
 
-  - model_name: openrouter/cloudflare/clef
+  - model_name: clef
     model_info:
       mode: evaluation
       max_input_tokens: 65537
@@ -718,9 +756,10 @@ model_list:
     litellm_params:
       model: openrouter/cloudflare/clef
       api_key: os.environ/OPENROUTER_API_KEY
+      order: 2
 
-  # ===== Ollama Cloud (https://ollama.com) — primary for fallback chains =====
-  - model_name: ollama/minimax-m3
+  # ===== Ollama Cloud (https://ollama.com) — order 1 primaries for the model groups =====
+  - model_name: minimax-m3
     model_info:
       mode: chat
       max_input_tokens: 512000
@@ -736,7 +775,7 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
-  - model_name: ollama/minimax-m3.1-flash
+  - model_name: minimax-m3.1-flash
     model_info:
       mode: chat
       max_input_tokens: 1000000
@@ -760,7 +799,7 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
-  - model_name: ollama/deepseek-v4.1-flash
+  - model_name: deepseek-v4.1-flash
     model_info:
       mode: chat
       max_input_tokens: 1000000
@@ -780,8 +819,9 @@ model_list:
       model: openai/deepseek-v4.1-flash:1017-cloud
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
+      order: 1
 
-  - model_name: ollama/glm-5.3
+  - model_name: glm-5.3
     model_info:
       mode: chat
       max_input_tokens: 1000000
@@ -795,8 +835,9 @@ model_list:
       model: openai/glm-5.3
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
+      order: 1
 
-  - model_name: ollama/glm-5.3-flash
+  - model_name: glm-5.3-flash
     model_info:
       mode: chat
       max_input_tokens: 1000000
@@ -811,8 +852,9 @@ model_list:
       model: openai/glm-5.3-flash
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
+      order: 1
 
-  - model_name: ollama/kimi-k3.1-pro
+  - model_name: kimi-k3.1-pro
     model_info:
       mode: chat
       max_input_tokens: 1048576
@@ -829,8 +871,9 @@ model_list:
       model: openai/kimi-k3.1-pro
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
+      order: 1
 
-  - model_name: ollama/gpt-oss:20b
+  - model_name: gpt-oss:20b
     model_info:
       mode: chat
       max_input_tokens: 131072
@@ -849,7 +892,7 @@ model_list:
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
 
-  - model_name: ollama/clef
+  - model_name: clef
     model_info:
       mode: evaluation
       max_input_tokens: 65536
@@ -858,20 +901,23 @@ model_list:
       model: typesafe/clef
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
+      order: 1
 
-  - model_name: ollama/mimo-v2.6-flash
+  - model_name: mimo-v2.6-flash
     model_info: *mimo-v26-flash
     litellm_params:
       model: openai/mimo-v2.6-flash
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
+      order: 1
 
-  - model_name: ollama/mimo-v2.6-pro
+  - model_name: mimo-v2.6-pro
     model_info: *mimo-v26-pro
     litellm_params:
       model: openai/mimo-v2.6-pro
       api_base: https://ollama.com/v1
       api_key: os.environ/OLLAMA_API_KEY
+      order: 1
 
 litellm_settings:
   callbacks:
@@ -905,111 +951,29 @@ router_settings:
   redis_port: os.environ/REDIS_PORT
   enable_pre_call_checks: true
 
-  # Routing aliases — clean model_name → primary provider/model_name
+  # Routing aliases — every model uses its short, provider-less name; only
+  # semantic shortcuts remain. Hindsight's openai/<name> lane strings resolve
+  # via team aliases in the DB.
   model_group_alias:
-    # anthropic models
-    claude-haiku-5.5: anthropic/claude-haiku-5.5
-    claude-sonnet-5.5: anthropic/claude-sonnet-5.5
-    claude-opus-5.5: anthropic/claude-opus-5.5
-    claude-fable-5.2: anthropic/claude-fable-5.2
-
-    # openai models
-    gpt-6-luna: openai/gpt-6-luna:flex
-    gpt-6.1-terra: openai/gpt-6.1-terra:flex
-    gpt-6.1-sol: openai/gpt-6.1-sol:flex
-    gpt-6-astra: openai/gpt-6-astra:flex
-
-    # ollama models
-    minimax-m3: ollama/minimax-m3
-    minimax-m3.1-flash: ollama/minimax-m3.1-flash
-    deepseek-v4.1-flash: ollama/deepseek-v4.1-flash
-    glm-5.3: ollama/glm-5.3
-    glm-5.3-flash: ollama/glm-5.3-flash
-    kimi-k3.1-pro: ollama/kimi-k3.1-pro
-    gpt-oss:20b: ollama/gpt-oss:20b
-
-    # qwen models
-    qwen4-max-preview: qwen/qwen4-max-preview
-    qwen3.8-max: qwen/qwen3.8-max
-    qwen3.8-flash: qwen/qwen3.8-flash
-    qwen-audio-3.0-tts-plus: qwen/qwen-audio-3.0-tts-plus
-    qwen-image-3.0-pro: qwen/qwen-image-3.0-pro
-    wan3.0-video: qwen/wan3.0-video
-
-    # xiaomi models
-    mimo-v2.6-flash: ollama/mimo-v2.6-flash
-    mimo-v2.6-pro: ollama/mimo-v2.6-pro
-
-    tts: openai/tts-1
-    stt: deepgram/nova-3
-    imagen: qwen/qwen-image-3.0-pro
-    imagedit: qwen/qwen-image-3.0-pro
-
-    # embedding models
-    text-embedding-3-large: openai/text-embedding-3-large
-    text-embedding-3-small: openai/text-embedding-3-small
-    qwen3-embedding-8b: openrouter/qwen/qwen3-embedding-8b
-
-    # rerank models
-    rerank-2.5-lite: openrouter/voyageai/rerank-2.5-lite
-
-    # text completion models
-    codestral-latest: codestral/codestral-latest
-
-    # decision models
-    jev-1.13: typesafe/jev-1.13
-    jev-1.14: typesafe/jev-1.14
-    clef: ollama/clef
+    tts: tts-1
+    stt: nova-3
+    imagen: qwen-image-3.0-pro
+    imagedit: qwen-image-3.0-pro
 
   fallbacks:
+    # Only genuinely different models — same-model provider redundancy is
+    # handled by ordered deployments within each model group above.
     - stt:
-        - openai/whisper-1
+        - whisper-1
     - imagen:
-        - gemini/gemini-3.1-flash-image
-        - gemini/gemini-3.1-flash-lite-image
+        - gemini-3.1-flash-image
+        - gemini-3.1-flash-lite-image
     - imagedit:
-        - gemini/gemini-3.1-flash-image
-        - gemini/gemini-3.1-flash-lite-image
-    - deepseek-v4.1-flash:
-        - qwen/deepseek-v4.1-flash
-        - deepseek/deepseek-v4.1-flash
-    - glm-5.3:
-        - qwen/glm-5.3
-        - openrouter/z-ai/glm-5.3
-        - zai/glm-5.3
-    - glm-5.3-flash:
-        - openrouter/z-ai/glm-5.3-flash
-        - zai/glm-5.3-flash
-    - kimi-k3.1-pro:
-        - openrouter/moonshotai/kimi-k3.1-pro
-        - moonshot/kimi-k3.1-pro
-    - gpt-6-luna:
-        - openrouter/openai/gpt-6-luna:flex
-        - openai/gpt-6-luna
-        - openrouter/openai/gpt-6-luna
-    - gpt-6.1-terra:
-        - openrouter/openai/gpt-6.1-terra:flex
-        - openai/gpt-6.1-terra
-        - openrouter/openai/gpt-6.1-terra
-    - gpt-6.1-sol:
-        - openrouter/openai/gpt-6.1-sol:flex
-        - openai/gpt-6.1-sol
-        - openrouter/openai/gpt-6.1-sol
-    - gpt-6-astra:
-        - openrouter/openai/gpt-6-astra:flex
-        - openai/gpt-6-astra
-        - openrouter/openai/gpt-6-astra
-    - jev-1.13:
-        - openrouter/typesafe/jev-1.13
-    - jev-1.14:
-        - openrouter/typesafe/jev-1.14
+        - gemini-3.1-flash-image
+        - gemini-3.1-flash-lite-image
     - clef:
-        - openrouter/cloudflare/clef-flash
-        - openrouter/cloudflare/clef
-    - mimo-v2.6-flash:
-        - openrouter/xiaomi/mimo-v2.6-flash
-    - mimo-v2.6-pro:
-        - openrouter/xiaomi/mimo-v2.6-pro
+        - clef-flash
+        - decision-model-preview
 
 general_settings:
   disable_env_credential_login: true
