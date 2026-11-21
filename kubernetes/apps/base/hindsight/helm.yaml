@@ -57,13 +57,13 @@ spec:
         # (401). The 'openai/<name>' strings are mapped to the bare model groups by
         # team aliases inside litellm (openai/<name> -> <name> -> model_group_alias).
         HINDSIGHT_API_LLM_PROVIDER: &provider litellm
-        HINDSIGHT_API_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_LLM_MODEL: openai/glm-5.3-flash
         HINDSIGHT_API_LLM_MAX_CONCURRENT: &concurrent 1
         HINDSIGHT_API_RETAIN_LLM_PROVIDER: *provider
         HINDSIGHT_API_RETAIN_LLM_MODEL: openai/minimax-m3.1-flash
         HINDSIGHT_API_RETAIN_LLM_MAX_CONCURRENT: *concurrent
         HINDSIGHT_API_CONSOLIDATION_LLM_PROVIDER: *provider
-        HINDSIGHT_API_CONSOLIDATION_LLM_MODEL: openai/minimax-m3.1-flash
+        HINDSIGHT_API_CONSOLIDATION_LLM_MODEL: openai/glm-5.3-flash
         HINDSIGHT_API_CONSOLIDATION_LLM_MAX_CONCURRENT: *concurrent
         HINDSIGHT_API_REFLECT_LLM_PROVIDER: *provider
         HINDSIGHT_API_REFLECT_LLM_MODEL: openai/glm-5.3-flash
@@ -92,21 +92,14 @@ spec:
         # pgvector's 2000-dim HNSW limit (see pgcluster.yaml extension image).
         HINDSIGHT_API_VECTOR_EXTENSION: vchord
 
-        # Embeddings: qwen3-embedding-8b via litellm's dedicated proxy provider
-        # (EMBEDDINGS_LITELLM_API_BASE is the proxy root, no /v1 suffix)
-        HINDSIGHT_API_EMBEDDINGS_PROVIDER: *provider
-        HINDSIGHT_API_EMBEDDINGS_LITELLM_API_BASE: *url
-        HINDSIGHT_API_EMBEDDINGS_LITELLM_MODEL: qwen3-embedding-8b
-        # Rerank via litellm (cohere-compatible /rerank against the proxy;
-        # model 'rerank-2.5-lite' passthroughs to OpenRouter's voyage model)
-        HINDSIGHT_API_RERANKER_PROVIDER: *provider
-        HINDSIGHT_API_RERANKER_LITELLM_API_BASE: *url
-        HINDSIGHT_API_RERANKER_LITELLM_MODEL: rerank-2.5-lite
-      # No resource requests/limits — krr will measure usage and fill in later
+        HINDSIGHT_API_EMBEDDINGS_PROVIDER: local
+        HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL: hindsight-ai/hs-embed-1
+        HINDSIGHT_API_RERANKER_PROVIDER: local
+        HINDSIGHT_API_RERANKER_LOCAL_MODEL: hindsight-ai/hs-rerank-1
       resources:
         requests:
           cpu: 1.2
-          memory: &memory 1Gi
+          memory: &memory 2Gi
         limits:
           memory: *memory
       # Chart-managed PVC for the Hugging Face model cache (embedder + reranker)
