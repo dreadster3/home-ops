@@ -58,7 +58,7 @@ spec:
         # team aliases inside litellm (openai/<name> -> <name> -> model_group_alias).
         HINDSIGHT_API_LLM_PROVIDER: &provider litellm
         HINDSIGHT_API_LLM_MODEL: openai/glm-5.3-flash
-        HINDSIGHT_API_LLM_MAX_CONCURRENT: &concurrent 1
+        HINDSIGHT_API_LLM_MAX_CONCURRENT: &concurrent 2
         HINDSIGHT_API_RETAIN_LLM_PROVIDER: *provider
         HINDSIGHT_API_RETAIN_LLM_MODEL: openai/minimax-m3.1-flash
         HINDSIGHT_API_RETAIN_LLM_MAX_CONCURRENT: *concurrent

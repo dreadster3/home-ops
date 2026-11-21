@@ -539,16 +539,6 @@ model_list:
       preset: "@preset/default"
       api_key: os.environ/OPENROUTER_API_KEY
 
-  - model_name: openrouter/minimax/minimax-m3
-    litellm_params:
-      model: openrouter/minimax/minimax-m3
-      preset: "@preset/default"
-      api_key: os.environ/OPENROUTER_API_KEY
-      # OpenRouter supports cache_control injection on MiniMax routes
-      cache_control_injection_points:
-        - location: message
-          role: system
-
   - model_name: openrouter/openai/gpt-6-luna:flex
     model_info: *openai-gpt-6-luna
     litellm_params:
@@ -621,32 +611,32 @@ model_list:
       # OpenAI automatic (implicit) prompt caching applies via OpenRouter
       # (explicit prompt_cache_breakpoints unsupported on openrouter/ openai routes)
 
-  - model_name: openrouter/minimax/minimax-m3.1-flash
-    model_info: &minimax-m31-flash
-      max_input_tokens: 1000000
-      max_output_tokens: 512000
-      supports_function_calling: true
-      supports_prompt_caching: true
-      supports_reasoning: true
-      supports_system_messages: true
-      supports_tool_choice: true
-      supports_vision: true
-      supports_video_input: true
-      supports_none_reasoning_effort: false
-      supports_minimal_reasoning_effort: false
-      supports_low_reasoning_effort: true
-      supports_medium_reasoning_effort: true
-      supports_high_reasoning_effort: true
-      supports_xhigh_reasoning_effort: true
-      supports_max_reasoning_effort: true
-    litellm_params:
-      model: openrouter/minimax/minimax-m3.1-flash
-      api_key: os.environ/OPENROUTER_API_KEY
-      preset: "@preset/minimax"
-      # OpenRouter supports cache_control injection on MiniMax routes
-      cache_control_injection_points:
-        - location: message
-          role: system
+  # - model_name: openrouter/minimax/minimax-m3.1-flash
+  #   model_info: &minimax-m31-flash
+  #     max_input_tokens: 1000000
+  #     max_output_tokens: 512000
+  #     supports_function_calling: true
+  #     supports_prompt_caching: true
+  #     supports_reasoning: true
+  #     supports_system_messages: true
+  #     supports_tool_choice: true
+  #     supports_vision: true
+  #     supports_video_input: true
+  #     supports_none_reasoning_effort: false
+  #     supports_minimal_reasoning_effort: false
+  #     supports_low_reasoning_effort: true
+  #     supports_medium_reasoning_effort: true
+  #     supports_high_reasoning_effort: true
+  #     supports_xhigh_reasoning_effort: true
+  #     supports_max_reasoning_effort: true
+  #   litellm_params:
+  #     model: openrouter/minimax/minimax-m3.1-flash
+  #     api_key: os.environ/OPENROUTER_API_KEY
+  #     preset: "@preset/minimax"
+  #     # OpenRouter supports cache_control injection on MiniMax routes
+  #     cache_control_injection_points:
+  #       - location: message
+  #         role: system
 
   - model_name: openrouter/xiaomi/mimo-v2.6-flash
     model_info: &mimo-v26-flash
@@ -741,7 +731,22 @@ model_list:
   - model_name: ollama/minimax-m3.1-flash
     model_info:
       mode: chat
-      <<: *minimax-m31-flash
+      max_input_tokens: 1000000
+      max_output_tokens: 512000
+      supports_function_calling: true
+      supports_prompt_caching: true
+      supports_reasoning: true
+      supports_system_messages: true
+      supports_tool_choice: true
+      supports_vision: true
+      supports_video_input: true
+      supports_none_reasoning_effort: false
+      supports_minimal_reasoning_effort: false
+      supports_low_reasoning_effort: true
+      supports_medium_reasoning_effort: true
+      supports_high_reasoning_effort: true
+      supports_xhigh_reasoning_effort: true
+      supports_max_reasoning_effort: true
     litellm_params:
       model: openai/minimax-m3.1-flash
       api_base: https://ollama.com/v1
@@ -960,10 +965,8 @@ router_settings:
     - deepseek-v4.1-flash:
         - qwen/deepseek-v4.1-flash
         - deepseek/deepseek-v4.1-flash
-    - minimax-m3:
-        - openrouter/minimax/minimax-m3
     - minimax-m3.1-flash:
-        - openrouter/minimax/minimax-m3.1-flash
+        - deepseek-v4.1-flash
     - glm-5.3:
         - qwen/glm-5.3
         - openrouter/z-ai/glm-5.3
