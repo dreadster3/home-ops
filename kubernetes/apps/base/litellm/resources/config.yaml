@@ -875,7 +875,7 @@ litellm_settings:
   require_auth_for_metrics_endpoint: true
 
   drop_params: true
-  request_timeout: 60
+  request_timeout: 120
   num_retries: 2
   set_verbose: false
   json_logs: true
