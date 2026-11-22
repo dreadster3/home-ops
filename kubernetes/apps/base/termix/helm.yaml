@@ -5,6 +5,7 @@ metadata:
   namespace: termix
 spec:
   interval: 1h
+  timeout: 10m
   install:
     remediation:
       retries: 3
@@ -73,7 +74,7 @@ spec:
             resources:
               requests:
                 cpu: 34m
-                memory: &memory 200Mi
+                memory: &memory 500Mi
               limits:
                 memory: *memory
             securityContext:
