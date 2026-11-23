@@ -991,6 +991,8 @@ router_settings:
         - clef-flash
     - decider-v1.3:
         - decider-flash-v1.3
+    - jev-1.14:
+        - jev-1.13
 
 general_settings:
   disable_env_credential_login: true
