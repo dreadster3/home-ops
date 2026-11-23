@@ -41,12 +41,6 @@ spec:
               # Database configuration
               DATABASE_DIALECT: postgres
 
-              # Guacamole configuration
-              GUACD_HOST: localhost
-              GUACD_TUNNEL_HOST: termix
-              GUACD_RECORDING_BACKEND_PATH: /app/data/recordings/guacamole
-              GUACD_RECORDING_PATH: /app/data/recordings/guacamole
-
               # OIDC configuration
               OIDC_ISSUER_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/termix/
               OIDC_AUTHORIZATION_URL: https://authentik.${EXTERNAL_DOMAIN}/application/o/authorize/
@@ -74,7 +68,7 @@ spec:
             resources:
               requests:
                 cpu: 34m
-                memory: &memory 500Mi
+                memory: &memory 1Gi
               limits:
                 memory: *memory
             securityContext:
@@ -97,20 +91,6 @@ spec:
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 6
-          guacd:
-            image:
-              repository: guacamole/guacd
-              tag: 1.6.0@sha256:8974eaa9ba32f713daf311e7cc8cd7e4cdfba1edea39eed75524e78ef4b08f4f
-            ports:
-              - containerPort: 4822
-                name: guacd
-                protocol: TCP
-            securityContext:
-              runAsNonRoot: true
-              readOnlyRootFilesystem: true
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
         pod:
           securityContext:
             runAsNonRoot: true
