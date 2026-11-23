@@ -14,6 +14,7 @@ metadata:
   namespace: langfuse
 spec:
   interval: 1h
+  timeout: 10m
   install:
     remediation:
       retries: 3
@@ -117,12 +118,16 @@ spec:
       auth:
         existingSecret: langfuse-cluster-credentials
         secretKeys:
+          adminPasswordKey: password
           userPasswordKey: password
 
     # --- ClickHouse: upstream operator, single node, in-namespace ---
     clickhouse:
       deploy: true
       crdCheck: false
+      auth:
+        existingSecret: langfuse-clickhouse-auth
+        existingSecretKey: password
       cluster:
         replicas: 1
         storage:
