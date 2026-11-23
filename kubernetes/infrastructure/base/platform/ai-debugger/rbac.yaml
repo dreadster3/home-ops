@@ -32,6 +32,31 @@ rules:
   - apiGroups: ["storage.k8s.io"]
     resources: ["storageclasses", "volumeattachments"]
     verbs: ["get", "list", "watch"]
+  # Operator-managed datastores (Langfuse ClickHouse/Keeper, CNPG, shared Dragonfly)
+  - apiGroups: ["clickhouse.com"]
+    resources: ["clickhouseclusters", "clickhouseclusters/status",
+                "keeperclusters", "keeperclusters/status"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["postgresql.cnpg.io"]
+    resources: ["clusters", "clusters/status", "backups", "scheduledbackups"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["dragonflydb.io"]
+    resources: ["dragonflies", "dragonflies/status"]
+    verbs: ["get", "list", "watch"]
+  # Cilium policies (the repo uses CNPs, not networking.k8s.io NetworkPolicies)
+  - apiGroups: ["cilium.io"]
+    resources: ["ciliumnetworkpolicies", "ciliumclusterwidenetworkpolicies"]
+    verbs: ["get", "list", "watch"]
+  # Flux reconcile state (no secrets; source objects carry no credentials)
+  - apiGroups: ["helm.toolkit.fluxcd.io"]
+    resources: ["helmreleases", "helmreleases/status"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["kustomize.toolkit.fluxcd.io"]
+    resources: ["kustomizations", "kustomizations/status"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["source.toolkit.fluxcd.io"]
+    resources: ["gitrepositories", "ocirepositories", "helmrepositories", "helmcharts"]
+    verbs: ["get", "list", "watch"]
   # Cert signing requests — public keys/SANs only; useful for cert rotation forensics
   - apiGroups: ["certificates.k8s.io"]
     resources: ["certificatesigningrequests"]
