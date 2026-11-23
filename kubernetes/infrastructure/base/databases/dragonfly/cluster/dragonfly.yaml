@@ -8,7 +8,7 @@ spec:
   # Consumers use dedicated logical DB indexes (Dragonfly supports 16 by default),
   # all set explicitly:
   # harbor 0/1/2/3, openwebui 4+5, immich 6, litellm 7, netbox 8+9,
-  # paperless 10, searxng 11, renovate 13
+  # paperless 10, searxng 11, langfuse 12, renovate 13
   # Full consumer table: README.md in this directory
   image: ghcr.io/dragonflydb/dragonfly:v2.1.0@sha256:94891bb22ce2fb0f7a5a3ff1bb3b2fbbc5830e2523293e47723d87fa3e5b1184
   replicas: 2
@@ -28,8 +28,8 @@ spec:
   args:
     - --maxmemory=$(MAX_MEMORY)Mi
     - --proactor_threads=4
-    # Required by BullMQ-based apps (immich, paperless, openwebui) that
-    # run Lua scripts with undeclared keys
+    # Required by BullMQ-based apps (immich, paperless, openwebui, langfuse)
+    # that run Lua scripts with undeclared keys
     - --default_lua_flags=allow-undeclared-keys
   # One shared password for all consumers, per app namespaces sync this via
   # their own ExternalSecret from /dragonfly/DRAGONFLY_PASSWORD

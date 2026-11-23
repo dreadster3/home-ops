@@ -6,6 +6,7 @@ labels:
       app.kubernetes.io/environment: dev
 
 resources: []
+  # - langfuse
   # - authentik
   # - harbor
   # - immich

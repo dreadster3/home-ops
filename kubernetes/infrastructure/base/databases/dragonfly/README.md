@@ -21,7 +21,7 @@ so consumers are separated by **logical DB indexes** (Dragonfly supports 16 by d
 | 9     | Netbox            | Caching                              | `kubernetes/apps/base/netbox/helm.yaml` (`cachingDatabase.database`) |
 | 10    | Paperless         | Redis cache/job queues               | `kubernetes/apps/base/paperless/secrets.yaml` (Redis URL `/10`) |
 | 11    | Searxng           | Valkey cache                         | `kubernetes/apps/base/searxng/secrets.yaml` (`SEARXNG_VALKEY_URL`) |
-| 12    | *free*            | — (previously Sure, now removed)     | —                                                          |
+| 12    | Langfuse          | Redis cache/job queues               | `kubernetes/apps/base/langfuse/helm.yaml` (`redis.auth.database`) |
 | 13    | Renovate Operator | Executor repository-cache queue      | `kubernetes/infrastructure/base/platform/renovate-operator/app/secrets.yaml` (`redis-url`) |
 | 14    | *free*            | —                                    | —                                                          |
 | 15    | *free*            | —                                    | —                                                          |

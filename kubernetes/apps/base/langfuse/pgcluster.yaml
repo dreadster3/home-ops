@@ -1,0 +1,68 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: langfuse-cluster
+  namespace: langfuse
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "disabled"
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.7-standard-trixie
+  instances: 2
+  primaryUpdateStrategy: unsupervised
+  affinity:
+    podAntiAffinityType: required
+  storage:
+    storageClass: ceph-block
+    size: 4Gi
+
+  bootstrap:
+    # recovery:
+    #   source: backup
+    #   database: langfuse
+    #   owner: langfuse
+    #   secret:
+    #     name: langfuse-cluster-credentials
+    initdb:
+      database: langfuse
+      owner: langfuse
+      secret:
+        name: langfuse-cluster-credentials
+
+  externalClusters:
+    - name: backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: backup-store
+          serverName: langfuse-cluster
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backup-store
+        serverName: langfuse-cluster
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: &memory 512Mi
+    limits:
+      memory: *memory
+
+  monitoring:
+    enablePodMonitor: true
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: langfuse-cluster-backup
+  namespace: langfuse
+spec:
+  cluster:
+    name: langfuse-cluster
+  schedule: "0 0 0 * * *"
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
