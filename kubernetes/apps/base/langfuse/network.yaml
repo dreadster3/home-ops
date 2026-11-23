@@ -184,6 +184,11 @@ spec:
         - ports:
             - port: smtp
               protocol: TCP
-    # NextAuth OAuth/SSO callbacks and telemetry.
-    - toEntities:
-        - world
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: "10443"
+              protocol: TCP
