@@ -52,6 +52,8 @@ spec:
         - matchLabels:
             io.kubernetes.pod.namespace: immich
         - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+        - matchLabels:
             io.kubernetes.pod.namespace: litellm
         - matchLabels:
             io.kubernetes.pod.namespace: netbox

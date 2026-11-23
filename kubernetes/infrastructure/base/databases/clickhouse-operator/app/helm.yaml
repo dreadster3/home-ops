@@ -1,0 +1,32 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: clickhouse-operator
+  namespace: clickhouse-operator
+spec:
+  interval: 24h
+  ref:
+    tag: 0.0.8
+  url: oci://ghcr.io/clickhouse/clickhouse-operator-helm
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: clickhouse-operator
+  namespace: clickhouse-operator
+spec:
+  interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chartRef:
+    kind: OCIRepository
+    name: clickhouse-operator
+    namespace: clickhouse-operator
+  values:
+    manager:
+      replicas: 1

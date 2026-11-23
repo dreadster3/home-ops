@@ -1,0 +1,189 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: deny-all-except-namespace
+  namespace: langfuse
+spec:
+  description: "Allow traffic only to the namespace itself"
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": langfuse
+  ingress: []
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cnpg-cluster
+  namespace: langfuse
+spec:
+  description: "Allow CloudNativePG pods access"
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: langfuse-cluster
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+            cnpg.io/cluster: langfuse-cluster
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+            - port: status
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+            app.kubernetes.io/name: langfuse
+      toPorts:
+        - ports:
+            - port: postgresql
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dragonfly-egress
+  namespace: langfuse
+spec:
+  description: "Allow egress to centralized Dragonfly (dragonfly namespace)"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: langfuse
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: dragonfly
+            app.kubernetes.io/part-of: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: clickhouse
+  namespace: langfuse
+spec:
+  description: "Allow Langfuse and the operator to reach ClickHouse"
+  endpointSelector:
+    matchLabels:
+      clickhouse.com/cluster: langfuse
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+            app.kubernetes.io/name: langfuse
+      toPorts:
+        - ports:
+            - port: "8123"
+              protocol: TCP
+            - port: "9000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: clickhouse-operator
+            control-plane: controller-manager
+        - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+            clickhouse.com/role: clickhouse-server
+      toPorts:
+        - ports:
+            - port: "9001"
+              protocol: TCP
+            - port: "9002"
+              protocol: TCP
+    # Inter-server replication traffic between ClickHouse replicas (HA).
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+            clickhouse.com/role: clickhouse-server
+      toPorts:
+        - ports:
+            - port: "9009"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: keeper
+  namespace: langfuse
+spec:
+  description: "Allow ClickHouse and the operator to reach Keeper"
+  endpointSelector:
+    matchLabels:
+      app: langfuse-keeper
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+            clickhouse.com/role: clickhouse-server
+      toPorts:
+        - ports:
+            - port: "2181"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: clickhouse-operator
+            control-plane: controller-manager
+      toPorts:
+        - ports:
+            - port: "2181"
+              protocol: TCP
+            - port: "9123"
+              protocol: TCP
+    # Keeper-to-keeper quorum traffic.
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: langfuse
+            app: langfuse-keeper
+      toPorts:
+        - ports:
+            - port: "9234"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: langfuse
+  namespace: langfuse
+spec:
+  description: "Allow traffic from and to langfuse web/worker"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: langfuse
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            "k8s:io.kubernetes.pod.namespace": envoy
+            app.kubernetes.io/name: envoy
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+  egress:
+    # Ceph RGW S3 for blob storage (traces, batch exports, media).
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: rook-ceph
+            app: rook-ceph-rgw
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    # Transactional emails via maddy.
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: maddy
+            app.kubernetes.io/name: maddy
+            app.kubernetes.io/instance: maddy
+      toPorts:
+        - ports:
+            - port: smtp
+              protocol: TCP
+    # NextAuth OAuth/SSO callbacks and telemetry.
+    - toEntities:
+        - world

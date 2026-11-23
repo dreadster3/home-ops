@@ -7,5 +7,6 @@ labels:
 
 resources:
   - dragonfly
+  - clickhouse-operator
   # - redis-operator
   - cnpg
