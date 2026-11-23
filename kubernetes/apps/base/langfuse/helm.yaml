@@ -58,26 +58,25 @@ spec:
             key: NEXTAUTH_SECRET
       auth:
         disableUsernamePassword: true
-
-        # Configure SSO providers
-        # For sensitive fields like clientSecret, use secretKeyRef to reference Kubernetes secrets
-        providers:
-          # Example: Azure AD configuration
-          authentik:
-            # Client ID can be specified directly as it's typically not sensitive
-            clientId:
-              secretKeyRef:
-                name: langfuse-oidc
-                key: OIDC_CLIENT_ID
-            clientSecret:
-              secretKeyRef:
-                name: langfuse-oidc
-                key: OIDC_CLIENT_SECRET
-            issuer: https://authentik.${INTERNAL_DOMAIN}/application/o/langfuse/
       smtp:
         connectionUrl: smtp://maddy.maddy.svc.cluster.local:25
         fromAddress: no-reply@${EXTERNAL_DOMAIN}
       additionalEnv:
+        # Authentik SSO via the app's native provider. Chart 2.2.6's validations.yaml
+        # allowlist rejects `auth.providers.authentik` (stale — the app supports it),
+        # so wire AUTH_AUTHENTIK_* directly. Move back to auth.providers once fixed.
+        - name: AUTH_AUTHENTIK_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: langfuse-oidc
+              key: OIDC_CLIENT_ID
+        - name: AUTH_AUTHENTIK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: langfuse-oidc
+              key: OIDC_CLIENT_SECRET
+        - name: AUTH_AUTHENTIK_ISSUER
+          value: https://authentik.${INTERNAL_DOMAIN}/application/o/langfuse/
         # S3 endpoint from the OBC-generated configmap (Rook fills per environment);
         # overrides the chart's empty endpoint when s3.deploy=false.
         # $(S3_ENDPOINT_HOST) expands from the env entry above — keep the order.
