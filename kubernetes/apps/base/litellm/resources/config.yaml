@@ -939,6 +939,7 @@ litellm_settings:
   callbacks:
     - prometheus
     - smtp_email
+    - langfuse_otel
   prometheus_initialize_budget_metrics: true
   enable_end_user_cost_tracking_prometheus_only: true
   service_callback: ["prometheus_system"]
