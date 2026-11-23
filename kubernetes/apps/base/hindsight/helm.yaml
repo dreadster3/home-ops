@@ -97,6 +97,7 @@ spec:
         HINDSIGHT_API_EMBEDDINGS_PROVIDER: *provider
         HINDSIGHT_API_EMBEDDINGS_LITELLM_API_BASE: *url
         HINDSIGHT_API_EMBEDDINGS_LITELLM_MODEL: qwen3-embedding-8b
+        HINDSIGHT_API_EMBEDDINGS_MAX_CONCURRENT_REQUESTS: 1
         # Rerank via litellm (cohere-compatible /rerank against the proxy;
         # model 'rerank-2.5-lite' passthroughs to OpenRouter's voyage model)
         HINDSIGHT_API_RERANKER_PROVIDER: *provider
