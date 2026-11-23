@@ -27,6 +27,22 @@ model_list:
       api_key: os.environ/OPENROUTER_API_KEY
       order: 2
 
+  - model_name: decider-v1.3
+    model_info:
+      mode: evaluation
+    litellm_params:
+      model: openrouter/perplexity/pplx-decider-v1.3:free
+      api_key: os.environ/OPENROUTER_API_KEY
+      order: 1
+
+  - model_name: decider-flash-v1.3
+    model_info:
+      mode: evaluation
+    litellm_params:
+      model: openrouter/perplexity/pplx-decider-flash-v1.3:free
+      api_key: os.environ/OPENROUTER_API_KEY
+      order: 1
+
   # ===== Image Generation =====
   - model_name: flux.2-pro
     model_info:
