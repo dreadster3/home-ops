@@ -46,14 +46,8 @@ model_list:
   # ===== Image Generation =====
   - model_name: flux.2-pro
     model_info:
-      mode: chat
+      mode: image_generation
       supports_vision: true
-      supported_openai_parameters:
-        - aspect_ratio
-        - output_format
-        - n
-        - input_references
-        - seed
     litellm_params:
       model: openrouter/black-forest-labs/flux.2-pro
       preset: "@preset/default"
@@ -966,19 +960,11 @@ router_settings:
   model_group_alias:
     tts: tts-1
     stt: nova-3
-    imagen: qwen-image-3.0-pro
-    imagedit: qwen-image-3.0-pro
 
   fallbacks:
     # Only genuinely different models — same-model provider redundancy is
     # handled by ordered deployments within each model group above.
-    - stt:
-        - whisper-1
-    - imagen:
-        - gemini-3.1-flash-image
-        - gemini-3.1-flash-lite-image
-    - imagedit:
-        - gemini-3.1-flash-image
+    - gemini-3.1-flash-image:
         - gemini-3.1-flash-lite-image
     - clef:
         - clef-flash
