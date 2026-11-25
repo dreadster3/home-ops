@@ -766,6 +766,14 @@ model_list:
       api_key: os.environ/OPENROUTER_API_KEY
       order: 2
 
+  - model_name: heygen-video-1
+    model_info:
+      mode: video_generation
+    litellm_params:
+      model: openrouter/heygen/heygen-video-1
+      api_key: os.environ/OPENROUTER_API_KEY
+      order: 1
+
   # ===== Ollama Cloud (https://ollama.com) — order 1 primaries for the model groups =====
   - model_name: minimax-m3
     model_info:
