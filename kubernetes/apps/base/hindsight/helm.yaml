@@ -144,7 +144,7 @@ spec:
       replicaCount: 1
       image:
         repository: ghcr.io/dreadster3/hindsight-control-plane
-        tag: v0.2.0@sha256:f3915ed63c55b4f24ab5c7578c15923ebe4fcdc1e57437a948de7e0a1b9cf6e3
+        tag: v0.2.1@sha256:8ac9b150b5d82cbf41d9063b9c21b69d5383896be1f4e2ac2f1267f3bfd0cda2
       # No resource requests/limits — krr will measure usage and fill in later
       env:
         AUTH_URL: https://hindsight.${INTERNAL_DOMAIN}
