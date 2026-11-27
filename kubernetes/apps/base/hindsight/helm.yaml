@@ -79,11 +79,11 @@ spec:
         HINDSIGHT_API_REFLECT_DECISION_MODEL_PROVIDER: none
 
         # optimizations
-        HINDSIGHT_API_ENABLE_AUTO_CONSOLIDATION: false
+        HINDSIGHT_API_ENABLE_AUTO_CONSOLIDATION: true
         HINDSIGHT_API_CONSOLIDATION_LLM_BATCH_SIZE: 20
         HINDSIGHT_API_CONSOLIDATION_LLM_PARALLELISM: 1
         HINDSIGHT_API_MENTAL_MODEL_MIN_REFRESH_INTERVAL_SECONDS: 3600
-        HINDSIGHT_API_PAGE_DEFAULT_TRIGGER: '{"refresh_after_consolidation": false, "refresh_cron": "0 3 * * *"}'
+        # HINDSIGHT_API_PAGE_DEFAULT_TRIGGER: '{"refresh_after_consolidation": false, "refresh_cron": "0 3 * * *"}'
 
         # Auth: shared bearer key guarding the API + MCP endpoints (from
         # Infisical via hindsight-secret-env).
