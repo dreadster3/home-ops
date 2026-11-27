@@ -380,7 +380,7 @@ model_list:
       order: 3
 
   # ==== Openrouter Models ====
-  - model_name: qwen4-max-preview
+  - model_name: qwen4-max
     model_info:
       supports_function_calling: true
       supports_prompt_caching: true
@@ -399,7 +399,7 @@ model_list:
       supports_xhigh_reasoning_effort: true
       supports_max_reasoning_effort: false
     litellm_params:
-      model: openai/qwen4-max-preview
+      model: openai/qwen4-max
       api_base: https://token-plan.maas.qwencloudapi.com/compatible-mode/v1
       api_key: os.environ/QWEN_CLOUD_API_KEY
 
