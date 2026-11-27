@@ -9,8 +9,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 1.2.3
-    digest: sha256:f1fba118f3333bbdcd7f9b6aef928ce59cbe547a7b7439d1a92de95fabef7959
+    tag: 1.3.0
+    digest: sha256:5a086a014e35d6991eba3886af7ed6b9cfca93d178662bc30efc2f24cc55138e
   url: oci://ghcr.io/vectorize-io/charts/hindsight
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -40,7 +40,7 @@ spec:
       replicaCount: 2
       image: &image
         repository: ghcr.io/dreadster3/hindsight-hybrid-authentication
-        tag: v1.2.3@sha256:e7548a8d4471be00a570d8711453b583a319e7d95931c1cf199f7f3aae65cb49
+        tag: v1.3.0@sha256:52be96b20d89ca14b52e5577012dd894bf340d321f7e1dc209a8b120594c5371
       env:
         HINDSIGHT_API_TENANT_OAUTH_ENABLED: true
         HINDSIGHT_API_TENANT_OAUTH_ISSUER: &issuer https://authentik.${EXTERNAL_DOMAIN}/application/o/hindsight/
