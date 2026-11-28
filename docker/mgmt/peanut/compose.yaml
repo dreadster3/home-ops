@@ -8,7 +8,7 @@ configs:
           PASSWORD: ${NUT_PASSWORD}
 services:
   peanut:
-    image: brandawg93/peanut:5.22.0@sha256:14d71889539a5b050961ca69f20b3c9fd5fa5af439e388dff08ebbe32bf15c84
+    image: brandawg93/peanut:6.2.0@sha256:b6bf626143cff8bc2797dd42cb7b231de833fa9fda9b770321c623c71433ec28
     container_name: peanut
     restart: unless-stopped
     environment:
