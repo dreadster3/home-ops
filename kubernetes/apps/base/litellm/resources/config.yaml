@@ -926,6 +926,8 @@ litellm_settings:
     - prometheus
     - smtp_email
     - langfuse_otel
+    # Strips X-DashScope-Async from video poll requests (token-plan host rejects it)
+    - video_poll_headers.video_poll_headers
   prometheus_initialize_budget_metrics: true
   enable_end_user_cost_tracking_prometheus_only: true
   service_callback: ["prometheus_system"]

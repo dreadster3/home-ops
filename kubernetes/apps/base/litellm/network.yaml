@@ -150,7 +150,7 @@ spec:
         - matchName: generativelanguage.googleapis.com
         - matchName: token-plan.maas.qwencloudapi.com
         - matchName: ap-southeast-1.maas.qwencloudapi.com
-        - matchPattern: "*.oss-ap-southeast-1.aliyuncs.com"
+        - matchPattern: "**.aliyuncs.com"
         # MCP Servers
         - matchName: api.githubcopilot.com
         - matchName: mcp.context7.com
